@@ -9,7 +9,7 @@ const API_BASE_URL = (() => {
   }
   // En producción (Vercel) → URL de Render
   // ⚠️ CAMBIA ESTO por tu URL real de Render después de desplegar
-  return 'https://neurolearn-backend.onrender.com/api';
+  return 'https://neurolearn-backend-0dvt.onrender.com/api';
 })();
 
 // ============================================
