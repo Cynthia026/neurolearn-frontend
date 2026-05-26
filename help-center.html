@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Centro de Ayuda - NeuroLearn Kids</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;600;700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .back-btn {
+            padding: 1rem 2rem;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            border-radius: 999px;
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            margin-bottom: 2rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .back-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateX(-5px);
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: fadeInDown 0.8s ease;
+        }
+
+        .header h1 {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 3.5rem;
+            color: white;
+            margin-bottom: 1rem;
+            text-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+
+        .header p {
+            color: rgba(255,255,255,0.9);
+            font-size: 1.2rem;
+        }
+
+        /* Search Bar */
+        .search-section {
+            background: white;
+            border-radius: 2rem;
+            padding: 2rem;
+            margin-bottom: 3rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            animation: fadeInUp 0.8s ease 0.2s both;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.5rem;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 1.25rem 1.5rem 1.25rem 4rem;
+            border: 2px solid #E2E8F0;
+            border-radius: 999px;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #7C3AED;
+            box-shadow: 0 0 0 3px rgba(124,58,237,0.1);
+        }
+
+        .search-suggestions {
+            margin-top: 1rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+
+        .suggestion-tag {
+            padding: 0.5rem 1rem;
+            background: rgba(124,58,237,0.1);
+            border-radius: 999px;
+            color: #7C3AED;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .suggestion-tag:hover {
+            background: rgba(124,58,237,0.2);
+        }
+
+        /* Categories */
+        .categories-section {
+            margin-bottom: 3rem;
+        }
+
+        .section-title {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 2rem;
+            color: white;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+
+        .category-card {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            animation: fadeInUp 0.6s ease both;
+        }
+
+        .category-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+        }
+
+        .category-icon {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .category-title {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            color: #1E293B;
+        }
+
+        .category-count {
+            color: #64748B;
+            font-size: 0.9rem;
+        }
+
+        /* FAQ Section */
+        .faq-section {
+            background: white;
+            border-radius: 2rem;
+            padding: 3rem;
+            margin-bottom: 3rem;
+            animation: fadeIn 0.8s ease;
+        }
+
+        .faq-section h2 {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            color: #1E293B;
+        }
+
+        .faq-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .faq-item {
+            border: 2px solid #E2E8F0;
+            border-radius: 1rem;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .faq-item.active {
+            border-color: #7C3AED;
+        }
+
+        .faq-question {
+            padding: 1.5rem;
+            background: #F8FAFC;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .faq-question:hover {
+            background: rgba(124,58,237,0.05);
+        }
+
+        .faq-icon {
+            font-size: 1.5rem;
+            color: #7C3AED;
+            transition: transform 0.3s;
+        }
+
+        .faq-item.active .faq-icon {
+            transform: rotate(45deg);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .faq-item.active .faq-answer {
+            max-height: 500px;
+        }
+
+        .faq-answer-content {
+            padding: 1.5rem;
+            color: #475569;
+            line-height: 1.8;
+        }
+
+        .faq-helpful {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #E2E8F0;
+        }
+
+        .helpful-text {
+            color: #64748B;
+            font-size: 0.9rem;
+        }
+
+        .helpful-btn {
+            padding: 0.5rem 1rem;
+            background: #F8FAFC;
+            border: 2px solid #E2E8F0;
+            border-radius: 999px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .helpful-btn:hover {
+            border-color: #7C3AED;
+            background: rgba(124,58,237,0.1);
+        }
+
+        /* Contact Section */
+        .contact-section {
+            background: white;
+            border-radius: 2rem;
+            padding: 3rem;
+            text-align: center;
+        }
+
+        .contact-section h2 {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .contact-section p {
+            color: #64748B;
+            margin-bottom: 2rem;
+        }
+
+        .contact-methods {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+
+        .contact-card {
+            padding: 2rem;
+            background: #F8FAFC;
+            border-radius: 1.5rem;
+            transition: all 0.3s;
+        }
+
+        .contact-card:hover {
+            background: rgba(124,58,237,0.05);
+        }
+
+        .contact-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .contact-title {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .contact-info {
+            color: #7C3AED;
+            font-weight: 600;
+        }
+
+        .contact-hours {
+            color: #64748B;
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @media (max-width: 768px) {
+            .categories-grid { grid-template-columns: 1fr; }
+            .contact-methods { grid-template-columns: 1fr; }
+            .header h1 { font-size: 2.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="parent-dashboard.html" class="back-btn">← Volver al Dashboard</a>
+
+        <!-- Header -->
+        <div class="header">
+            <h1>💡 Centro de Ayuda</h1>
+            <p>¿En qué podemos ayudarte hoy?</p>
+        </div>
+
+        <!-- Search Section -->
+        <div class="search-section">
+            <div class="search-box">
+                <span class="search-icon">🔍</span>
+                <input type="text" class="search-input" id="searchInput" placeholder="Busca tu pregunta aquí..." onkeyup="searchFAQ()">
+            </div>
+            <div class="search-suggestions">
+                <span class="suggestion-tag" onclick="searchFor('¿Cómo creo una cuenta?')">Crear cuenta</span>
+                <span class="suggestion-tag" onclick="searchFor('Cambiar contraseña')">Contraseña</span>
+                <span class="suggestion-tag" onclick="searchFor('Planes y precios')">Precios</span>
+                <span class="suggestion-tag" onclick="searchFor('Cancelar suscripción')">Cancelar</span>
+                <span class="suggestion-tag" onclick="searchFor('Métodos de pago')">Pagos</span>
+            </div>
+        </div>
+
+        <!-- Categories -->
+        <div class="categories-section">
+            <h2 class="section-title">Categorías Populares</h2>
+            <div class="categories-grid">
+                <div class="category-card" onclick="filterByCategory('cuenta')" style="animation-delay: 0.1s;">
+                    <div class="category-icon">👤</div>
+                    <div class="category-title">Cuenta y Perfil</div>
+                    <div class="category-count">8 artículos</div>
+                </div>
+                <div class="category-card" onclick="filterByCategory('pagos')" style="animation-delay: 0.2s;">
+                    <div class="category-icon">💳</div>
+                    <div class="category-title">Pagos y Suscripción</div>
+                    <div class="category-count">6 artículos</div>
+                </div>
+                <div class="category-card" onclick="filterByCategory('uso')" style="animation-delay: 0.3s;">
+                    <div class="category-icon">📱</div>
+                    <div class="category-title">Uso de la Plataforma</div>
+                    <div class="category-count">12 artículos</div>
+                </div>
+                <div class="category-card" onclick="filterByCategory('evaluaciones')" style="animation-delay: 0.4s;">
+                    <div class="category-icon">📝</div>
+                    <div class="category-title">Evaluaciones</div>
+                    <div class="category-count">5 artículos</div>
+                </div>
+                <div class="category-card" onclick="filterByCategory('seguridad')" style="animation-delay: 0.5s;">
+                    <div class="category-icon">🔒</div>
+                    <div class="category-title">Seguridad y Privacidad</div>
+                    <div class="category-count">7 artículos</div>
+                </div>
+                <div class="category-card" onclick="filterByCategory('tecnico')" style="animation-delay: 0.6s;">
+                    <div class="category-icon">🛠️</div>
+                    <div class="category-title">Soporte Técnico</div>
+                    <div class="category-count">9 artículos</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FAQ Section -->
+        <div class="faq-section">
+            <h2>📚 Preguntas Frecuentes</h2>
+            <div class="faq-list" id="faqList">
+                <!-- Cuenta y Perfil -->
+                <div class="faq-item" data-category="cuenta">
+                    <div class="faq-question" onclick="toggleFAQ(this)">
+                        <span>¿Cómo creo una cuenta en NeuroLearn?</span>
+                        <span class="faq-icon">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            Crear una cuenta es muy sencillo:
+                            <ol style="margin: 1rem 0; padding-left: 1.5rem;">
+                                <li>Haz clic en "Comenzar Gratis" en la página principal</li>
+                                <li>Elige tu rol (Estudiante, Padre/Madre o Docente)</li>
+                                <li>Completa el formulario con tus datos</li>
+                                <li>Verifica tu email</li>
+                                <li>¡Listo! Ya puedes comenzar a usar la plataforma</li>
+                            </ol>
+                            El proceso completo toma menos de 2 minutos.
+                            <div class="faq-helpful">
+                                <span class="helpful-text">¿Te resultó útil?</span>
+                                <button class="helpful-btn" onclick="markHelpful(this, true)">👍 Sí</button>
+                                <button class="helpful-btn" onclick="markHelpful(this, false)">👎 No</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item" data-category="cuenta">
+                    <div class="faq-question" onclick="toggleFAQ(this)">
+                        <span>¿Cómo cambio mi contraseña?</span>
+                        <span class="faq-icon">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            Para cambiar tu contraseña:
+                            <ol style="margin: 1rem 0; padding-left: 1.5rem;">
+                                <li>Ve a Configuración (⚙️) en el menú</li>
+                                <li>Selecciona "Seguridad"</li>
+                                <li>Haz clic en "Cambiar Contraseña"</li>
+                                <li>Ingresa tu contraseña actual</li>
+                                <li>Ingresa tu nueva contraseña (mínimo 8 caracteres)</li>
+                                <li>Confirma la nueva contraseña</li>
+                            </ol>
+                            Te enviaremos un email confirmando el cambio.
+                            <div class="faq-helpful">
+                                <span class="helpful-text">¿Te resultó útil?</span>
+                                <button class="helpful-btn" onclick="markHelpful(this, true)">👍 Sí</button>
+                                <button class="helpful-btn" onclick="markHelpful(this, false)">👎 No</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pagos -->
+                <div class="faq-item" data-category="pagos">
+                    <div class="faq-question" onclick="toggleFAQ(this)">
+                        <span>¿Qué métodos de pago aceptan?</span>
+                        <span class="faq-icon">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            Aceptamos los siguientes métodos de pago:
+                            <ul style="margin: 1rem 0; padding-left: 1.5rem;">
+                                <li>💳 Tarjetas de crédito (Visa, Mastercard, American Express)</li>
+                                <li>💳 Tarjetas de débito</li>
+                                <li>🏦 Transferencia bancaria (SPEI)</li>
+                                <li>💰 PayPal</li>
+                                <li>💵 OXXO Pay (solo México)</li>
+                            </ul>
+                            Todos los pagos son procesados de forma segura con encriptación SSL.
+                            <div class="faq-helpful">
+                                <span class="helpful-text">¿Te resultó útil?</span>
+                                <button class="helpful-btn" onclick="markHelpful(this, true)">👍 Sí</button>
+                                <button class="helpful-btn" onclick="markHelpful(this, false)">👎 No</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item" data-category="pagos">
+                    <div class="faq-question" onclick="toggleFAQ(this)">
+                        <span>¿Cómo cancelo mi suscripción?</span>
+                        <span class="faq-icon">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            Puedes cancelar en cualquier momento sin penalización:
+                            <ol style="margin: 1rem 0; padding-left: 1.5rem;">
+                                <li>Ve a Configuración → Suscripción</li>
+                                <li>Haz clic en "Cancelar Suscripción"</li>
+                                <li>Selecciona el motivo (opcional)</li>
+                                <li>Confirma la cancelación</li>
+                            </ol>
+                            <strong>Importante:</strong> Seguirás teniendo acceso hasta el final de tu periodo de facturación actual. Si tienes plan anual, te reembolsamos la parte proporcional.
+                            <div class="faq-helpful">
+                                <span class="helpful-text">¿Te resultó útil?</span>
+                                <button class="helpful-btn" onclick="markHelpful(this, true)">👍 Sí</button>
+                                <button class="helpful-btn" onclick="markHelpful(this, false)">👎 No</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Uso de la Plataforma -->
+                <div class="faq-item" data-category="uso">
+                    <div class="faq-question" onclick="toggleFAQ(this)">
+                        <span>¿Cómo funciona la adaptación inteligente?</span>
+                        <span class="faq-icon">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            Nuestro motor de IA analiza cada respuesta del estudiante en tiempo real:
+                            <ul style="margin: 1rem 0; padding-left: 1.5rem;">
+                                <li>Si responde correctamente varias veces → aumenta la dificultad</li>
+                                <li>Si tiene dificultades → presenta ejercicios más sencillos</li>
+                                <li>Identifica patrones de error para reforzar áreas específicas</li>
+                                <li>Ajusta el tipo de ejercicio según el estilo de aprendizaje</li>
+                            </ul>
+                            Todo esto ocurre automáticamente. El estudiante siempre practica en su "zona de desarrollo próximo" - ni muy fácil ni muy difícil.
+                            <div class="faq-helpful">
+                                <span class="helpful-text">¿Te resultó útil?</span>
+                                <button class="helpful-btn" onclick="markHelpful(this, true)">👍 Sí</button>
+                                <button class="helpful-btn" onclick="markHelpful(this, false)">👎 No</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item" data-category="uso">
+                    <div class="faq-question" onclick="toggleFAQ(this)">
+                        <span>¿Puedo usar NeuroLearn en tablet o celular?</span>
+                        <span class="faq-icon">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            ¡Sí! NeuroLearn funciona en cualquier dispositivo:
+                            <ul style="margin: 1rem 0; padding-left: 1.5rem;">
+                                <li>💻 Computadoras (Windows, Mac, Linux)</li>
+                                <li>📱 Teléfonos móviles (iOS y Android)</li>
+                                <li>📱 Tablets (iPad, Android tablets)</li>
+                            </ul>
+                            El diseño es 100% responsive, adaptándose automáticamente al tamaño de pantalla. Recomendamos tablet o computadora para una mejor experiencia, especialmente en ejercicios de matemáticas.
+                            <div class="faq-helpful">
+                                <span class="helpful-text">¿Te resultó útil?</span>
+                                <button class="helpful-btn" onclick="markHelpful(this, true)">👍 Sí</button>
+                                <button class="helpful-btn" onclick="markHelpful(this, false)">👎 No</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Evaluaciones -->
+                <div class="faq-item" data-category="evaluaciones">
+                    <div class="faq-question" onclick="toggleFAQ(this)">
+                        <span>¿Cómo veo los resultados de las evaluaciones?</span>
+                        <span class="faq-icon">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            Los resultados están disponibles inmediatamente después de completar cada evaluación:
+                            <ol style="margin: 1rem 0; padding-left: 1.5rem;">
+                                <li>Ve a "Reportes" en el menú principal</li>
+                                <li>Selecciona "Evaluaciones"</li>
+                                <li>Verás una lista de todas las evaluaciones</li>
+                                <li>Haz clic en cualquiera para ver detalles</li>
+                            </ol>
+                            Los padres reciben un email automático con los resultados. Los maestros pueden exportar reportes en PDF o Excel.
+                            <div class="faq-helpful">
+                                <span class="helpful-text">¿Te resultó útil?</span>
+                                <button class="helpful-btn" onclick="markHelpful(this, true)">👍 Sí</button>
+                                <button class="helpful-btn" onclick="markHelpful(this, false)">👎 No</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Seguridad -->
+                <div class="faq-item" data-category="seguridad">
+                    <div class="faq-question" onclick="toggleFAQ(this)">
+                        <span>¿Es segura la información de mi hijo?</span>
+                        <span class="faq-icon">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            La seguridad y privacidad son nuestra máxima prioridad:
+                            <ul style="margin: 1rem 0; padding-left: 1.5rem;">
+                                <li>🔒 Encriptación SSL/TLS en todas las comunicaciones</li>
+                                <li>🔐 Contraseñas cifradas con hash seguro</li>
+                                <li>🛡️ Cumplimiento con COPPA y GDPR</li>
+                                <li>🚫 NO compartimos datos con terceros</li>
+                                <li>🔒 Servidores en centros de datos certificados</li>
+                                <li>👁️ Control parental total sobre la información</li>
+                            </ul>
+                            Puedes leer nuestra Política de Privacidad completa <a href="#" style="color: #7C3AED;">aquí</a>.
+                            <div class="faq-helpful">
+                                <span class="helpful-text">¿Te resultó útil?</span>
+                                <button class="helpful-btn" onclick="markHelpful(this, true)">👍 Sí</button>
+                                <button class="helpful-btn" onclick="markHelpful(this, false)">👎 No</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Soporte Técnico -->
+                <div class="faq-item" data-category="tecnico">
+                    <div class="faq-question" onclick="toggleFAQ(this)">
+                        <span>La plataforma va lenta, ¿qué puedo hacer?</span>
+                        <span class="faq-icon">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            Prueba estas soluciones:
+                            <ol style="margin: 1rem 0; padding-left: 1.5rem;">
+                                <li>Cierra otras pestañas del navegador</li>
+                                <li>Borra el caché y cookies (Ctrl+Shift+Del)</li>
+                                <li>Actualiza tu navegador a la última versión</li>
+                                <li>Verifica tu conexión a Internet (mínimo 5 Mbps recomendado)</li>
+                                <li>Intenta con otro navegador (recomendamos Chrome o Firefox)</li>
+                                <li>Desactiva extensiones del navegador temporalmente</li>
+                            </ol>
+                            Si el problema persiste, contáctanos en soporte@neurolearn.edu.mx
+                            <div class="faq-helpful">
+                                <span class="helpful-text">¿Te resultó útil?</span>
+                                <button class="helpful-btn" onclick="markHelpful(this, true)">👍 Sí</button>
+                                <button class="helpful-btn" onclick="markHelpful(this, false)">👎 No</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Section -->
+        <div class="contact-section">
+            <h2>¿No encontraste lo que buscabas?</h2>
+            <p>Nuestro equipo está listo para ayudarte</p>
+            <div class="contact-methods">
+                <div class="contact-card">
+                    <div class="contact-icon">📧</div>
+                    <div class="contact-title">Email</div>
+                    <div class="contact-info">soporte@neurolearn.edu.mx</div>
+                    <div class="contact-hours">Respuesta en 24 horas</div>
+                </div>
+                <div class="contact-card">
+                    <div class="contact-icon">💬</div>
+                    <div class="contact-title">WhatsApp</div>
+                    <div class="contact-info">(442) 123-4567</div>
+                    <div class="contact-hours">Lun-Vie 9am-6pm</div>
+                </div>
+                <div class="contact-card">
+                    <div class="contact-icon">📞</div>
+                    <div class="contact-title">Teléfono</div>
+                    <div class="contact-info">01-800-NEUROLEARN</div>
+                    <div class="contact-hours">Lun-Vie 9am-6pm</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleFAQ(element) {
+            const item = element.parentElement;
+            const isActive = item.classList.contains('active');
+            
+            // Close all FAQ items
+            document.querySelectorAll('.faq-item').forEach(faq => {
+                faq.classList.remove('active');
+            });
+            
+            // Open clicked item if it wasn't active
+            if (!isActive) {
+                item.classList.add('active');
+            }
+        }
+
+        function searchFAQ() {
+            const input = document.getElementById('searchInput').value.toLowerCase();
+            const items = document.querySelectorAll('.faq-item');
+            let hasResults = false;
+            
+            items.forEach(item => {
+                const question = item.querySelector('.faq-question span').textContent.toLowerCase();
+                const answer = item.querySelector('.faq-answer-content').textContent.toLowerCase();
+                
+                if (question.includes(input) || answer.includes(input)) {
+                    item.style.display = 'block';
+                    hasResults = true;
+                } else {
+                    item.style.display = input ? 'none' : 'block';
+                }
+            });
+            
+            if (input && !hasResults) {
+                // Could show "No results found" message here
+            }
+        }
+
+        function searchFor(query) {
+            document.getElementById('searchInput').value = query;
+            searchFAQ();
+        }
+
+        function filterByCategory(category) {
+            const items = document.querySelectorAll('.faq-item');
+            
+            items.forEach(item => {
+                if (item.dataset.category === category) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+            
+            // Scroll to FAQ section
+            document.querySelector('.faq-section').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function markHelpful(button, isHelpful) {
+            const container = button.parentElement;
+            container.innerHTML = isHelpful 
+                ? '<span style="color: #10B981;">✓ Gracias por tu feedback</span>'
+                : '<span style="color: #64748B;">Gracias. Trabajaremos en mejorar esta respuesta.</span>';
+        }
+
+        // Staggered animation for category cards
+        document.querySelectorAll('.category-card').forEach((card, index) => {
+            card.style.animationDelay = (index * 0.1) + 's';
+        });
+    </script>
+
+    <!-- NeuroLearn Systems -->
+    <script src="nl-notifications.js"></script>
+    <script src="nl-themes.js"></script>
+    <script src="nl-ux-enhancements.js"></script>
+
+</body>
+</html>

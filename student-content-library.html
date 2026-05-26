@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contenido del Curso - NeuroLearn Kids</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --primary-purple: #7C3AED;
+            --primary-pink: #EC4899;
+            --primary-blue: #06B6D4;
+            --success: #10B981;
+            --neutral-900: #0F172A;
+            --neutral-700: #334155;
+            --neutral-500: #64748B;
+            --neutral-100: #F1F5F9;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 2rem;
+            border-radius: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        .back-btn {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            background: var(--primary-purple);
+            color: white;
+            border-radius: 999px;
+            text-decoration: none;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            transition: transform 0.3s;
+        }
+
+        .back-btn:hover {
+            transform: translateX(-5px);
+        }
+
+        .header h1 {
+            font-family: 'Fredoka', sans-serif;
+            color: var(--neutral-900);
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            border-bottom: 2px solid #E2E8F0;
+        }
+
+        .tab {
+            padding: 1rem 2rem;
+            background: none;
+            border: none;
+            font-family: 'Fredoka', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            color: var(--neutral-500);
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            color: var(--primary-purple);
+            border-bottom-color: var(--primary-purple);
+        }
+
+        .content-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 2rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .content-card {
+            background: white;
+            border: 2px solid #E2E8F0;
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .content-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-purple), var(--primary-pink));
+        }
+
+        .content-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(124, 58, 237, 0.2);
+        }
+
+        .content-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .content-card h3 {
+            font-family: 'Fredoka', sans-serif;
+            color: var(--neutral-900);
+            margin-bottom: 0.5rem;
+            font-size: 1.25rem;
+        }
+
+        .content-card p {
+            color: var(--neutral-500);
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+
+        .content-meta {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .meta-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge-type {
+            background: #EDE9FE;
+            color: #7C3AED;
+        }
+
+        .badge-subject {
+            background: #DBEAFE;
+            color: #2563EB;
+        }
+
+        .badge-date {
+            background: #FEF3C7;
+            color: #D97706;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--neutral-500);
+        }
+
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .filter-bar {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 0.5rem 1rem;
+            border: 2px solid #E2E8F0;
+            background: white;
+            border-radius: 999px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .filter-btn.active {
+            background: var(--primary-purple);
+            color: white;
+            border-color: var(--primary-purple);
+        }
+
+        @media (max-width: 768px) {
+            body { padding: 1rem; }
+            .header h1 { font-size: 2rem; }
+            .tabs { flex-wrap: wrap; }
+            .content-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                <a href="student-dashboard.html" class="back-btn">← Volver al Dashboard</a>
+                <a href="landing-page-v2.html" class="back-btn" onclick="return confirm('¿Seguro que quieres cerrar sesión?')" style="background: linear-gradient(135deg, #EF4444, #DC2626); margin-left: auto;">🚪 Cerrar Sesión</a>
+            </div>
+            <h1>📚 Contenido del Curso</h1>
+            <p style="color: var(--neutral-500); margin-top: 0.5rem;">Material compartido por tu profesor(a)</p>
+            
+            <div class="tabs">
+                <button class="tab active" onclick="filterBySubject('all')">📖 Todo</button>
+                <button class="tab" onclick="filterBySubject('math')">🔢 Matemáticas</button>
+                <button class="tab" onclick="filterBySubject('spanish')">📚 Español</button>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <div class="filter-bar">
+                <button class="filter-btn active" onclick="filterByType('all')">Todos</button>
+                <button class="filter-btn" onclick="filterByType('video')">📹 Videos</button>
+                <button class="filter-btn" onclick="filterByType('doc')">📄 Documentos</button>
+                <button class="filter-btn" onclick="filterByType('game')">🎮 Juegos</button>
+                <button class="filter-btn" onclick="filterByType('worksheet')">📝 Hojas de Trabajo</button>
+            </div>
+
+            <div id="contentGrid" class="content-grid">
+                <!-- El contenido se carga aquí dinámicamente -->
+            </div>
+
+            <div id="emptyState" class="empty-state" style="display: none;">
+                <div class="empty-state-icon">📭</div>
+                <h3>No hay contenido disponible</h3>
+                <p>Tu profesor(a) aún no ha compartido contenido para este filtro.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Datos de ejemplo del contenido subido por el docente
+        // En producción, esto vendría de una base de datos
+        const teacherContent = [
+            {
+                id: 1,
+                title: "Multiplicaciones del 1 al 5",
+                type: "video",
+                subject: "math",
+                description: "Video tutorial sobre las tablas de multiplicar del 1 al 5 con ejemplos prácticos.",
+                icon: "📹",
+                date: "2026-03-15",
+                url: "#"
+            },
+            {
+                id: 2,
+                title: "Ejercicios de Sumas y Restas",
+                type: "worksheet",
+                subject: "math",
+                description: "Hoja de trabajo con 20 ejercicios de práctica de sumas y restas.",
+                icon: "📝",
+                date: "2026-03-14",
+                url: "#"
+            },
+            {
+                id: 3,
+                title: "Cuentos Cortos para Leer",
+                type: "doc",
+                subject: "spanish",
+                description: "Colección de 5 cuentos cortos para practicar lectura comprensiva.",
+                icon: "📄",
+                date: "2026-03-13",
+                url: "#"
+            },
+            {
+                id: 4,
+                title: "Juego de Fracciones",
+                type: "game",
+                subject: "math",
+                description: "Juego interactivo para aprender fracciones de manera divertida.",
+                icon: "🎮",
+                date: "2026-03-12",
+                url: "math-blaster.html"
+            },
+            {
+                id: 5,
+                title: "Ortografía: Uso de la B y V",
+                type: "doc",
+                subject: "spanish",
+                description: "Guía completa sobre cuándo usar B y V con reglas y ejemplos.",
+                icon: "📄",
+                date: "2026-03-10",
+                url: "#"
+            },
+            {
+                id: 6,
+                title: "Video: Suma de Fracciones",
+                type: "video",
+                subject: "math",
+                description: "Aprende a sumar fracciones paso a paso con este video tutorial.",
+                icon: "📹",
+                date: "2026-03-08",
+                url: "#"
+            }
+        ];
+
+        let currentSubjectFilter = 'all';
+        let currentTypeFilter = 'all';
+
+        function renderContent() {
+            const grid = document.getElementById('contentGrid');
+            const emptyState = document.getElementById('emptyState');
+            
+            // Filtrar contenido
+            const filtered = teacherContent.filter(item => {
+                const subjectMatch = currentSubjectFilter === 'all' || item.subject === currentSubjectFilter;
+                const typeMatch = currentTypeFilter === 'all' || item.type === currentTypeFilter;
+                return subjectMatch && typeMatch;
+            });
+
+            if (filtered.length === 0) {
+                grid.style.display = 'none';
+                emptyState.style.display = 'block';
+                return;
+            }
+
+            grid.style.display = 'grid';
+            emptyState.style.display = 'none';
+
+            // Renderizar tarjetas
+            grid.innerHTML = filtered.map(item => `
+                <div class="content-card" onclick="openContent(${item.id})">
+                    <span class="content-icon">${item.icon}</span>
+                    <h3>${item.title}</h3>
+                    <p>${item.description}</p>
+                    <div class="content-meta">
+                        <span class="meta-badge badge-type">${getTypeLabel(item.type)}</span>
+                        <span class="meta-badge badge-subject">${getSubjectLabel(item.subject)}</span>
+                        <span class="meta-badge badge-date">${formatDate(item.date)}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterBySubject(subject) {
+            currentSubjectFilter = subject;
+            
+            // Actualizar tabs
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            renderContent();
+        }
+
+        function filterByType(type) {
+            currentTypeFilter = type;
+            
+            // Actualizar botones de filtro
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            renderContent();
+        }
+
+        function getTypeLabel(type) {
+            const labels = {
+                video: '📹 Video',
+                doc: '📄 Documento',
+                game: '🎮 Juego',
+                worksheet: '📝 Hoja de Trabajo'
+            };
+            return labels[type] || type;
+        }
+
+        function getSubjectLabel(subject) {
+            const labels = {
+                math: '🔢 Matemáticas',
+                spanish: '📚 Español'
+            };
+            return labels[subject] || subject;
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            const today = new Date();
+            const diffTime = Math.abs(today - date);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+            if (diffDays === 0) return 'Hoy';
+            if (diffDays === 1) return 'Ayer';
+            if (diffDays < 7) return `Hace ${diffDays} días`;
+            
+            return date.toLocaleDateString('es-MX', { day: 'numeric', month: 'short' });
+        }
+
+        function openContent(id) {
+            const item = teacherContent.find(c => c.id === id);
+            if (!item) return;
+
+            // Si tiene URL, abrir el contenido
+            if (item.url && item.url !== '#') {
+                window.location.href = item.url;
+            } else {
+                // Mostrar modal de previsualización
+                alert(`📖 Abriendo: ${item.title}\n\n${item.description}\n\n(En producción, aquí se abriría el archivo real)`);
+            }
+        }
+
+        // Cargar contenido al iniciar
+        renderContent();
+    </script>
+
+    <script src="nl-notifications.js"></script>
+</body>
+</html>

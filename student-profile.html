@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Perfil - NeuroLearn Kids</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;600;700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #06B6D4 0%, #EC4899 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .back-btn {
+            padding: 1rem 1.5rem;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            border-radius: 999px;
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            margin-bottom: 2rem;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .back-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateX(-5px);
+        }
+
+        /* Profile Header */
+        .profile-header {
+            background: white;
+            border-radius: 2rem;
+            padding: 3rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            animation: fadeIn 0.6s ease;
+        }
+
+        .avatar-container {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 1.5rem;
+        }
+
+        .avatar {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 5rem;
+            box-shadow: 0 10px 30px rgba(102,126,234,0.3);
+            position: relative;
+        }
+
+        .avatar-upload {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            width: 45px;
+            height: 45px;
+            background: #7C3AED;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(124,58,237,0.4);
+            transition: all 0.3s;
+        }
+
+        .avatar-upload:hover {
+            transform: scale(1.1);
+        }
+
+        .profile-name {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 2.5rem;
+            color: #1E293B;
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-subtitle {
+            color: #64748B;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+
+        .level-badge {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: #333;
+            border-radius: 999px;
+            font-weight: 700;
+            box-shadow: 0 4px 15px rgba(255,215,0,0.3);
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 2rem;
+            color: #7C3AED;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            color: #64748B;
+            font-size: 0.9rem;
+        }
+
+        /* Content Sections */
+        .section {
+            background: white;
+            border-radius: 2rem;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            animation: fadeIn 0.6s ease;
+        }
+
+        .section-title {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.8rem;
+            color: #1E293B;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #1E293B;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #E2E8F0;
+            border-radius: 0.75rem;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #7C3AED;
+            box-shadow: 0 0 0 3px rgba(124,58,237,0.1);
+        }
+
+        /* Subject Cards */
+        .subjects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .subject-card {
+            padding: 1.5rem;
+            border-radius: 1.5rem;
+            background: linear-gradient(135deg, rgba(102,126,234,0.1), rgba(118,75,162,0.1));
+            border: 2px solid rgba(124,58,237,0.2);
+        }
+
+        .subject-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .subject-name {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.2rem;
+            color: #1E293B;
+        }
+
+        .subject-percentage {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.5rem;
+            color: #7C3AED;
+        }
+
+        .progress-bar {
+            height: 10px;
+            background: #E2E8F0;
+            border-radius: 999px;
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 999px;
+            transition: width 0.5s ease;
+        }
+
+        .subject-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: #64748B;
+        }
+
+        /* Preferences */
+        .preferences-list {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .preference-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem;
+            background: rgba(124,58,237,0.05);
+            border-radius: 1rem;
+        }
+
+        .preference-info h3 {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .preference-info p {
+            color: #64748B;
+            font-size: 0.9rem;
+        }
+
+        .toggle {
+            width: 60px;
+            height: 32px;
+            background: #E2E8F0;
+            border-radius: 999px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .toggle.active {
+            background: #7C3AED;
+        }
+
+        .toggle::after {
+            content: '';
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            width: 24px;
+            height: 24px;
+            background: white;
+            border-radius: 50%;
+            transition: all 0.3s;
+        }
+
+        .toggle.active::after {
+            left: 32px;
+        }
+
+        /* Achievements Preview */
+        .achievements-preview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+
+        .achievement-mini {
+            text-align: center;
+            padding: 1.5rem;
+            background: rgba(255,215,0,0.1);
+            border-radius: 1rem;
+            border: 2px solid rgba(255,215,0,0.3);
+        }
+
+        .achievement-mini-icon {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .achievement-mini-title {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #1E293B;
+        }
+
+        /* Save Button */
+        .save-btn {
+            width: 100%;
+            padding: 1.5rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 999px;
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(102,126,234,0.3);
+            transition: all 0.3s;
+            margin-top: 2rem;
+        }
+
+        .save-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(102,126,234,0.4);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 768px) {
+            body { padding: 1rem; }
+            .profile-header { padding: 2rem 1.5rem; }
+            .section { padding: 1.5rem; }
+            .stats-grid, .subjects-grid, .form-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ==================== SCRIPT DE AUTENTICACIÓN - AGREGADO ==================== -->
+    <script>
+        // Verificar autenticación inmediatamente
+        (function() {
+            const token = localStorage.getItem('token');
+            const userStr = localStorage.getItem('user');
+            
+            if (!token || !userStr) {
+                alert('Por favor inicia sesión primero');
+                window.location.href = 'login-register.html';
+                return;
+            }
+            
+            try {
+                const user = JSON.parse(userStr);
+                // Permitir STUDENT, PARENT y TEACHER ver esta página
+                const rolesPermitidos = ['STUDENT', 'PARENT', 'TEACHER'];
+                if (!rolesPermitidos.includes(user.role)) {
+                    alert('Acceso no autorizado');
+                    window.location.href = 'login-register.html';
+                }
+            } catch (error) {
+                localStorage.clear();
+                window.location.href = 'login-register.html';
+            }
+        })();
+    </script>
+    <!-- ==================== FIN SCRIPT DE AUTENTICACIÓN ==================== -->
+
+    <div class="container">
+        <div style="display: flex; gap: 1rem; margin-bottom: 2rem;">
+            <button class="back-btn" onclick="window.location.href='student-dashboard.html'">
+                ← Volver al Dashboard
+            </button>
+            <button class="back-btn" onclick="logout()" style="background: linear-gradient(135deg, #EF4444, #DC2626); margin-left: auto;">
+                🚪 Cerrar Sesión
+            </button>
+        </div>
+
+        <!-- Profile Header -->
+        <div class="profile-header">
+            <div class="avatar-container">
+                <div class="avatar">
+                    <span>👦</span>
+                </div>
+                <div class="avatar-upload" onclick="uploadAvatar()">
+                    <span style="color: white; font-size: 1.5rem;">📷</span>
+                </div>
+            </div>
+            <h1 class="profile-name" id="profile-name">Miguel Hernández</h1>
+            <p class="profile-subtitle" id="profile-subtitle">2° Primaria • CBTIS 45</p>
+            <span class="level-badge" id="level-badge">🌟 Nivel 3: Explorador</span>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">⭐</div>
+                <div class="stat-value" id="stat-points">0</div>
+                <div class="stat-label">Puntos Totales</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🔥</div>
+                <div class="stat-value" id="stat-streak">0 días</div>
+                <div class="stat-label">Racha Actual</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📚</div>
+                <div class="stat-value" id="stat-exercises">0</div>
+                <div class="stat-label">Ejercicios Completados</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">⏱️</div>
+                <div class="stat-value" id="stat-time">0h</div>
+                <div class="stat-label">Tiempo Total</div>
+            </div>
+        </div>
+
+        <!-- Personal Information -->
+        <div class="section">
+            <h2 class="section-title">📝 Información Personal</h2>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Nombre Completo *</label>
+                    <input type="text" value="Miguel Hernández González" id="fullname">
+                </div>
+                <div class="form-group">
+                    <label>Fecha de Nacimiento</label>
+                    <input type="date" value="2015-03-15" id="birthdate">
+                </div>
+                <div class="form-group">
+                    <label>Grado Escolar *</label>
+                    <select id="grade">
+                        <option value="1">1° Primaria</option>
+                        <option value="2" selected>2° Primaria</option>
+                        <option value="3">3° Primaria</option>
+                        <option value="4">4° Primaria</option>
+                        <option value="5">5° Primaria</option>
+                        <option value="6">6° Primaria</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Escuela</label>
+                    <input type="text" value="CBTIS 45" id="school">
+                </div>
+                <div class="form-group">
+                    <label>Email (Opcional)</label>
+                    <input type="email" placeholder="miguel@ejemplo.com" id="email">
+                </div>
+                <div class="form-group">
+                    <label>Color Favorito</label>
+                    <select id="color">
+                        <option value="blue">Azul 🔵</option>
+                        <option value="red">Rojo 🔴</option>
+                        <option value="green">Verde 🟢</option>
+                        <option value="purple" selected>Morado 🟣</option>
+                        <option value="yellow">Amarillo 🟡</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Subjects Performance -->
+        <div class="section">
+            <h2 class="section-title">📊 Desempeño por Materia</h2>
+            <div class="subjects-grid">
+                <div class="subject-card">
+                    <div class="subject-header">
+                        <span class="subject-name">🔢 Matemáticas</span>
+                        <span class="subject-percentage">87%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 87%;"></div>
+                    </div>
+                    <div class="subject-stats">
+                        <span>78 ejercicios</span>
+                        <span>6.2 hrs</span>
+                    </div>
+                </div>
+
+                <div class="subject-card">
+                    <div class="subject-header">
+                        <span class="subject-name">📚 Español</span>
+                        <span class="subject-percentage">92%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 92%;"></div>
+                    </div>
+                    <div class="subject-stats">
+                        <span>70 ejercicios</span>
+                        <span>6.2 hrs</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Preferences -->
+        <div class="section">
+            <h2 class="section-title">⚙️ Preferencias</h2>
+            <div class="preferences-list">
+                <div class="preference-item">
+                    <div class="preference-info">
+                        <h3>🎵 Música de Fondo</h3>
+                        <p>Reproduce música suave mientras practicas</p>
+                    </div>
+                    <div class="toggle active" onclick="togglePreference(this)"></div>
+                </div>
+
+                <div class="preference-item">
+                    <div class="preference-info">
+                        <h3>🔊 Efectos de Sonido</h3>
+                        <p>Sonidos cuando respondes correctamente</p>
+                    </div>
+                    <div class="toggle active" onclick="togglePreference(this)"></div>
+                </div>
+
+                <div class="preference-item">
+                    <div class="preference-info">
+                        <h3>🌙 Modo Oscuro</h3>
+                        <p>Interfaz con colores oscuros para la noche</p>
+                    </div>
+                    <div class="toggle" onclick="togglePreference(this)"></div>
+                </div>
+
+                <div class="preference-item">
+                    <div class="preference-info">
+                        <h3>🎯 Dificultad Automática</h3>
+                        <p>Ajusta la dificultad según tu desempeño</p>
+                    </div>
+                    <div class="toggle active" onclick="togglePreference(this)"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Achievements -->
+        <div class="section">
+            <h2 class="section-title">🏆 Logros Recientes</h2>
+            <div class="achievements-preview">
+                <div class="achievement-mini">
+                    <div class="achievement-mini-icon">🔥</div>
+                    <div class="achievement-mini-title">Racha de Fuego</div>
+                </div>
+                <div class="achievement-mini">
+                    <div class="achievement-mini-icon">💯</div>
+                    <div class="achievement-mini-title">Perfeccionista</div>
+                </div>
+                <div class="achievement-mini">
+                    <div class="achievement-mini-icon">🧮</div>
+                    <div class="achievement-mini-title">Maestro de Números</div>
+                </div>
+            </div>
+            <button style="width: 100%; margin-top: 1.5rem; padding: 1rem; background: white; border: 2px solid #E2E8F0; border-radius: 999px; font-weight: 700; cursor: pointer;" onclick="window.location.href='student-achievements.html'">
+                Ver Todos los Logros →
+            </button>
+        </div>
+
+        <!-- Save Button -->
+        <button class="save-btn" onclick="saveProfile()">
+            💾 Guardar Cambios
+        </button>
+    </div>
+
+    <!-- ==================== SCRIPTS - AGREGADOS/MODIFICADOS ==================== -->
+    <script>
+        // Cargar datos del usuario al iniciar
+        window.addEventListener('load', function() {
+            loadUserData();
+        });
+
+        function loadUserData() {
+            const userStr = localStorage.getItem('user');
+            if (!userStr) return;
+            
+            try {
+                const user = JSON.parse(userStr);
+                console.log('✅ Cargando datos del usuario:', user);
+                
+                // Actualizar nombre en header
+                const fullName = `${user.firstName} ${user.lastName || ''}`.trim();
+                document.getElementById('profile-name').textContent = fullName;
+                
+                // Actualizar input de nombre
+                document.getElementById('fullname').value = fullName;
+                
+                // Actualizar email
+                if (user.email) {
+                    document.getElementById('email').value = user.email;
+                }
+                
+                // Actualizar grado
+                if (user.grade) {
+                    document.getElementById('grade').value = user.grade;
+                    document.getElementById('profile-subtitle').textContent = `${user.grade}° Primaria • CBTIS 45`;
+                }
+                
+                // Actualizar stats desde studentProfile
+                if (user.studentProfile) {
+                    const profile = user.studentProfile;
+                    
+                    // Puntos
+                    if (profile.points !== undefined) {
+                        document.getElementById('stat-points').textContent = profile.points.toLocaleString();
+                    }
+                    
+                    // Racha
+                    if (profile.streak !== undefined) {
+                        document.getElementById('stat-streak').textContent = `${profile.streak} días`;
+                    }
+                    
+                    // Nivel
+                    if (profile.level !== undefined) {
+                        const levelNames = {
+                            1: 'Principiante',
+                            2: 'Aprendiz',
+                            3: 'Explorador',
+                            4: 'Experto',
+                            5: 'Maestro'
+                        };
+                        const levelName = levelNames[profile.level] || 'Explorador';
+                        document.getElementById('level-badge').textContent = `🌟 Nivel ${profile.level}: ${levelName}`;
+                    }
+                }
+                
+                console.log('✅ Datos del usuario cargados en el perfil');
+                
+            } catch (error) {
+                console.error('❌ Error al cargar datos del usuario:', error);
+            }
+        }
+
+        function uploadAvatar() {
+            alert('Funcionalidad de subir foto próximamente.\nPor ahora puedes elegir un emoji como avatar.');
+        }
+
+        function togglePreference(element) {
+            element.classList.toggle('active');
+        }
+
+        function saveProfile() {
+            const name = document.getElementById('fullname').value;
+            const grade = document.getElementById('grade').value;
+            const email = document.getElementById('email').value;
+            
+            // Por ahora solo guardar en localStorage
+            // En el futuro se puede conectar con API para actualizar en MySQL
+            
+            const btn = event.target;
+            const originalText = btn.textContent;
+            btn.textContent = '✅ ¡Guardado!';
+            btn.style.background = '#10B981';
+            
+            setTimeout(() => {
+                btn.textContent = originalText;
+                btn.style.background = '';
+            }, 2000);
+            
+            console.log('Perfil guardado:', { name, grade, email });
+        }
+
+        function logout() {
+            if (confirm('¿Seguro que quieres cerrar sesión?')) {
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                window.location.href = 'login-register.html';
+            }
+        }
+    </script>
+    <!-- ==================== FIN SCRIPTS ==================== -->
+    
+    <!-- NeuroLearn Systems -->
+    <script src="nl-notifications.js"></script>
+</body>
+</html>

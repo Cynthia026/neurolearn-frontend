@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ejercicio - NeuroLearn Kids</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-purple: #7C3AED;
+            --primary-blue: #3B82F6;
+            --success-green: #10B981;
+            --danger-red: #EF4444;
+            --neutral-50: #F8FAFC;
+            --neutral-900: #0F172A;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .exercise-container {
+            max-width: 900px;
+            width: 100%;
+        }
+
+        /* Progress Header */
+        .progress-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1.5rem 2rem;
+            border-radius: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .progress-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .exercise-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .subject-badge {
+            padding: 0.5rem 1rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 999px;
+            font-family: 'Fredoka', sans-serif;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .exercise-number {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.25rem;
+            color: var(--neutral-900);
+        }
+
+        .timer {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.25rem;
+            color: var(--neutral-900);
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 10px;
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 999px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--success-green) 0%, var(--primary-blue) 100%);
+            transition: width 0.3s ease;
+            border-radius: 999px;
+        }
+
+        /* Exercise Card */
+        .exercise-card {
+            background: white;
+            padding: 3rem;
+            border-radius: 2rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .exercise-icon {
+            font-size: 4rem;
+            margin-bottom: 2rem;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        .question-text {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 2.5rem;
+            color: var(--neutral-900);
+            margin-bottom: 3rem;
+            line-height: 1.3;
+        }
+
+        .question-highlight {
+            color: var(--primary-purple);
+            font-weight: 700;
+        }
+
+        /* Answer Options */
+        .answer-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .answer-option {
+            padding: 2rem;
+            background: var(--neutral-50);
+            border: 3px solid transparent;
+            border-radius: 1.5rem;
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .answer-option::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(124, 58, 237, 0.1);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .answer-option:hover {
+            border-color: var(--primary-purple);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(124, 58, 237, 0.2);
+        }
+
+        .answer-option:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .answer-option.selected {
+            border-color: var(--primary-purple);
+            background: rgba(124, 58, 237, 0.1);
+        }
+
+        .answer-option.correct {
+            border-color: var(--success-green);
+            background: rgba(16, 185, 129, 0.1);
+            animation: correctPulse 0.5s ease;
+        }
+
+        .answer-option.incorrect {
+            border-color: var(--danger-red);
+            background: rgba(239, 68, 68, 0.1);
+            animation: shake 0.5s ease;
+        }
+
+        @keyframes correctPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .answer-letter {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            background: var(--primary-purple);
+            color: white;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            margin-right: 1rem;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 1.25rem 3rem;
+            border: none;
+            border-radius: 999px;
+            font-family: 'Fredoka', sans-serif;
+            font-weight: 600;
+            font-size: 1.125rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--primary-purple);
+            border: 2px solid var(--primary-purple);
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary-purple);
+            color: white;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Feedback Message */
+        .feedback-message {
+            background: white;
+            padding: 2rem;
+            border-radius: 1.5rem;
+            margin-top: 2rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .feedback-message.correct {
+            border-left: 6px solid var(--success-green);
+        }
+
+        .feedback-message.incorrect {
+            border-left: 6px solid var(--danger-red);
+        }
+
+        .feedback-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .feedback-icon {
+            font-size: 2rem;
+        }
+
+        .feedback-title {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.5rem;
+        }
+
+        .feedback-text {
+            color: #64748b;
+            line-height: 1.6;
+        }
+
+        /* Encouragement */
+        .encouragement {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1.5rem;
+            border-radius: 1.5rem;
+            margin-top: 2rem;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .encouragement-text {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.25rem;
+            color: var(--neutral-900);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .answer-options {
+                grid-template-columns: 1fr;
+            }
+
+            .question-text {
+                font-size: 1.75rem;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="exercise-container">
+        <!-- Progress Header -->
+        <div class="progress-header">
+            <div class="progress-top">
+                <div class="exercise-info">
+                    <span class="subject-badge">🔢 Matemáticas</span>
+                    <span class="exercise-number">Ejercicio 5 de 10</span>
+                </div>
+                <div class="timer">
+                    ⏱️ <span id="timer">1:45</span>
+                </div>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" style="width: 50%;"></div>
+            </div>
+        </div>
+
+        <!-- Exercise Card -->
+        <div class="exercise-card">
+            <div class="exercise-icon">🎯</div>
+            
+            <h2 class="question-text">
+                ¿Cuánto es <span class="question-highlight">7 + 5</span>?
+            </h2>
+
+            <div class="answer-options">
+                <button class="answer-option" onclick="selectAnswer(this, 'A')">
+                    <span class="answer-letter">A</span>
+                    <span>10</span>
+                </button>
+                <button class="answer-option" onclick="selectAnswer(this, 'B')">
+                    <span class="answer-letter">B</span>
+                    <span>12</span>
+                </button>
+                <button class="answer-option" onclick="selectAnswer(this, 'C')">
+                    <span class="answer-letter">C</span>
+                    <span>13</span>
+                </button>
+                <button class="answer-option" onclick="selectAnswer(this, 'D')">
+                    <span class="answer-letter">D</span>
+                    <span>11</span>
+                </button>
+            </div>
+
+            <div class="action-buttons">
+                <button class="btn btn-secondary" onclick="NLPageExercise.skip()">
+                    ↩️ Saltar
+                </button>
+                <button class="btn btn-primary" id="checkBtn" disabled onclick="NLPageExercise.check()">
+                    ✓ Comprobar Respuesta
+                </button>
+            </div>
+        </div>
+
+        <!-- Encouragement -->
+        <div class="encouragement">
+            <p class="encouragement-text">
+                💪 ¡Vas muy bien! Sigue así, campeón
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // NLPageExercise.init() en nl-init.js toma el control completo.
+        // Esta función es solo fallback visual antes de que carguen los scripts.
+        function selectAnswer(el, letter) {
+            if(window.NLPageExercise && NLPageExercise.question) return;
+            document.querySelectorAll('.answer-option').forEach(o=>o.classList.remove('selected'));
+            el.classList.add('selected');
+            const btn = document.getElementById('checkBtn');
+            if(btn) btn.disabled = false;
+        }
+    </script>
+
+  <!-- NeuroLearn Core Scripts -->
+  <script src="state.js"></script>
+  <script src="ui.js"></script>
+  <script src="router.js"></script>
+  <script src="auth.js"></script>
+  <script src="adaptive.js"></script>
+  <script src="nl-init.js"></script>
+</body>
+</html>

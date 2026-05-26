@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Number Line Jump - NeuroLearn Kids</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Fredoka', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 1rem;
+        }
+        .game-container {
+            background: white;
+            border-radius: 2rem;
+            padding: 2rem;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 1000px;
+            width: 100%;
+        }
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 3px solid #E2E8F0;
+        }
+        .back-btn {
+            padding: 0.75rem 1.5rem;
+            background: #7C3AED;
+            color: white;
+            border: none;
+            border-radius: 999px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .back-btn:hover { background: #6D28D9; transform: translateY(-2px); }
+        .game-title { font-size: 2.5rem; color: #1E293B; }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .stat {
+            text-align: center;
+            padding: 1rem;
+            background: rgba(124,58,237,0.1);
+            border-radius: 1rem;
+        }
+        .stat-label { font-size: 0.85rem; color: #64748B; margin-bottom: 0.5rem; }
+        .stat-value { font-size: 1.8rem; color: #7C3AED; font-weight: 700; }
+        
+        .problem-display {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 2rem;
+            background: rgba(124,58,237,0.05);
+            border-radius: 1.5rem;
+        }
+        .problem-text {
+            font-size: 2.5rem;
+            color: #1E293B;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        .problem-hint {
+            color: #64748B;
+            font-size: 1.1rem;
+        }
+        
+        #numberLine {
+            width: 100%;
+            height: 300px;
+            margin-bottom: 2rem;
+        }
+        
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+        }
+        .control-btn {
+            padding: 1.5rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: white;
+            border: 3px solid #E2E8F0;
+            border-radius: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .control-btn:hover {
+            border-color: #7C3AED;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(124,58,237,0.3);
+        }
+        .control-btn.correct {
+            background: #10B981;
+            color: white;
+            border-color: #10B981;
+        }
+        .control-btn.wrong {
+            background: #EF4444;
+            color: white;
+            border-color: #EF4444;
+        }
+        .game-over {
+            display: none;
+            text-align: center;
+            padding: 3rem;
+        }
+        .game-over.active { display: block; }
+        .game-over h2 {
+            font-size: 3rem;
+            color: #7C3AED;
+            margin-bottom: 1rem;
+        }
+        .final-score {
+            font-size: 4rem;
+            color: #1E293B;
+            font-weight: 700;
+            margin: 2rem 0;
+        }
+        .play-again-btn {
+            padding: 1.5rem 3rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 999px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .play-again-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(102,126,234,0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div id="gameScreen">
+            <div class="game-header">
+                <button class="back-btn" onclick="window.location.href='student-dashboard.html'">← Volver</button>
+                <h1 class="game-title">🦘 Number Line Jump</h1>
+                <div></div>
+            </div>
+
+            <div class="stats">
+                <div class="stat">
+                    <div class="stat-label">Puntuación</div>
+                    <div class="stat-value" id="score">0</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">Correctas</div>
+                    <div class="stat-value" id="correct">0</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">Tiempo</div>
+                    <div class="stat-value" id="timer">60</div>
+                </div>
+            </div>
+
+            <div class="problem-display">
+                <div class="problem-text" id="problemText">5 + 3 = ?</div>
+                <div class="problem-hint">Salta al número correcto en la recta</div>
+            </div>
+
+            <canvas id="numberLine"></canvas>
+
+            <div class="controls" id="answerButtons"></div>
+        </div>
+
+        <div class="game-over" id="gameOver">
+            <h2>🎉 ¡Tiempo Terminado!</h2>
+            <p>Tu puntuación final:</p>
+            <div class="final-score" id="finalScore">0</div>
+            <p id="performanceMessage"></p>
+            <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                <button class="play-again-btn" onclick="restartGame()">🔄 Jugar de Nuevo</button>
+                <button class="play-again-btn" onclick="window.location.href='student-dashboard.html'" style="background: linear-gradient(135deg, #10B981, #059669);">← Regresar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('numberLine');
+        const ctx = canvas.getContext('2d');
+        canvas.width = canvas.offsetWidth;
+        canvas.height = 300;
+
+        let gameState = {
+            score: 0,
+            correct: 0,
+            timeLeft: 60,
+            currentProblem: null,
+            kangarooPosition: 0,
+            targetPosition: 0,
+            isJumping: false,
+            timerInterval: null,
+            totalAnswers: 0,
+            startTime: Date.now()
+        };
+
+        function generateProblem() {
+            const num1 = Math.floor(Math.random() * 10) + 1;
+            const num2 = Math.floor(Math.random() * 10) + 1;
+            const operations = ['+', '-'];
+            const operation = operations[Math.floor(Math.random() * operations.length)];
+            
+            let answer;
+            if (operation === '+') {
+                answer = num1 + num2;
+            } else {
+                answer = Math.max(num1, num2) - Math.min(num1, num2);
+            }
+
+            const wrongAnswers = [];
+            while (wrongAnswers.length < 3) {
+                const offset = Math.floor(Math.random() * 6) - 3;
+                const wrong = answer + offset;
+                if (wrong > 0 && wrong !== answer && !wrongAnswers.includes(wrong) && wrong <= 20) {
+                    wrongAnswers.push(wrong);
+                }
+            }
+
+            const allAnswers = [answer, ...wrongAnswers].sort(() => Math.random() - 0.5);
+
+            return {
+                question: `${operation === '+' ? num1 : Math.max(num1, num2)} ${operation} ${operation === '+' ? num2 : Math.min(num1, num2)}`,
+                answer: answer,
+                options: allAnswers
+            };
+        }
+
+        function startGame() {
+            gameState.currentProblem = generateProblem();
+            gameState.kangarooPosition = 0;
+            displayProblem();
+            drawNumberLine();
+            startTimer();
+        }
+
+        function displayProblem() {
+            document.getElementById('problemText').textContent = 
+                `${gameState.currentProblem.question} = ?`;
+            
+            const container = document.getElementById('answerButtons');
+            container.innerHTML = '';
+            
+            gameState.currentProblem.options.forEach(option => {
+                const btn = document.createElement('button');
+                btn.className = 'control-btn';
+                btn.textContent = option;
+                btn.onclick = () => checkAnswer(option);
+                container.appendChild(btn);
+            });
+        }
+
+        function drawNumberLine() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw line
+            ctx.strokeStyle = '#CBD5E1';
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            ctx.moveTo(50, 200);
+            ctx.lineTo(canvas.width - 50, 200);
+            ctx.stroke();
+
+            // Draw numbers 0-20
+            const spacing = (canvas.width - 100) / 20;
+            for (let i = 0; i <= 20; i++) {
+                const x = 50 + i * spacing;
+                
+                // Tick marks
+                ctx.beginPath();
+                ctx.moveTo(x, 195);
+                ctx.lineTo(x, 205);
+                ctx.stroke();
+                
+                // Numbers
+                ctx.fillStyle = '#64748B';
+                ctx.font = '14px Fredoka';
+                ctx.textAlign = 'center';
+                ctx.fillText(i, x, 225);
+            }
+
+            // Draw kangaroo
+            const kangarooX = 50 + gameState.kangarooPosition * spacing;
+            const kangarooY = gameState.isJumping ? 140 : 160;
+            
+            ctx.font = '40px Fredoka';
+            ctx.fillText('🦘', kangarooX, kangarooY);
+        }
+
+        function checkAnswer(selected) {
+            const correct = selected === gameState.currentProblem.answer;
+            
+            const buttons = document.querySelectorAll('.control-btn');
+            buttons.forEach(btn => {
+                if (parseInt(btn.textContent) === selected) {
+                    btn.classList.add(correct ? 'correct' : 'wrong');
+                }
+                if (parseInt(btn.textContent) === gameState.currentProblem.answer) {
+                    btn.classList.add('correct');
+                }
+                btn.disabled = true;
+            });
+
+            gameState.totalAnswers++;
+            if (correct) {
+                playSound('correct');
+                
+                // ✨ NUEVO: Confetti en respuesta correcta
+                if (typeof NLConfetti !== 'undefined') {
+                    NLConfetti.celebrate();
+                }
+                
+                // ✨ NUEVO: Mega confetti cada 10 correctas
+                if (gameState.correct > 0 && gameState.correct % 10 === 0) {
+                    if (typeof NLConfetti !== 'undefined') {
+                        NLConfetti.celebrate('mega');
+                    }
+                    if (typeof NLSounds !== 'undefined') {
+                        NLSounds.play('achievement');
+                    }
+                }
+            } else {
+                playSound('wrong');
+            }
+
+            updateUI();
+
+            setTimeout(() => {
+                buttons.forEach(btn => {
+                    btn.classList.remove('correct', 'wrong');
+                    btn.disabled = false;
+                });
+                gameState.currentProblem = generateProblem();
+                displayProblem();
+            }, 1500);
+        }
+
+        function jumpToNumber(number) {
+            gameState.isJumping = true;
+            const targetPos = number;
+            const steps = 20;
+            let currentStep = 0;
+
+            const jumpInterval = setInterval(() => {
+                currentStep++;
+                gameState.kangarooPosition = 
+                    gameState.kangarooPosition + (targetPos - gameState.kangarooPosition) / (steps - currentStep + 1);
+                
+                drawNumberLine();
+
+                if (currentStep >= steps) {
+                    clearInterval(jumpInterval);
+                    gameState.kangarooPosition = targetPos;
+                    gameState.isJumping = false;
+                    drawNumberLine();
+                }
+            }, 30);
+        }
+
+        function startTimer() {
+            gameState.timerInterval = setInterval(() => {
+                gameState.timeLeft--;
+                updateUI();
+                
+                if (gameState.timeLeft <= 0) {
+                    endGame();
+                }
+            }, 1000);
+        }
+
+        function updateUI() {
+            document.getElementById('score').textContent = gameState.score;
+            document.getElementById('correct').textContent = gameState.correct;
+            document.getElementById('timer').textContent = gameState.timeLeft;
+        }
+
+        function endGame() {
+            clearInterval(gameState.timerInterval);
+            
+            document.getElementById('gameScreen').style.display = 'none';
+            document.getElementById('gameOver').classList.add('active');
+            document.getElementById('finalScore').textContent = gameState.score;
+
+            let message = '';
+            if (gameState.score >= 150) {
+                message = '🌟 ¡Increíble! ¡Eres un genio de los números!';
+            } else if (gameState.score >= 100) {
+                message = '🎉 ¡Excelente trabajo! Sigue así.';
+            } else if (gameState.score >= 50) {
+                message = '👍 ¡Buen intento! Puedes hacerlo mejor.';
+            } else {
+                message = '💪 ¡Sigue practicando! Cada vez mejorarás más.';
+            }
+            document.getElementById('performanceMessage').textContent = message;
+
+            // ── Guardar en el backend ──────────────────────────────
+            const timeSpent = Math.round((Date.now() - gameState.startTime) / 1000);
+            saveScoreNumberLine(
+                gameState.score,
+                timeSpent,
+                gameState.correct,
+                gameState.totalAnswers,
+                1
+            );
+        }
+
+        function restartGame() {
+            gameState = {
+                score: 0,
+                correct: 0,
+                timeLeft: 60,
+                currentProblem: null,
+                kangarooPosition: 0,
+                targetPosition: 0,
+                isJumping: false,
+                timerInterval: null
+            };
+
+            document.getElementById('gameScreen').style.display = 'block';
+            document.getElementById('gameOver').classList.remove('active');
+            updateUI();
+            startGame();
+        }
+
+        function playSound(type) {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            if (type === 'correct') {
+                oscillator.frequency.value = 800;
+                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+            } else {
+                oscillator.frequency.value = 200;
+                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.4);
+            }
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.4);
+        }
+
+        startGame();
+    </script>
+    
+    <script src="nl-notifications.js"></script>
+</body>
+
+<script src="api-config.js"></script>
+<script src="game-integration.js"></script>
+
+<script>
+// Al terminar el juego, guarda la puntuación:
+async function finalizarJuego() {
+  // Tus variables del juego
+  let puntuacionFinal = 850;
+  let tiempoJugado = 120; // segundos
+  let precision = 85; // porcentaje
+  let nivelActual = 2;
+
+  // Guardar puntuación
+  const result = await saveGameScore(
+    'MATH_GAME',  // o 'SPANISH_GAME', 'MEMORY_GAME', 'LOGIC_GAME'
+    puntuacionFinal,
+    tiempoJugado,
+    precision,
+    nivelActual
+  );
+
+  if (result) {
+    // Opcional: redirigir al dashboard
+    setTimeout(() => {
+      window.location.href = 'student-dashboard.html';
+    }, 3000);
+  }
+}
+</script>
+
+</html>

@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Docente - NeuroLearn Kids</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-purple: #7C3AED;
+            --primary-blue: #3B82F6;
+            --success-green: #10B981;
+            --warning-yellow: #FBBF24;
+            --danger-red: #EF4444;
+            --neutral-50: #F8FAFC;
+            --neutral-100: #F1F5F9;
+            --neutral-200: #E2E8F0;
+            --neutral-700: #334155;
+            --neutral-800: #1E293B;
+            --neutral-900: #0F172A;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--neutral-50);
+            color: var(--neutral-900);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 280px;
+            height: 100vh;
+            background: var(--neutral-900);
+            color: white;
+            padding: 2rem 0;
+            z-index: 100;
+        }
+
+        .logo {
+            padding: 0 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .logo h1 {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo p {
+            font-size: 0.875rem;
+            opacity: 0.7;
+            margin-top: 0.25rem;
+        }
+
+        .nav-menu {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 2rem;
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: rgba(124, 58, 237, 0.2);
+            color: white;
+            border-left: 4px solid var(--primary-purple);
+        }
+
+        .nav-icon {
+            font-size: 1.25rem;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 280px;
+            padding: 2rem;
+        }
+
+        /* Header */
+        .header {
+            background: white;
+            padding: 2rem;
+            border-radius: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left h2 {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .header-left p {
+            color: var(--neutral-700);
+        }
+
+        .header-right {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .date-selector {
+            padding: 0.875rem 1.5rem;
+            border: 2px solid var(--neutral-200);
+            border-radius: 0.75rem;
+            background: white;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .date-selector:hover {
+            border-color: var(--primary-purple);
+        }
+
+        .profile-btn {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .profile-btn:hover {
+            transform: scale(1.05);
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .stat-icon.purple { background: rgba(124, 58, 237, 0.1); }
+        .stat-icon.blue { background: rgba(59, 130, 246, 0.1); }
+        .stat-icon.green { background: rgba(16, 185, 129, 0.1); }
+        .stat-icon.yellow { background: rgba(251, 191, 36, 0.1); }
+
+        .stat-value {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--neutral-900);
+        }
+
+        .stat-label {
+            color: var(--neutral-700);
+            font-size: 0.875rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-change {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .stat-change.positive {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success-green);
+        }
+
+        .stat-change.negative {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger-red);
+        }
+
+        /* Main Grid */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Student Performance Table */
+        .performance-card {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 2rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .card-header h3 {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.5rem;
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .filter-tab {
+            padding: 0.5rem 1rem;
+            border: none;
+            background: var(--neutral-100);
+            border-radius: 0.75rem;
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-tab.active {
+            background: var(--primary-purple);
+            color: white;
+        }
+
+        .student-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 0.5rem;
+        }
+
+        .student-table thead th {
+            text-align: left;
+            padding: 1rem;
+            font-weight: 600;
+            color: var(--neutral-700);
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .student-table tbody tr {
+            background: var(--neutral-50);
+            transition: all 0.3s ease;
+        }
+
+        .student-table tbody tr:hover {
+            background: var(--neutral-100);
+            transform: scale(1.01);
+        }
+
+        .student-table tbody td {
+            padding: 1.25rem 1rem;
+        }
+
+        .student-table tbody tr td:first-child {
+            border-radius: 0.75rem 0 0 0.75rem;
+        }
+
+        .student-table tbody tr td:last-child {
+            border-radius: 0 0.75rem 0.75rem 0;
+        }
+
+        .student-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .student-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .student-name {
+            font-weight: 600;
+            color: var(--neutral-900);
+        }
+
+        .student-grade {
+            font-size: 0.75rem;
+            color: var(--neutral-700);
+        }
+
+        .progress-cell {
+            width: 120px;
+        }
+
+        .mini-progress {
+            width: 100%;
+            height: 6px;
+            background: var(--neutral-200);
+            border-radius: 999px;
+            overflow: hidden;
+            margin-top: 0.25rem;
+        }
+
+        .mini-progress-fill {
+            height: 100%;
+            border-radius: 999px;
+            background: linear-gradient(90deg, var(--primary-purple) 0%, var(--primary-blue) 100%);
+        }
+
+        .risk-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            display: inline-block;
+        }
+
+        .risk-badge.bajo {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success-green);
+        }
+
+        .risk-badge.medio {
+            background: rgba(251, 191, 36, 0.1);
+            color: var(--warning-yellow);
+        }
+
+        .risk-badge.alto {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger-red);
+        }
+
+        .action-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            background: var(--primary-purple);
+            color: white;
+            border-radius: 0.5rem;
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .action-btn:hover {
+            background: #6D28D9;
+            transform: translateY(-2px);
+        }
+
+        /* Alerts Card */
+        .alerts-card {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 2rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            margin-bottom: 2rem;
+        }
+
+        .alert-item {
+            display: flex;
+            gap: 1rem;
+            padding: 1.5rem;
+            background: var(--neutral-50);
+            border-radius: 1rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid;
+        }
+
+        .alert-item.warning {
+            border-left-color: var(--warning-yellow);
+        }
+
+        .alert-item.danger {
+            border-left-color: var(--danger-red);
+        }
+
+        .alert-item.info {
+            border-left-color: var(--primary-blue);
+        }
+
+        .alert-icon {
+            font-size: 1.5rem;
+        }
+
+        .alert-content h4 {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .alert-content p {
+            font-size: 0.875rem;
+            color: var(--neutral-700);
+        }
+
+        .alert-time {
+            font-size: 0.75rem;
+            color: var(--neutral-700);
+            margin-top: 0.5rem;
+        }
+
+        /* Quick Actions */
+        .quick-actions-card {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 2rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .action-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+
+        .action-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.25rem;
+            background: var(--neutral-50);
+            border-radius: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: var(--neutral-900);
+        }
+
+        .action-item:hover {
+            background: var(--primary-purple);
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .action-item-icon {
+            font-size: 1.75rem;
+        }
+
+        .action-item-content {
+            flex: 1;
+        }
+
+        .action-item-title {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .action-item-desc {
+            font-size: 0.75rem;
+            opacity: 0.8;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="logo">
+            <h1>🚀 NeuroLearn</h1>
+            <p>Panel Docente</p>
+        </div>
+        <nav>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="teacher-dashboard.html" class="nav-link active">
+                        <span class="nav-icon">📊</span>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="teacher-students.html" class="nav-link">
+                        <span class="nav-icon">👥</span>
+                        <span>Mis Estudiantes</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="teacher-content.html" class="nav-link">
+                        <span class="nav-icon">📚</span>
+                        <span>Contenido</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="teacher-evaluations.html" class="nav-link">
+                        <span class="nav-icon">📝</span>
+                        <span>Evaluaciones</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="progress-report.html" class="nav-link">
+                        <span class="nav-icon">📈</span>
+                        <span>Reportes</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="messaging.html" class="nav-link">
+                        <span class="nav-icon">💬</span>
+                        <span>Mensajes</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="teacher-settings.html" class="nav-link">
+                        <span class="nav-icon">⚙️</span>
+                        <span>Configuración</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="help-center.html" class="nav-link">
+                        <span class="nav-icon">❓</span>
+                        <span>Ayuda</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" onclick="logout(); return false;" class="nav-link" style="background: linear-gradient(135deg, #EF4444, #DC2626); color: white; margin-top: 1rem;">
+                        <span class="nav-icon">🚪</span>
+                        <span>Cerrar Sesión</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-left">
+                <h2>Panel de Control</h2>
+                <p id="teacher-info">Bienvenida, Profa. María González • 2° A • 28 estudiantes</p>
+            </div>
+            <div class="header-right">
+                <select class="date-selector">
+                    <option>📅 Última semana</option>
+                    <option>📅 Último mes</option>
+                    <option>📅 Último trimestre</option>
+                </select>
+                <div class="profile-btn">👩‍🏫</div>
+            </div>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon purple">👥</div>
+                    <span class="stat-change positive">↑ 4</span>
+                </div>
+                <div class="stat-label">Estudiantes Activos</div>
+                <div class="stat-value" id="total-students">28</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon green">✅</div>
+                    <span class="stat-change positive">↑ 12%</span>
+                </div>
+                <div class="stat-label">Promedio Grupal</div>
+                <div class="stat-value" id="avg-group-score">87%</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon blue">📚</div>
+                    <span class="stat-change positive">↑ 145</span>
+                </div>
+                <div class="stat-label">Ejercicios Completados</div>
+                <div class="stat-value" id="total-exercises">1,247</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon yellow">⚠️</div>
+                    <span class="stat-change negative">↑ 2</span>
+                </div>
+                <div class="stat-label">Alertas Activas</div>
+                <div class="stat-value" id="alert-count">5</div>
+            </div>
+        </div>
+
+        <!-- Content Grid -->
+        <div class="content-grid">
+            <!-- Student Performance Table -->
+            <div class="performance-card">
+                <div class="card-header">
+                    <h3>Desempeño de Estudiantes</h3>
+                    <div class="filter-tabs">
+                        <button class="filter-tab active">Todos</button>
+                        <button class="filter-tab">Matemáticas</button>
+                        <button class="filter-tab">Español</button>
+                    </div>
+                </div>
+
+                <table class="student-table">
+                    <thead>
+                        <tr>
+                            <th>Estudiante</th>
+                            <th>Progreso</th>
+                            <th>Precisión</th>
+                            <th>Riesgo</th>
+                            <th>Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody id="student-tbody">
+                        <!-- Se llenará automáticamente con datos reales -->
+                        <tr>
+                            <td colspan="5" style="text-align:center;padding:2rem;">
+                                <p>🔄 Cargando estudiantes...</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Sidebar -->
+            <div>
+                <!-- Alerts -->
+                <div class="alerts-card">
+                    <div class="card-header">
+                        <h3>⚠️ Alertas Recientes</h3>
+                    </div>
+                    
+                    <div id="alerts-container">
+                        <!-- Se llenará automáticamente -->
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="quick-actions-card">
+                    <div class="card-header">
+                        <h3>Acciones Rápidas</h3>
+                    </div>
+
+                    <div class="action-grid">
+                        <a href="diagnostic-evaluation.html" class="action-item">
+                            <div class="action-item-icon">📝</div>
+                            <div class="action-item-content">
+                                <div class="action-item-title">Nueva Evaluación</div>
+                                <div class="action-item-desc">Crear evaluación personalizada</div>
+                            </div>
+                        </a>
+
+                        <a href="progress-report.html" class="action-item">
+                            <div class="action-item-icon">📊</div>
+                            <div class="action-item-content">
+                                <div class="action-item-title">Generar Reporte</div>
+                                <div class="action-item-desc">Descargar análisis completo</div>
+                            </div>
+                        </a>
+
+                        <a href="#" class="action-item">
+                            <div class="action-item-icon">👥</div>
+                            <div class="action-item-content">
+                                <div class="action-item-title">Gestionar Grupos</div>
+                                <div class="action-item-desc">Organizar estudiantes</div>
+                            </div>
+                        </a>
+
+                        <a href="#" class="action-item">
+                            <div class="action-item-icon">📚</div>
+                            <div class="action-item-content">
+                                <div class="action-item-title">Asignar Contenido</div>
+                                <div class="action-item-desc">Tareas y material extra</div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Scripts -->
+    <script src="api-config.js"></script>
+    <script src="teacher-dashboard-loader.js"></script>
+
+    <script>
+        function logout() {
+            if (confirm('¿Seguro que quieres cerrar sesión?')) {
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                window.location.href = 'login-register.html';
+            }
+        }
+    </script>
+
+    <!-- Authentication Check -->
+    <script>
+        (function() {
+            console.log('🔍 Verificando autenticación...');
+            
+            const token = localStorage.getItem('token');
+            const userStr = localStorage.getItem('user');
+            
+            if (!token || !userStr) {
+                alert('Por favor inicia sesión primero');
+                window.location.href = 'login-register.html';
+                return;
+            }
+            
+            try {
+                const user = JSON.parse(userStr);
+                console.log('✅ Usuario:', user);
+                
+                if (user.role !== 'TEACHER') {
+                    alert('Esta página es solo para docentes');
+                    window.location.href = 'login-register.html';
+                    return;
+                }
+                
+                // Actualizar nombre del profesor en header
+                const fullName = `${user.firstName} ${user.lastName || ''}`.trim();
+                const teacherInfo = document.getElementById('teacher-info');
+                if (teacherInfo) {
+                    teacherInfo.textContent = `Bienvenida, Prof. ${fullName}`;
+                }
+                
+                console.log('✅ Dashboard docente cargado correctamente');
+                
+            } catch (error) {
+                console.error('❌ Error:', error);
+                localStorage.clear();
+                window.location.href = 'login-register.html';
+            }
+        })();
+    </script>
+
+</body>
+</html>

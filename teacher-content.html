@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contenido - NeuroLearn Kids</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --primary: #7C3AED;
+            --secondary: #EC4899;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --danger: #EF4444;
+            --dark: #1E293B;
+            --light: #F8FAFC;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--light);
+            display: grid;
+            grid-template-columns: 240px 1fr;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            background: var(--dark);
+            color: white;
+            padding: 2rem 0;
+        }
+
+        .sidebar-logo {
+            padding: 0 1.5rem 2rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .sidebar-logo h1 {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.5rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .sidebar-logo p {
+            font-size: 0.85rem;
+            opacity: 0.7;
+        }
+
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 1.5rem;
+            color: white;
+            text-decoration: none;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+        }
+
+        .sidebar-nav a:hover {
+            background: rgba(255,255,255,0.1);
+            border-left-color: var(--primary);
+        }
+
+        .sidebar-nav a.active {
+            background: rgba(124,58,237,0.2);
+            border-left-color: var(--primary);
+        }
+
+        .main-content {
+            padding: 2rem;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 2rem;
+            color: var(--dark);
+        }
+
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid #E2E8F0;
+        }
+
+        .tab {
+            padding: 1rem 1.5rem;
+            background: none;
+            border: none;
+            font-weight: 600;
+            color: #64748B;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.2s;
+        }
+
+        .tab.active {
+            color: var(--primary);
+        }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--primary);
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .content-card {
+            background: white;
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .content-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+
+        .content-thumbnail {
+            height: 160px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+        }
+
+        .content-body {
+            padding: 1.25rem;
+        }
+
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 0.75rem;
+        }
+
+        .content-title {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.1rem;
+            color: var(--dark);
+        }
+
+        .content-type {
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .type-video { background: #DBEAFE; color: #1E40AF; }
+        .type-doc { background: #FEF3C7; color: #92400E; }
+        .type-game { background: #FCE7F3; color: #9F1239; }
+        .type-worksheet { background: #D1FAE5; color: #065F46; }
+
+        .content-meta {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.85rem;
+            color: #64748B;
+            margin-bottom: 1rem;
+        }
+
+        .content-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .content-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-secondary {
+            flex: 1;
+            padding: 0.5rem;
+            background: white;
+            color: var(--dark);
+            border: 2px solid #E2E8F0;
+            font-size: 0.85rem;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .search-bar {
+            background: white;
+            padding: 1rem 1.5rem;
+            border-radius: 1rem;
+            margin-bottom: 2rem;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .search-bar input {
+            flex: 1;
+            padding: 0.75rem;
+            border: 2px solid #E2E8F0;
+            border-radius: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        @media (max-width: 768px) {
+            body { grid-template-columns: 1fr; }
+            .sidebar { display: none; }
+            .content-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+    <script src="state.js" defer></script>
+    <script src="ui.js" defer></script>
+    <script src="router.js" defer></script>
+    <script src="auth.js" defer></script>
+    <script src="nl-init.js" defer></script>
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <h1>🚀 NeuroLearn</h1>
+            <p>Panel Docente</p>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="teacher-dashboard.html">
+                <span class="icon">📊</span>
+                <span class="label">Dashboard</span>
+            </a>
+            <a href="teacher-students.html">
+                <span class="icon">👥</span>
+                <span class="label">Mis Estudiantes</span>
+            </a>
+            <a href="teacher-content.html" class="active">
+                <span class="icon">📚</span>
+                <span class="label">Contenido</span>
+            </a>
+            <a href="teacher-evaluations.html">
+                <span class="icon">📝</span>
+                <span class="label">Evaluaciones</span>
+            </a>
+            <a href="progress-report.html">
+                <span class="icon">📈</span>
+                <span class="label">Reportes</span>
+            </a>
+            <a href="teacher-settings.html">
+                <span class="icon">⚙️</span>
+                <span class="label">Configuración</span>
+            </a>
+            <a href="landing-page-v2.html" onclick="return confirm('¿Seguro que quieres cerrar sesión?');" style="background: linear-gradient(135deg, #EF4444, #DC2626);">
+                <span class="icon">🚪</span>
+                <span class="label">Cerrar Sesión</span>
+            </a>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <div class="header">
+            <div>
+                <h1>Biblioteca de Contenido</h1>
+                <p style="color: #64748B; margin-top: 0.5rem;">Recursos educativos para tus clases</p>
+            </div>
+            <button class="btn btn-primary" onclick="uploadContent()">
+                ⬆️ Subir Contenido
+            </button>
+        </div>
+
+        <div class="search-bar">
+            <input type="text" placeholder="🔍 Buscar recursos..." id="search-input" onkeyup="filterContent()">
+            <select id="subject-filter" onchange="filterContent()" style="padding: 0.75rem; border: 2px solid #E2E8F0; border-radius: 0.5rem;">
+                <option value="">Todas las materias</option>
+                <option value="math">Matemáticas</option>
+                <option value="spanish">Español</option>
+            </select>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab(this, 'all')">Todos</button>
+            <button class="tab" onclick="switchTab(this, 'video')">Videos</button>
+            <button class="tab" onclick="switchTab(this, 'doc')">Documentos</button>
+            <button class="tab" onclick="switchTab(this, 'game')">Juegos</button>
+            <button class="tab" onclick="switchTab(this, 'worksheet')">Hojas de Trabajo</button>
+        </div>
+
+        <div class="content-grid" id="content-container"></div>
+    </main>
+
+    <script>
+        const contentLibrary = [
+            { id: 1, title: 'Sumas y Restas Básicas', type: 'video', subject: 'math', icon: '🎥', duration: '12 min', views: 45 },
+            { id: 2, title: 'Guía de Multiplicación', type: 'doc', subject: 'math', icon: '📄', duration: '8 páginas', views: 32 },
+            { id: 3, title: 'Juego de Números', type: 'game', subject: 'math', icon: '🎮', duration: '15 min', views: 67 },
+            { id: 4, title: 'Ejercicios de Sumas', type: 'worksheet', subject: 'math', icon: '📝', duration: '10 ejercicios', views: 54 },
+            { id: 5, title: 'Lectura Comprensiva', type: 'video', subject: 'spanish', icon: '🎥', duration: '10 min', views: 38 },
+            { id: 6, title: 'Vocabulario Ilustrado', type: 'doc', subject: 'spanish', icon: '📄', duration: '12 páginas', views: 41 },
+            { id: 7, title: 'Sílabas Divertidas', type: 'game', subject: 'spanish', icon: '🎮', duration: '12 min', views: 52 },
+            { id: 8, title: 'Práctica de Ortografía', type: 'worksheet', subject: 'spanish', icon: '📝', duration: '15 ejercicios', views: 29 },
+        ];
+
+        let currentFilter = { tab: 'all', search: '', subject: '' };
+
+        function renderContent() {
+            const container = document.getElementById('content-container');
+            const filtered = contentLibrary.filter(item => {
+                const matchesTab = currentFilter.tab === 'all' || item.type === currentFilter.tab;
+                const matchesSearch = item.title.toLowerCase().includes(currentFilter.search.toLowerCase());
+                const matchesSubject = !currentFilter.subject || item.subject === currentFilter.subject;
+                return matchesTab && matchesSearch && matchesSubject;
+            });
+
+            container.innerHTML = filtered.map(item => `
+                <div class="content-card" onclick="viewContent(${item.id})">
+                    <div class="content-thumbnail">${item.icon}</div>
+                    <div class="content-body">
+                        <div class="content-header">
+                            <h3 class="content-title">${item.title}</h3>
+                        </div>
+                        <span class="content-type type-${item.type}">${item.type}</span>
+                        <div class="content-meta">
+                            <span>⏱️ ${item.duration}</span>
+                            <span>👁️ ${item.views}</span>
+                        </div>
+                        <div class="content-actions">
+                            <button class="btn-secondary" onclick="assignContent(${item.id}); event.stopPropagation();">
+                                📤 Asignar
+                            </button>
+                            <button class="btn-secondary" onclick="shareContent(${item.id}); event.stopPropagation();">
+                                🔗 Compartir
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function switchTab(btn, type) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            btn.classList.add('active');
+            currentFilter.tab = type;
+            renderContent();
+        }
+
+        function filterContent() {
+            currentFilter.search = document.getElementById('search-input').value;
+            currentFilter.subject = document.getElementById('subject-filter').value;
+            renderContent();
+        }
+
+        function viewContent(id) {
+            const item = contentLibrary.find(c => c.id === id);
+            NLUI.showModal(`${item.icon} ${item.title}`, `Vista previa de "${item.title}" próximamente.`);
+        }
+
+        function assignContent(id) {
+            const item = contentLibrary.find(c => c.id === id);
+            
+            const modal = document.createElement('div');
+            modal.id = 'assign-modal';
+            modal.style.cssText = 'position:fixed;inset:0;background:rgba(15,23,42,0.6);backdrop-filter:blur(6px);z-index:9999;display:flex;align-items:center;justify-content:center;padding:1.5rem;';
+            
+            modal.innerHTML = `
+                <div style="background:white;border-radius:1.5rem;padding:2rem;max-width:600px;width:100%;box-shadow:0 25px 60px rgba(0,0,0,0.25);">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
+                        <h2 style="font-family:'Fredoka',sans-serif;font-size:1.5rem;margin:0;">📤 Asignar Contenido</h2>
+                        <button onclick="document.getElementById('assign-modal').remove()" style="background:none;border:none;font-size:1.5rem;cursor:pointer;color:#94A3B8;">×</button>
+                    </div>
+                    
+                    <div style="background:linear-gradient(135deg,rgba(102,126,234,0.1),rgba(118,75,162,0.1));padding:1.25rem;border-radius:1rem;margin-bottom:1.5rem;display:flex;align-items:center;gap:1rem;">
+                        <div style="font-size:2.5rem;">${item.icon}</div>
+                        <div>
+                            <div style="font-weight:700;font-size:1.1rem;color:#1E293B;margin-bottom:0.25rem;">${item.title}</div>
+                            <div style="font-size:0.85rem;color:#64748B;">${item.type} • ${item.duration}</div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom:1.5rem;">
+                        <label style="display:block;font-weight:600;margin-bottom:0.75rem;color:#1E293B;">Asignar a:</label>
+                        
+                        <div style="display:flex;gap:0.5rem;margin-bottom:1rem;">
+                            <button onclick="selectAllStudents()" style="padding:0.5rem 1rem;border:2px solid #E2E8F0;background:white;border-radius:999px;font-size:0.85rem;font-weight:600;cursor:pointer;color:#64748B;">
+                                ✓ Todos (28)
+                            </button>
+                            <button onclick="deselectAllStudents()" style="padding:0.5rem 1rem;border:2px solid #E2E8F0;background:white;border-radius:999px;font-size:0.85rem;font-weight:600;cursor:pointer;color:#64748B;">
+                                ✗ Ninguno
+                            </button>
+                        </div>
+                        
+                        <div style="border:2px solid #E2E8F0;border-radius:0.75rem;max-height:250px;overflow-y:auto;padding:0.75rem;">
+                            <label style="display:flex;align-items:center;gap:0.75rem;padding:0.75rem;cursor:pointer;border-radius:0.5rem;transition:all 0.2s;" class="student-checkbox-item">
+                                <input type="checkbox" checked class="student-checkbox" value="1" style="width:18px;height:18px;cursor:pointer;">
+                                <span style="flex:1;color:#1E293B;">👦 Miguel Hernández</span>
+                            </label>
+                            <label style="display:flex;align-items:center;gap:0.75rem;padding:0.75rem;cursor:pointer;border-radius:0.5rem;" class="student-checkbox-item">
+                                <input type="checkbox" checked class="student-checkbox" value="2" style="width:18px;height:18px;cursor:pointer;">
+                                <span style="flex:1;color:#1E293B;">👧 Ana Martínez</span>
+                            </label>
+                            <label style="display:flex;align-items:center;gap:0.75rem;padding:0.75rem;cursor:pointer;border-radius:0.5rem;" class="student-checkbox-item">
+                                <input type="checkbox" checked class="student-checkbox" value="3" style="width:18px;height:18px;cursor:pointer;">
+                                <span style="flex:1;color:#1E293B;">🧒 Carlos López</span>
+                            </label>
+                            <label style="display:flex;align-items:center;gap:0.75rem;padding:0.75rem;cursor:pointer;border-radius:0.5rem;" class="student-checkbox-item">
+                                <input type="checkbox" checked class="student-checkbox" value="4" style="width:18px;height:18px;cursor:pointer;">
+                                <span style="flex:1;color:#1E293B;">👧 Sofía Ramírez</span>
+                            </label>
+                            <label style="display:flex;align-items:center;gap:0.75rem;padding:0.75rem;cursor:pointer;border-radius:0.5rem;" class="student-checkbox-item">
+                                <input type="checkbox" checked class="student-checkbox" value="5" style="width:18px;height:18px;cursor:pointer;">
+                                <span style="flex:1;color:#1E293B;">👦 Luis Torres</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom:1.5rem;">
+                        <label style="display:block;font-weight:600;margin-bottom:0.5rem;color:#1E293B;">Fecha límite (opcional)</label>
+                        <input type="date" id="assignment-deadline" style="width:100%;padding:0.75rem;border:2px solid #E2E8F0;border-radius:0.5rem;font-size:0.95rem;">
+                    </div>
+                    
+                    <div style="margin-bottom:1.5rem;">
+                        <label style="display:block;font-weight:600;margin-bottom:0.5rem;color:#1E293B;">Instrucciones adicionales</label>
+                        <textarea id="assignment-notes" placeholder="Ej: Revisar para el examen del viernes..." style="width:100%;padding:0.75rem;border:2px solid #E2E8F0;border-radius:0.5rem;font-size:0.95rem;min-height:80px;font-family:'DM Sans',sans-serif;resize:vertical;"></textarea>
+                    </div>
+                    
+                    <div style="display:flex;gap:0.75rem;">
+                        <button onclick="document.getElementById('assign-modal').remove()" style="flex:1;padding:0.875rem;border:2px solid #E2E8F0;background:white;border-radius:999px;font-family:'Fredoka',sans-serif;font-weight:600;cursor:pointer;color:#334155;">
+                            Cancelar
+                        </button>
+                        <button onclick="submitAssignment(${id})" style="flex:1;padding:0.875rem;border:none;background:linear-gradient(135deg,#667eea,#764ba2);color:white;border-radius:999px;font-family:'Fredoka',sans-serif;font-weight:600;cursor:pointer;box-shadow:0 4px 12px rgba(102,126,234,0.3);">
+                            📤 Asignar
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            // Add hover effect to checkboxes
+            document.querySelectorAll('.student-checkbox-item').forEach(item => {
+                item.addEventListener('mouseenter', () => item.style.background = '#F8FAFC');
+                item.addEventListener('mouseleave', () => item.style.background = '');
+            });
+        }
+        
+        function selectAllStudents() {
+            document.querySelectorAll('.student-checkbox').forEach(cb => cb.checked = true);
+        }
+        
+        function deselectAllStudents() {
+            document.querySelectorAll('.student-checkbox').forEach(cb => cb.checked = false);
+        }
+        
+        function submitAssignment(contentId) {
+            const item = contentLibrary.find(c => c.id === contentId);
+            const selectedStudents = Array.from(document.querySelectorAll('.student-checkbox:checked')).map(cb => cb.value);
+            const deadline = document.getElementById('assignment-deadline').value;
+            const notes = document.getElementById('assignment-notes').value;
+            
+            if (selectedStudents.length === 0) {
+                alert('Selecciona al menos un estudiante');
+                return;
+            }
+            
+            document.getElementById('assign-modal').remove();
+            
+            NLUI.showModal(
+                '✅ Contenido Asignado',
+                `"${item.title}" ha sido asignado a ${selectedStudents.length} estudiante${selectedStudents.length > 1 ? 's' : ''}.\n\nRecibirán una notificación en su dashboard.`
+            );
+            
+            console.log('Assignment:', { contentId, selectedStudents, deadline, notes });
+        }
+
+        function shareContent(id) {
+            const item = contentLibrary.find(c => c.id === id);
+            
+            const modal = document.createElement('div');
+            modal.id = 'share-modal';
+            modal.style.cssText = 'position:fixed;inset:0;background:rgba(15,23,42,0.6);backdrop-filter:blur(6px);z-index:9999;display:flex;align-items:center;justify-content:center;padding:1.5rem;';
+            
+            const shareUrl = `https://neurolearn.edu.mx/content/${id}`;
+            
+            modal.innerHTML = `
+                <div style="background:white;border-radius:1.5rem;padding:2rem;max-width:550px;width:100%;box-shadow:0 25px 60px rgba(0,0,0,0.25);">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
+                        <h2 style="font-family:'Fredoka',sans-serif;font-size:1.5rem;margin:0;">🔗 Compartir Contenido</h2>
+                        <button onclick="document.getElementById('share-modal').remove()" style="background:none;border:none;font-size:1.5rem;cursor:pointer;color:#94A3B8;">×</button>
+                    </div>
+                    
+                    <div style="background:#F8FAFC;padding:1rem;border-radius:0.75rem;margin-bottom:1.5rem;">
+                        <div style="font-weight:700;margin-bottom:0.5rem;color:#1E293B;">${item.icon} ${item.title}</div>
+                        <div style="font-size:0.85rem;color:#64748B;">${item.type} • ${item.subject === 'math' ? 'Matemáticas' : 'Español'}</div>
+                    </div>
+                    
+                    <div style="margin-bottom:1.5rem;">
+                        <label style="display:block;font-weight:600;margin-bottom:0.5rem;color:#1E293B;">Enlace para compartir</label>
+                        <div style="display:flex;gap:0.5rem;">
+                            <input type="text" id="share-url" value="${shareUrl}" readonly style="flex:1;padding:0.75rem;border:2px solid #E2E8F0;border-radius:0.5rem;font-size:0.9rem;background:#F8FAFC;color:#64748B;">
+                            <button onclick="copyShareLink()" style="padding:0.75rem 1.25rem;border:none;background:#7C3AED;color:white;border-radius:0.5rem;font-weight:600;cursor:pointer;white-space:nowrap;">
+                                📋 Copiar
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom:1.5rem;">
+                        <label style="display:block;font-weight:600;margin-bottom:0.75rem;color:#1E293B;">Compartir en:</label>
+                        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0.75rem;">
+                            <button onclick="shareVia('whatsapp', ${id})" style="padding:1rem;border:2px solid #E2E8F0;background:white;border-radius:0.75rem;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:0.5rem;transition:all 0.2s;">
+                                <div style="font-size:1.75rem;">💬</div>
+                                <div style="font-size:0.75rem;font-weight:600;color:#64748B;">WhatsApp</div>
+                            </button>
+                            <button onclick="shareVia('email', ${id})" style="padding:1rem;border:2px solid #E2E8F0;background:white;border-radius:0.75rem;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:0.5rem;">
+                                <div style="font-size:1.75rem;">📧</div>
+                                <div style="font-size:0.75rem;font-weight:600;color:#64748B;">Email</div>
+                            </button>
+                            <button onclick="shareVia('classroom', ${id})" style="padding:1rem;border:2px solid #E2E8F0;background:white;border-radius:0.75rem;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:0.5rem;">
+                                <div style="font-size:1.75rem;">🎓</div>
+                                <div style="font-size:0.75rem;font-weight:600;color:#64748B;">Classroom</div>
+                            </button>
+                            <button onclick="shareVia('teams', ${id})" style="padding:1rem;border:2px solid #E2E8F0;background:white;border-radius:0.75rem;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:0.5rem;">
+                                <div style="font-size:1.75rem;">👥</div>
+                                <div style="font-size:0.75rem;font-weight:600;color:#64748B;">Teams</div>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <button onclick="document.getElementById('share-modal').remove()" style="width:100%;padding:0.875rem;border:2px solid #E2E8F0;background:white;border-radius:999px;font-family:'Fredoka',sans-serif;font-weight:600;cursor:pointer;color:#334155;">
+                        Cerrar
+                    </button>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+        }
+        
+        function copyShareLink() {
+            const input = document.getElementById('share-url');
+            input.select();
+            document.execCommand('copy');
+            
+            const btn = event.target;
+            const originalText = btn.textContent;
+            btn.textContent = '✓ Copiado';
+            btn.style.background = '#10B981';
+            
+            setTimeout(() => {
+                btn.textContent = originalText;
+                btn.style.background = '#7C3AED';
+            }, 2000);
+        }
+        
+        function shareVia(platform, contentId) {
+            const item = contentLibrary.find(c => c.id === contentId);
+            const url = `https://neurolearn.edu.mx/content/${contentId}`;
+            const text = `Te comparto este recurso: "${item.title}"`;
+            
+            const urls = {
+                whatsapp: `https://wa.me/?text=${encodeURIComponent(text + ' ' + url)}`,
+                email: `mailto:?subject=${encodeURIComponent(item.title)}&body=${encodeURIComponent(text + '\n\n' + url)}`,
+                classroom: `https://classroom.google.com/share?url=${encodeURIComponent(url)}`,
+                teams: `https://teams.microsoft.com/share?href=${encodeURIComponent(url)}`
+            };
+            
+            window.open(urls[platform], '_blank');
+        }
+
+        function uploadContent() {
+            const modal = document.createElement('div');
+            modal.id = 'upload-modal';
+            modal.style.cssText = 'position:fixed;inset:0;background:rgba(15,23,42,0.6);backdrop-filter:blur(6px);z-index:9999;display:flex;align-items:center;justify-content:center;padding:1.5rem;overflow-y:auto;';
+            
+            modal.innerHTML = `
+                <div style="background:white;border-radius:1.5rem;padding:2rem;max-width:650px;width:100%;box-shadow:0 25px 60px rgba(0,0,0,0.25);margin:2rem auto;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem;">
+                        <h2 style="font-family:'Fredoka',sans-serif;font-size:1.75rem;margin:0;">⬆️ Subir Contenido</h2>
+                        <button onclick="document.getElementById('upload-modal').remove()" style="background:none;border:none;font-size:1.5rem;cursor:pointer;color:#94A3B8;">×</button>
+                    </div>
+                    
+                    <form id="upload-form" onsubmit="submitUpload(event)" style="display:grid;gap:1.25rem;">
+                        <div style="margin-bottom:0.5rem;">
+                            <label style="display:block;font-weight:600;margin-bottom:0.5rem;color:#1E293B;">Título *</label>
+                            <input type="text" id="content-title" required placeholder="Ej: Multiplicaciones del 1 al 5" style="width:100%;padding:0.75rem;border:2px solid #E2E8F0;border-radius:0.5rem;font-size:0.95rem;">
+                        </div>
+                        
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+                            <div>
+                                <label style="display:block;font-weight:600;margin-bottom:0.5rem;color:#1E293B;">Tipo *</label>
+                                <select id="content-type" required onchange="updateUploadIcon()" style="width:100%;padding:0.75rem;border:2px solid #E2E8F0;border-radius:0.5rem;font-size:0.95rem;">
+                                    <option value="">Seleccionar...</option>
+                                    <option value="video">📹 Video</option>
+                                    <option value="doc">📄 Documento</option>
+                                    <option value="game">🎮 Juego</option>
+                                    <option value="worksheet">📝 Hoja de Trabajo</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label style="display:block;font-weight:600;margin-bottom:0.5rem;color:#1E293B;">Materia *</label>
+                                <select id="content-subject" required style="width:100%;padding:0.75rem;border:2px solid #E2E8F0;border-radius:0.5rem;font-size:0.95rem;">
+                                    <option value="">Seleccionar...</option>
+                                    <option value="math">🔢 Matemáticas</option>
+                                    <option value="spanish">📚 Español</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label style="display:block;font-weight:600;margin-bottom:0.5rem;color:#1E293B;">Archivo *</label>
+                            <div id="drop-zone" style="border:2px dashed #CBD5E1;border-radius:0.75rem;padding:2rem;text-align:center;cursor:pointer;transition:all 0.2s;" onclick="document.getElementById('file-input').click()">
+                                <input type="file" id="file-input" accept=".pdf,.doc,.docx,.ppt,.pptx,.mp4,.avi,.mov,.jpg,.png" style="display:none;" onchange="handleFileSelect(event)">
+                                <div id="drop-zone-content">
+                                    <div style="font-size:3rem;margin-bottom:0.5rem;">📁</div>
+                                    <div style="font-weight:600;margin-bottom:0.25rem;">Haz clic o arrastra tu archivo aquí</div>
+                                    <div style="font-size:0.85rem;color:#64748B;">PDF, Word, PowerPoint, Video o Imagen</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label style="display:block;font-weight:600;margin-bottom:0.5rem;color:#1E293B;">Descripción</label>
+                            <textarea id="content-desc" placeholder="Breve descripción del contenido..." style="width:100%;padding:0.75rem;border:2px solid #E2E8F0;border-radius:0.5rem;font-size:0.95rem;min-height:80px;font-family:'DM Sans',sans-serif;resize:vertical;"></textarea>
+                        </div>
+                        
+                        <div style="background:#F0F9FF;padding:1rem;border-radius:0.75rem;border-left:4px solid #3B82F6;">
+                            <div style="font-size:0.85rem;color:#1E40AF;">
+                                <strong>💡 Nota:</strong> El contenido estará disponible en tu biblioteca una vez completada la carga.
+                            </div>
+                        </div>
+                        
+                        <div style="display:flex;gap:0.75rem;margin-top:0.5rem;">
+                            <button type="button" onclick="document.getElementById('upload-modal').remove()" style="flex:1;padding:0.875rem;border:2px solid #E2E8F0;background:white;border-radius:999px;font-family:'Fredoka',sans-serif;font-weight:600;cursor:pointer;color:#334155;">
+                                Cancelar
+                            </button>
+                            <button type="submit" style="flex:1;padding:0.875rem;border:none;background:linear-gradient(135deg,#667eea,#764ba2);color:white;border-radius:999px;font-family:'Fredoka',sans-serif;font-weight:600;cursor:pointer;box-shadow:0 4px 12px rgba(102,126,234,0.3);">
+                                ⬆️ Subir Contenido
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            // Drag and drop functionality
+            const dropZone = document.getElementById('drop-zone');
+            
+            dropZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropZone.style.borderColor = '#7C3AED';
+                dropZone.style.background = 'rgba(124,58,237,0.05)';
+            });
+            
+            dropZone.addEventListener('dragleave', () => {
+                dropZone.style.borderColor = '#CBD5E1';
+                dropZone.style.background = '';
+            });
+            
+            dropZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropZone.style.borderColor = '#CBD5E1';
+                dropZone.style.background = '';
+                
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    handleFileSelect({ target: { files } });
+                }
+            });
+        }
+        
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const dropZone = document.getElementById('drop-zone-content');
+            const fileSize = (file.size / 1024 / 1024).toFixed(2);
+            
+            dropZone.innerHTML = `
+                <div style="font-size:3rem;margin-bottom:0.5rem;">✓</div>
+                <div style="font-weight:600;color:#10B981;margin-bottom:0.25rem;">${file.name}</div>
+                <div style="font-size:0.85rem;color:#64748B;">${fileSize} MB</div>
+                <button type="button" onclick="document.getElementById('file-input').value=''; updateUploadIcon()" style="margin-top:0.75rem;padding:0.5rem 1rem;border:2px solid #E2E8F0;background:white;border-radius:999px;font-size:0.85rem;font-weight:600;cursor:pointer;color:#64748B;">
+                    Cambiar archivo
+                </button>
+            `;
+        }
+        
+        function updateUploadIcon() {
+            const dropZone = document.getElementById('drop-zone-content');
+            if (!dropZone) return;
+            
+            dropZone.innerHTML = `
+                <div style="font-size:3rem;margin-bottom:0.5rem;">📁</div>
+                <div style="font-weight:600;margin-bottom:0.25rem;">Haz clic o arrastra tu archivo aquí</div>
+                <div style="font-size:0.85rem;color:#64748B;">PDF, Word, PowerPoint, Video o Imagen</div>
+            `;
+        }
+        
+        function submitUpload(event) {
+            event.preventDefault();
+            
+            const title = document.getElementById('content-title').value;
+            const type = document.getElementById('content-type').value;
+            const subject = document.getElementById('content-subject').value;
+            const desc = document.getElementById('content-desc').value;
+            const file = document.getElementById('file-input').files[0];
+            
+            if (!file) {
+                alert('Por favor selecciona un archivo');
+                return;
+            }
+            
+            const typeIcons = {
+                video: '🎥',
+                doc: '📄',
+                game: '🎮',
+                worksheet: '📝'
+            };
+            
+            const newContent = {
+                id: contentLibrary.length + 1,
+                title,
+                type,
+                subject,
+                icon: typeIcons[type],
+                duration: type === 'video' ? '10 min' : type === 'doc' ? '8 páginas' : '15 min',
+                views: 0
+            };
+            
+            contentLibrary.push(newContent);
+            
+            document.getElementById('upload-modal').remove();
+            
+            NLUI.showModal(
+                '✅ Contenido Subido',
+                `"${title}" ha sido agregado exitosamente a tu biblioteca.\n\nYa está disponible para asignar a tus estudiantes.`,
+                [
+                    { label: 'Ver en Biblioteca', primary: true, action: () => {
+                        renderContent();
+                        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+                    }},
+                    { label: 'Cerrar', action: null }
+                ]
+            );
+            
+            console.log('Uploaded:', { newContent, file });
+        }
+
+        renderContent();
+    </script>
+    <!-- NeuroLearn Systems -->
+    <script src="nl-notifications.js"></script>
+</body>
+</html>

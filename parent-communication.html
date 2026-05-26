@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Comunicación con Maestros — NeuroLearn Kids</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --purple: #6C63FF;
+      --purple-light: #EEF2FF;
+      --green: #22C55E;
+      --yellow: #F59E0B;
+      --red: #EF4444;
+      --n50:  #F8FAFC;
+      --n100: #F1F5F9;
+      --n200: #E2E8F0;
+      --n500: #64748B;
+      --n700: #334155;
+      --n900: #0F172A;
+      --sidebar-w: 220px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--n50);
+      color: var(--n900);
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      width: var(--sidebar-w);
+      background: var(--n900);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      padding: 1.5rem 0;
+      position: fixed;
+      top: 0; left: 0; bottom: 0;
+      z-index: 100;
+    }
+
+    .sidebar-logo {
+      padding: 0 1.25rem 1.5rem;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      margin-bottom: 1rem;
+    }
+    .sidebar-logo h2 { font-family: 'Fredoka', sans-serif; font-size: 1.1rem; color: white; }
+    .sidebar-logo p  { font-size: 0.75rem; color: rgba(255,255,255,0.5); margin-top: 0.15rem; }
+
+    .nav-list { list-style: none; flex: 1; padding: 0 0.75rem; }
+    .nav-list li { margin-bottom: 0.25rem; }
+    .nav-link {
+      display: flex; align-items: center; gap: 0.65rem;
+      padding: 0.6rem 0.85rem;
+      border-radius: 10px;
+      color: rgba(255,255,255,0.65);
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+    .nav-link:hover { background: rgba(255,255,255,0.08); color: white; }
+    .nav-link.active { background: var(--purple); color: white; }
+    .nav-icon { font-size: 1rem; width: 1.25rem; text-align: center; }
+
+    .sidebar-user {
+      padding: 1rem 1.25rem 0;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      display: flex; align-items: center; gap: 0.75rem;
+    }
+    .user-avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: var(--purple);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 0.9rem;
+    }
+    .user-info small { font-size: 0.7rem; color: rgba(255,255,255,0.45); }
+    .user-info strong { font-size: 0.82rem; display: block; }
+
+    /* ── Main ── */
+    .main {
+      margin-left: var(--sidebar-w);
+      flex: 1;
+      padding: 2rem;
+      max-width: 900px;
+    }
+
+    .page-header { margin-bottom: 1.75rem; }
+    .page-header h1 { font-family: 'Fredoka', sans-serif; font-size: 1.75rem; color: var(--n900); }
+    .page-header p  { color: var(--n500); font-size: 0.9rem; margin-top: 0.25rem; }
+
+    /* ── Teacher cards ── */
+    .teachers-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 2rem;
+    }
+
+    .teacher-card {
+      background: white;
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      border: 1px solid var(--n200);
+      transition: transform 0.2s, box-shadow 0.2s;
+      cursor: pointer;
+    }
+    .teacher-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(108,99,255,0.12);
+      border-color: var(--purple);
+    }
+
+    .teacher-avatar {
+      width: 52px; height: 52px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--purple), #A78BFA);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem; margin-bottom: 1rem;
+      font-weight: 700; color: white;
+    }
+
+    .teacher-name  { font-weight: 700; font-size: 1rem; margin-bottom: 0.2rem; }
+    .teacher-grade { font-size: 0.8rem; color: var(--n500); margin-bottom: 0.75rem; }
+
+    .teacher-badge {
+      display: inline-block;
+      padding: 0.2rem 0.65rem;
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 600;
+    }
+    .badge-available { background: #DCFCE7; color: #15803D; }
+    .badge-busy      { background: #FEF3C7; color: #92400E; }
+
+    .btn-message {
+      display: block;
+      width: 100%;
+      margin-top: 1rem;
+      padding: 0.55rem;
+      border-radius: 10px;
+      background: var(--purple-light);
+      color: var(--purple);
+      font-weight: 700;
+      font-size: 0.85rem;
+      border: none;
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+    .btn-message:hover { background: var(--purple); color: white; }
+
+    /* ── Recent messages ── */
+    .section-title {
+      font-family: 'Fredoka', sans-serif;
+      font-size: 1.15rem;
+      margin-bottom: 1rem;
+      color: var(--n900);
+    }
+
+    .msg-list { display: flex; flex-direction: column; gap: 0.75rem; }
+
+    .msg-row {
+      background: white;
+      border-radius: 14px;
+      padding: 1rem 1.25rem;
+      display: flex; align-items: center; gap: 1rem;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+      border: 1px solid var(--n200);
+      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
+      transition: box-shadow 0.2s;
+    }
+    .msg-row:hover { box-shadow: 0 4px 16px rgba(108,99,255,0.1); border-color: var(--purple); }
+    .msg-row.unread { border-left: 3px solid var(--purple); }
+
+    .msg-avatar {
+      width: 42px; height: 42px; border-radius: 50%;
+      background: linear-gradient(135deg, #6C63FF, #A78BFA);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; color: white; font-size: 0.9rem;
+      flex-shrink: 0;
+    }
+
+    .msg-body { flex: 1; min-width: 0; }
+    .msg-sender { font-weight: 700; font-size: 0.88rem; }
+    .msg-preview { font-size: 0.8rem; color: var(--n500); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .msg-time { font-size: 0.72rem; color: var(--n500); white-space: nowrap; }
+    .msg-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--purple); flex-shrink: 0;
+    }
+
+    /* ── Empty state ── */
+    .empty-state {
+      text-align: center;
+      padding: 3rem;
+      background: white;
+      border-radius: 16px;
+      border: 1px dashed var(--n200);
+      color: var(--n500);
+    }
+    .empty-state .icon { font-size: 2.5rem; margin-bottom: 0.75rem; }
+    .empty-state p { font-size: 0.9rem; }
+  </style>
+</head>
+<body>
+
+<!-- ── Sidebar ── -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <h2>🚀 NeuroLearn Kids</h2>
+    <p>Panel de Padres</p>
+  </div>
+  <ul class="nav-list">
+    <li><a class="nav-link" href="parent-dashboard.html"><span class="nav-icon">🏠</span> Inicio</a></li>
+    <li><a class="nav-link" href="student-profile.html"><span class="nav-icon">👦</span> Mis Hijos</a></li>
+    <li><a class="nav-link" href="progress-report.html"><span class="nav-icon">📊</span> Progreso</a></li>
+    <li><a class="nav-link" href="reports-advanced.html"><span class="nav-icon">📝</span> Reportes</a></li>
+    <li><a class="nav-link" href="parent-recommendations.html"><span class="nav-icon">🎯</span> Recomendaciones</a></li>
+    <li><a class="nav-link active" href="parent-communication.html"><span class="nav-icon">💬</span> Maestros</a></li>
+    <li><a class="nav-link" href="messaging.html"><span class="nav-icon">📱</span> Mensajes</a></li>
+    <li><a class="nav-link" href="reports-advanced.html#alerts"><span class="nav-icon">🔔</span> Alertas</a></li>
+    <li><a class="nav-link" href="teacher-settings.html"><span class="nav-icon">⚙️</span> Configuración</a></li>
+    <li><a class="nav-link" href="help-center.html"><span class="nav-icon">❓</span> Ayuda</a></li>
+    <li><a class="nav-link" href="login-register.html" style="background:linear-gradient(135deg,#EF4444,#DC2626);color:white;margin-top:1rem;"><span class="nav-icon">🚪</span> Cerrar Sesión</a></li>
+  </ul>
+  <div class="sidebar-user">
+    <div class="user-avatar" id="user-avatar">T</div>
+    <div class="user-info">
+      <strong id="user-name">Cargando...</strong>
+      <small>Padre/Madre de familia</small>
+    </div>
+  </div>
+</aside>
+
+<!-- ── Main ── -->
+<main class="main">
+  <div class="page-header">
+    <h1>💬 Comunicación con Maestros</h1>
+    <p>Mantente en contacto con los docentes de tus hijos</p>
+  </div>
+
+  <!-- Teacher cards -->
+  <div class="section-title">Maestros de tus hijos</div>
+  <div class="teachers-grid" id="teachers-grid">
+
+    <div class="teacher-card" onclick="window.location.href='messaging.html'">
+      <div class="teacher-avatar">MA</div>
+      <div class="teacher-name">Mtra. María Alvarado</div>
+      <div class="teacher-grade">📚 Matemáticas · 2° Primaria</div>
+      <span class="teacher-badge badge-available">● Disponible</span>
+      <a class="btn-message" href="messaging.html">✉️ Enviar mensaje</a>
+    </div>
+
+    <div class="teacher-card" onclick="window.location.href='messaging.html'">
+      <div class="teacher-avatar">CR</div>
+      <div class="teacher-name">Mtro. Carlos Ramírez</div>
+      <div class="teacher-grade">📖 Español · 1° y 2° Primaria</div>
+      <span class="teacher-badge badge-available">● Disponible</span>
+      <a class="btn-message" href="messaging.html">✉️ Enviar mensaje</a>
+    </div>
+
+    <div class="teacher-card" onclick="window.location.href='messaging.html'">
+      <div class="teacher-avatar">LP</div>
+      <div class="teacher-name">Mtra. Laura Pérez</div>
+      <div class="teacher-grade">🔬 Ciencias · 1° Primaria</div>
+      <span class="teacher-badge badge-busy">⏳ Ocupada</span>
+      <a class="btn-message" href="messaging.html">✉️ Enviar mensaje</a>
+    </div>
+
+  </div>
+
+  <!-- Recent messages -->
+  <div class="section-title">Mensajes recientes</div>
+  <div class="msg-list">
+
+    <a class="msg-row unread" href="messaging.html">
+      <div class="msg-avatar">MA</div>
+      <div class="msg-body">
+        <div class="msg-sender">Mtra. María Alvarado</div>
+        <div class="msg-preview">Miguel ha mejorado mucho en las sumas esta semana. Te felicito por el apoyo en casa.</div>
+      </div>
+      <div>
+        <div class="msg-time">Hoy · 10:15 am</div>
+      </div>
+      <div class="msg-dot"></div>
+    </a>
+
+    <a class="msg-row unread" href="messaging.html">
+      <div class="msg-avatar">CR</div>
+      <div class="msg-body">
+        <div class="msg-sender">Mtro. Carlos Ramírez</div>
+        <div class="msg-preview">Recordatorio: la evaluación de lectura es el próximo lunes. Favor de repasar en casa.</div>
+      </div>
+      <div>
+        <div class="msg-time">Ayer · 3:40 pm</div>
+      </div>
+      <div class="msg-dot"></div>
+    </a>
+
+    <a class="msg-row" href="messaging.html">
+      <div class="msg-avatar">LP</div>
+      <div class="msg-body">
+        <div class="msg-sender">Mtra. Laura Pérez</div>
+        <div class="msg-preview">Valeria participó muy bien en la clase de hoy. Sigue así.</div>
+      </div>
+      <div>
+        <div class="msg-time">Hace 3 días</div>
+      </div>
+    </a>
+
+  </div>
+</main>
+
+<script src="api-config.js"></script>
+<script>
+  // Cargar nombre del usuario
+  (function() {
+    try {
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      if (!user.firstName) {
+        window.location.href = 'login-register.html';
+        return;
+      }
+      document.getElementById('user-name').textContent = `${user.firstName} ${user.lastName}`;
+      document.getElementById('user-avatar').textContent =
+        (user.firstName.charAt(0) + user.lastName.charAt(0)).toUpperCase();
+    } catch(e) {
+      window.location.href = 'login-register.html';
+    }
+  })();
+</script>
+</body>
+</html>

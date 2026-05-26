@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Padres - NeuroLearn Kids</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+
+        :root {
+            --purple:#7C3AED; --blue:#3B82F6; --pink:#EC4899;
+            --cyan:#06B6D4; --green:#10B981; --red:#EF4444;
+            --yellow:#FBBF24; --n50:#F8FAFC; --n100:#F1F5F9;
+            --n200:#E2E8F0; --n500:#64748B; --n700:#334155; --n900:#0F172A;
+        }
+
+        body {
+            font-family:'DM Sans', sans-serif;
+            background: var(--n50);
+            color: var(--n900);
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            position: fixed;
+            left: 0; top: 0;
+            width: 260px; height: 100vh;
+            background: linear-gradient(180deg, #1a1040 0%, #0f172a 100%);
+            padding: 2rem 0;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-logo {
+            padding: 0 1.75rem 2rem;
+            border-bottom: 1px solid rgba(255,255,255,0.07);
+        }
+
+        .sidebar-logo h2 {
+            font-family:'Fredoka', sans-serif;
+            color: white;
+            font-size: 1.4rem;
+        }
+
+        .sidebar-logo p {
+            color: rgba(255,255,255,0.5);
+            font-size: 0.8rem;
+            margin-top: 0.25rem;
+        }
+
+        .sidebar-nav {
+            list-style: none;
+            padding: 1.5rem 0;
+            flex: 1;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 0.875rem;
+            padding: 0.875rem 1.75rem;
+            color: rgba(255,255,255,0.55);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: all 0.25s;
+            border-left: 3px solid transparent;
+            cursor: pointer;
+        }
+
+        .nav-link:hover { color: white; background: rgba(255,255,255,0.05); }
+        .nav-link.active {
+            color: white;
+            background: rgba(124,58,237,0.2);
+            border-left-color: var(--purple);
+        }
+
+        .nav-icon { font-size: 1.15rem; }
+
+        .sidebar-bottom {
+            padding: 1.5rem;
+            border-top: 1px solid rgba(255,255,255,0.07);
+        }
+
+        .parent-profile {
+            display: flex;
+            align-items: center;
+            gap: 0.875rem;
+        }
+
+        .parent-avatar {
+            width: 44px; height: 44px;
+            border-radius: 50%;
+            background: linear-gradient(135deg,#667eea,#764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+        }
+
+        .parent-name { color: white; font-weight: 600; font-size: 0.9rem; }
+        .parent-role { color: rgba(255,255,255,0.5); font-size: 0.75rem; }
+
+        /* MAIN */
+        .main {
+            margin-left: 260px;
+            padding: 2.5rem;
+            min-height: 100vh;
+        }
+
+        /* PAGE HEADER */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .page-header h1 {
+            font-family:'Fredoka', sans-serif;
+            font-size: 2rem;
+        }
+
+        .page-header p { color: var(--n500); margin-top: 0.25rem; font-size: 0.95rem; }
+
+        .header-actions { display: flex; gap: 1rem; align-items: center; }
+
+        .notif-btn {
+            width: 44px; height: 44px;
+            border-radius: 50%;
+            border: 2px solid var(--n200);
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .notif-btn:hover { border-color: var(--purple); }
+
+        .notif-dot {
+            width: 10px; height: 10px;
+            background: var(--red);
+            border-radius: 50%;
+            position: absolute;
+            top: 4px; right: 4px;
+            border: 2px solid white;
+        }
+
+        /* CHILD SELECTOR */
+        .child-selector {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .child-card {
+            background: white;
+            border: 3px solid var(--n200);
+            border-radius: 1.5rem;
+            padding: 1.25rem 2rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .child-card.active {
+            border-color: var(--purple);
+            background: rgba(124,58,237,0.04);
+            box-shadow: 0 4px 20px rgba(124,58,237,0.1);
+        }
+
+        .child-card:hover { border-color: var(--purple); }
+
+        .child-av {
+            width: 48px; height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            background: var(--n100);
+        }
+
+        .child-name { font-weight: 700; font-size: 1rem; }
+        .child-grade { color: var(--n500); font-size: 0.8rem; margin-top: 0.15rem; }
+
+        .child-badge {
+            margin-left: auto;
+            padding: 0.3rem 0.75rem;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .child-badge.good { background: rgba(16,185,129,0.1); color: var(--green); }
+        .child-badge.warn { background: rgba(251,191,36,0.1); color: var(--yellow); }
+
+        /* STAT CARDS */
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 1.75rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover { transform: translateY(-4px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+
+        .stat-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.25rem;
+        }
+
+        .stat-ico {
+            width: 48px; height: 48px;
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .ico-purple { background: rgba(124,58,237,0.1); }
+        .ico-green  { background: rgba(16,185,129,0.1); }
+        .ico-pink   { background: rgba(236,72,153,0.1); }
+        .ico-blue   { background: rgba(59,130,246,0.1); }
+
+        .stat-badge {
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 0.25rem 0.625rem;
+            border-radius: 999px;
+        }
+
+        .stat-badge.up { background: rgba(16,185,129,0.1); color: var(--green); }
+        .stat-badge.dn { background: rgba(239,68,68,0.1); color: var(--red); }
+
+        .stat-val {
+            font-family:'Fredoka', sans-serif;
+            font-size: 2.25rem;
+            font-weight: 700;
+        }
+
+        .stat-lbl { color: var(--n500); font-size: 0.875rem; margin-top: 0.25rem; }
+
+        /* CONTENT GRID */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 2rem;
+        }
+
+        /* CHART CARD */
+        .chart-card {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .card-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.75rem;
+        }
+
+        .card-head h3 {
+            font-family:'Fredoka', sans-serif;
+            font-size: 1.4rem;
+        }
+
+        .chart-tabs {
+            display: flex;
+            gap: 0.4rem;
+        }
+
+        .ctab {
+            padding: 0.4rem 1rem;
+            border: none;
+            border-radius: 0.6rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            background: var(--n100);
+            color: var(--n500);
+            transition: all 0.2s;
+        }
+
+        .ctab.active { background: var(--purple); color: white; }
+
+        /* FAKE SVG CHART */
+        .fake-chart {
+            width: 100%;
+            height: 220px;
+            position: relative;
+        }
+
+        .chart-bars {
+            display: flex;
+            align-items: flex-end;
+            height: 200px;
+            gap: 0.75rem;
+            padding: 0 0.5rem;
+            border-bottom: 2px solid var(--n200);
+            margin-top: 1rem;
+        }
+
+        .bar-group {
+            flex: 1;
+            display: flex;
+            gap: 0.3rem;
+            align-items: flex-end;
+        }
+
+        .bar {
+            flex: 1;
+            border-radius: 0.5rem 0.5rem 0 0;
+            transition: opacity 0.2s;
+        }
+
+        .bar:hover { opacity: 0.75; }
+
+        .chart-labels {
+            display: flex;
+            gap: 0.75rem;
+            padding: 0.75rem 0.5rem 0;
+        }
+
+        .chart-lbl {
+            flex: 1;
+            text-align: center;
+            font-size: 0.75rem;
+            color: var(--n500);
+            font-weight: 600;
+        }
+
+        .chart-legend {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.8rem;
+            color: var(--n500);
+        }
+
+        .legend-dot {
+            width: 10px; height: 10px;
+            border-radius: 50%;
+        }
+
+        /* RIGHT SIDEBAR */
+        .right-col { display: flex; flex-direction: column; gap: 1.5rem; }
+
+        /* ALERTS */
+        .alerts-card {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 1.75rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .alert-row {
+            display: flex;
+            gap: 1rem;
+            padding: 1.1rem;
+            border-radius: 1rem;
+            margin-bottom: 0.75rem;
+            background: var(--n50);
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .alert-row:hover { background: var(--n100); }
+        .alert-row:last-child { margin-bottom: 0; }
+
+        .alert-row.danger { border-left: 3px solid var(--red); }
+        .alert-row.warn   { border-left: 3px solid var(--yellow); }
+        .alert-row.info   { border-left: 3px solid var(--blue); }
+
+        .alert-ico { font-size: 1.5rem; }
+        .alert-content { flex: 1; }
+        .alert-title { font-weight: 700; font-size: 0.875rem; margin-bottom: 0.2rem; }
+        .alert-desc { font-size: 0.8rem; color: var(--n500); line-height: 1.4; }
+        .alert-time { font-size: 0.7rem; color: var(--n500); margin-top: 0.35rem; }
+
+        /* SUBJECT MINI CARDS */
+        .subjects-card {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 1.75rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .subject-row {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            border-radius: 1rem;
+            background: var(--n50);
+            margin-bottom: 0.75rem;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .subject-row:hover { background: var(--n100); }
+        .subject-row:last-child { margin-bottom: 0; }
+
+        .sub-icon { font-size: 2rem; }
+        .sub-info { flex: 1; }
+        .sub-name { font-weight: 700; font-size: 0.95rem; }
+        .sub-level { font-size: 0.75rem; color: var(--n500); }
+
+        .mini-bar {
+            width: 80px; height: 6px;
+            background: var(--n200);
+            border-radius: 999px;
+            overflow: hidden;
+            margin-top: 0.3rem;
+        }
+
+        .mini-fill {
+            height: 100%;
+            border-radius: 999px;
+        }
+
+        .sub-pct {
+            font-family:'Fredoka', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        /* ACTIONS CARD */
+        .actions-card {
+            background: linear-gradient(135deg,#667eea,#764ba2);
+            border-radius: 1.5rem;
+            padding: 1.75rem;
+            color: white;
+        }
+
+        .actions-card h3 {
+            font-family:'Fredoka', sans-serif;
+            font-size: 1.25rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .action-row {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: rgba(255,255,255,0.15);
+            border-radius: 1rem;
+            margin-bottom: 0.75rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .action-row:hover { background: rgba(255,255,255,0.25); }
+        .action-row:last-child { margin-bottom: 0; }
+        .action-icon { font-size: 1.5rem; }
+        .action-text { font-weight: 600; font-size: 0.9rem; }
+        .action-text small { display: block; font-weight: 400; opacity: 0.8; font-size: 0.75rem; }
+
+        /* RESPONSIVE */
+        @media (max-width: 1280px) {
+            .stat-grid { grid-template-columns: repeat(2, 1fr); }
+            .content-grid { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 900px) {
+            .sidebar { display: none; }
+            .main { margin-left: 0; padding: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ==================== AUTENTICACIÓN - AGREGADO ==================== -->
+    <script>
+        (function() {
+            const token = localStorage.getItem('token');
+            const userStr = localStorage.getItem('user');
+            
+            if (!token || !userStr) {
+                alert('Por favor inicia sesión primero');
+                window.location.href = 'login-register.html';
+                return;
+            }
+            
+            try {
+                const user = JSON.parse(userStr);
+                if (user.role !== 'PARENT') {
+                    alert('Esta página es solo para padres de familia');
+                    window.location.href = 'login-register.html';
+                }
+            } catch (error) {
+                localStorage.clear();
+                window.location.href = 'login-register.html';
+            }
+        })();
+    </script>
+    <!-- ==================== FIN AUTENTICACIÓN ==================== -->
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <h2>🚀 NeuroLearn Kids</h2>
+            <p>Panel de Padres</p>
+        </div>
+        <nav>
+            <ul class="sidebar-nav">
+                <li><a class="nav-link active" href="parent-dashboard.html"><span class="nav-icon">🏠</span> Inicio</a></li>
+                <li><a class="nav-link" href="parent-children.html"><span class="nav-icon">👦</span> Mis Hijos</a></li>
+                <li><a class="nav-link" href="progress-report.html"><span class="nav-icon">📊</span> Progreso</a></li>
+                <li><a class="nav-link" href="reports-advanced.html"><span class="nav-icon">📝</span> Reportes</a></li>
+                <li><a class="nav-link" href="parent-recommendations.html"><span class="nav-icon">🎯</span> Recomendaciones</a></li>
+                <li><a class="nav-link" href="parent-communication.html"><span class="nav-icon">💬</span> Maestros</a></li>
+                <li><a class="nav-link" href="messaging.html"><span class="nav-icon">📱</span> Mensajes</a></li>
+                <li><a class="nav-link" href="#" onclick="showAlertsPanel();return false;"><span class="nav-icon">🔔</span> Alertas</a></li>
+                <li><a class="nav-link" href="help-center.html"><span class="nav-icon">❓</span> Ayuda</a></li>
+                <li><a class="nav-link" href="#" onclick="logout(); return false;" style="background: linear-gradient(135deg, #EF4444, #DC2626); color: white; margin-top: 1rem;"><span class="nav-icon">🚪</span> Cerrar Sesión</a></li>
+            </ul>
+        </nav>
+        <div class="sidebar-bottom">
+            <div class="parent-profile">
+                <div class="parent-avatar" style="cursor:pointer">👩</div>
+                <div>
+                    <div class="parent-name" id="parent-display-name">Laura Hernández</div>
+                    <div class="parent-role">Padre/Madre de familia</div>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+
+        <!-- HEADER -->
+        <div class="page-header">
+            <div>
+                <h1 id="parent-greeting">¡Hola, Laura! 👋</h1>
+                <p>Aquí está el resumen de progreso de tus hijos esta semana</p>
+            </div>
+            <div class="header-actions">
+            </div>
+        </div>
+
+        <!-- CHILD SELECTOR -->
+        <div class="child-selector">
+            <div class="child-card active">
+                <div class="child-av">👦</div>
+                <div>
+                    <div class="child-name">Miguel</div>
+                    <div class="child-grade">2° Primaria · CBTIS 45</div>
+                </div>
+                <span class="child-badge good">✔ Bien</span>
+            </div>
+            <div class="child-card">
+                <div class="child-av">👧</div>
+                <div>
+                    <div class="child-name">Valeria</div>
+                    <div class="child-grade">1° Primaria · CBTIS 45</div>
+                </div>
+                <span class="child-badge warn">⚠ Atención</span>
+            </div>
+        </div>
+
+        <!-- STATS -->
+        <div class="stat-grid">
+            <div class="stat-card">
+                <div class="stat-top">
+                    <div class="stat-ico ico-purple">📚</div>
+                    <span class="stat-badge up">↑ 12%</span>
+                </div>
+                <div class="stat-val">87%</div>
+                <div class="stat-lbl">Promedio General</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-top">
+                    <div class="stat-ico ico-green">✅</div>
+                    <span class="stat-badge up">↑ 23</span>
+                </div>
+                <div class="stat-val">148</div>
+                <div class="stat-lbl">Ejercicios esta semana</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-top">
+                    <div class="stat-ico ico-pink">🔥</div>
+                    <span class="stat-badge up">↑ 2</span>
+                </div>
+                <div class="stat-val">7 días</div>
+                <div class="stat-lbl">Racha de actividad</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-top">
+                    <div class="stat-ico ico-blue">⏱️</div>
+                    <span class="stat-badge dn">↑ 30s</span>
+                </div>
+                <div class="stat-val">2.4 min</div>
+                <div class="stat-lbl">Tiempo por ejercicio</div>
+            </div>
+        </div>
+
+        <!-- CONTENT GRID -->
+        <div class="content-grid">
+
+            <!-- CHART -->
+            <div class="chart-card">
+                <div class="card-head">
+                    <h3>📈 Progreso Semanal</h3>
+                    <div class="chart-tabs">
+                        <button class="ctab active">Semana</button>
+                        <button class="ctab">Mes</button>
+                        <button class="ctab">Trimestre</button>
+                    </div>
+                </div>
+
+                <div class="fake-chart">
+                    <div class="chart-bars">
+                        <!-- Lunes -->
+                        <div class="bar-group">
+                            <div class="bar" style="height:110px;background:linear-gradient(180deg,#667eea,#764ba2)"></div>
+                            <div class="bar" style="height:85px;background:linear-gradient(180deg,#f093fb,#f5576c)"></div>
+                        </div>
+                        <!-- Martes -->
+                        <div class="bar-group">
+                            <div class="bar" style="height:130px;background:linear-gradient(180deg,#667eea,#764ba2)"></div>
+                            <div class="bar" style="height:100px;background:linear-gradient(180deg,#f093fb,#f5576c)"></div>
+                        </div>
+                        <!-- Miércoles -->
+                        <div class="bar-group">
+                            <div class="bar" style="height:90px;background:linear-gradient(180deg,#667eea,#764ba2)"></div>
+                            <div class="bar" style="height:120px;background:linear-gradient(180deg,#f093fb,#f5576c)"></div>
+                        </div>
+                        <!-- Jueves -->
+                        <div class="bar-group">
+                            <div class="bar" style="height:160px;background:linear-gradient(180deg,#667eea,#764ba2)"></div>
+                            <div class="bar" style="height:140px;background:linear-gradient(180deg,#f093fb,#f5576c)"></div>
+                        </div>
+                        <!-- Viernes -->
+                        <div class="bar-group">
+                            <div class="bar" style="height:145px;background:linear-gradient(180deg,#667eea,#764ba2)"></div>
+                            <div class="bar" style="height:130px;background:linear-gradient(180deg,#f093fb,#f5576c)"></div>
+                        </div>
+                        <!-- Sábado -->
+                        <div class="bar-group">
+                            <div class="bar" style="height:60px;background:linear-gradient(180deg,#667eea,#764ba2)"></div>
+                            <div class="bar" style="height:50px;background:linear-gradient(180deg,#f093fb,#f5576c)"></div>
+                        </div>
+                        <!-- Hoy -->
+                        <div class="bar-group">
+                            <div class="bar" style="height:180px;background:linear-gradient(180deg,#667eea,#764ba2);opacity:0.4;border:2px dashed #667eea;"></div>
+                            <div class="bar" style="height:155px;background:linear-gradient(180deg,#f093fb,#f5576c);opacity:0.4;border:2px dashed #f093fb;"></div>
+                        </div>
+                    </div>
+                    <div class="chart-labels">
+                        <div class="chart-lbl">Lun</div>
+                        <div class="chart-lbl">Mar</div>
+                        <div class="chart-lbl">Mié</div>
+                        <div class="chart-lbl">Jue</div>
+                        <div class="chart-lbl">Vie</div>
+                        <div class="chart-lbl">Sáb</div>
+                        <div class="chart-lbl">Hoy</div>
+                    </div>
+                </div>
+
+                <div class="chart-legend">
+                    <div class="legend-item">
+                        <div class="legend-dot" style="background:#667eea"></div>
+                        Matemáticas
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-dot" style="background:#f093fb"></div>
+                        Español
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT COLUMN -->
+            <div class="right-col">
+
+                <!-- ALERTS -->
+                <div class="alerts-card">
+                    <div class="card-head">
+                        <h3>🔔 Alertas Recientes</h3>
+                        <a href="#" style="font-size:0.8rem;color:var(--purple);font-weight:600;text-decoration:none;" onclick="showAlertsPanel();return false;">Ver todas</a>
+                    </div>
+                    <div class="alert-row danger">
+                        <div class="alert-ico">⚠️</div>
+                        <div class="alert-content">
+                            <div class="alert-title">Dificultad en Restas</div>
+                            <div class="alert-desc">Miguel tuvo 5 errores consecutivos en restas con dos dígitos</div>
+                            <div class="alert-time">Hoy · 10:32 am</div>
+                        </div>
+                    </div>
+                    <div class="alert-row warn">
+                        <div class="alert-ico">⏱️</div>
+                        <div class="alert-content">
+                            <div class="alert-title">Tiempo elevado</div>
+                            <div class="alert-desc">Tiempo promedio por encima de lo esperado en Español</div>
+                            <div class="alert-time">Ayer · 4:15 pm</div>
+                        </div>
+                    </div>
+                    <div class="alert-row info">
+                        <div class="alert-ico">🏆</div>
+                        <div class="alert-content">
+                            <div class="alert-title">¡Nuevo Nivel Alcanzado!</div>
+                            <div class="alert-desc">Miguel subió al Nivel 2 en Matemáticas</div>
+                            <div class="alert-time">Hace 2 días</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SUBJECTS -->
+                <div class="subjects-card">
+                    <div class="card-head">
+                        <h3>📊 Por Materia</h3>
+                    </div>
+                    <div class="subject-row" onclick="window.location.href='progress-report.html'">
+                        <div class="sub-icon">🔢</div>
+                        <div class="sub-info">
+                            <div class="sub-name">Matemáticas</div>
+                            <div class="sub-level">Nivel 2 · Sumas y restas</div>
+                            <div class="mini-bar">
+                                <div class="mini-fill" style="width:70%;background:linear-gradient(90deg,#667eea,#764ba2)"></div>
+                            </div>
+                        </div>
+                        <div class="sub-pct" style="color:#667eea">70%</div>
+                    </div>
+                    <div class="subject-row" onclick="window.location.href='progress-report.html'">
+                        <div class="sub-icon">📚</div>
+                        <div class="sub-info">
+                            <div class="sub-name">Español</div>
+                            <div class="sub-level">Nivel 3 · Comprensión</div>
+                            <div class="mini-bar">
+                                <div class="mini-fill" style="width:92%;background:linear-gradient(90deg,#f093fb,#f5576c)"></div>
+                            </div>
+                        </div>
+                        <div class="sub-pct" style="color:#f093fb">92%</div>
+                    </div>
+                </div>
+
+                <!-- QUICK ACTIONS -->
+                <div class="actions-card">
+                    <h3>Acciones Rápidas</h3>
+                    <div class="action-row">
+                        <div class="action-icon">📄</div>
+                        <div class="action-text">Descargar Reporte
+                            <small>PDF completo del mes</small>
+                        </div>
+                        <div>↗</div>
+                    </div>
+                    <div class="action-row">
+                        <div class="action-icon">✉️</div>
+                        <div class="action-text">Contactar Docente
+                            <small>Profa. María González</small>
+                        </div>
+                        <div>↗</div>
+                    </div>
+                    <div class="action-row">
+                        <div class="action-icon">📅</div>
+                        <div class="action-text">Historial Completo
+                            <small>Ver todos los ejercicios</small>
+                        </div>
+                        <div>↗</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- ==================== SCRIPTS - AGREGADOS/MODIFICADOS ==================== -->
+    <script>
+        window.addEventListener('load', function() {
+            loadParentData();
+        });
+
+        function loadParentData() {
+            const userStr = localStorage.getItem('user');
+            if (!userStr) return;
+            
+            try {
+                const user = JSON.parse(userStr);
+                console.log('✅ Datos del padre/madre:', user);
+                
+                const fullName = `${user.firstName} ${user.lastName || ''}`.trim();
+                
+                const sidebarName = document.getElementById('parent-display-name');
+                if (sidebarName) {
+                    sidebarName.textContent = fullName;
+                }
+                
+                const greeting = document.getElementById('parent-greeting');
+                if (greeting) {
+                    greeting.textContent = `¡Hola, ${user.firstName}! 👋`;
+                }
+                
+            } catch (error) {
+                console.error('❌ Error al cargar datos del padre:', error);
+            }
+        }
+
+        function logout() {
+            if (confirm('¿Seguro que quieres cerrar sesión?')) {
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                window.location.href = 'login-register.html';
+            }
+        }
+
+        // Tab switching for chart
+        document.querySelectorAll('.ctab').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.ctab').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            });
+        });
+
+        // Child selector
+        document.querySelectorAll('.child-card').forEach(card => {
+            card.addEventListener('click', () => {
+                document.querySelectorAll('.child-card').forEach(c => c.classList.remove('active'));
+                card.classList.add('active');
+            });
+        });
+
+        // Navigation helpers (ya no son alerts, los enlaces del menú navegan directamente)
+        function showMyChildren()    { window.location.href = 'student-profile.html'; }
+        function showAlertsPanel()   { document.getElementById('alerts-modal').classList.add('active'); }
+        function closeAlertsModal()  { document.getElementById('alerts-modal').classList.remove('active'); }
+        function showSettings()      { window.location.href = 'teacher-settings.html'; }
+    </script>
+    <!-- ==================== FIN SCRIPTS ==================== -->
+
+    <!-- NeuroLearn Systems -->
+    <script src="nl-notifications.js"></script>
+    <script src="nl-ux-enhancements.js"></script>
+    <!-- ==================== MODAL ALERTAS ==================== -->
+    <style>
+        .alerts-modal-overlay {
+            display: none;
+            position: fixed; inset: 0;
+            background: rgba(15,23,42,0.6);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+        }
+        .alerts-modal-overlay.active { display: flex; }
+        .alerts-modal {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 2rem;
+            width: 90%;
+            max-width: 540px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            animation: slideUp 0.3s ease;
+        }
+        @keyframes slideUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to   { transform: translateY(0);    opacity: 1; }
+        }
+        .alerts-modal-head {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        .alerts-modal-head h2 { font-family:'Fredoka',sans-serif; font-size: 1.4rem; }
+        .close-modal-btn {
+            width: 34px; height: 34px; border-radius: 50%;
+            border: none; background: var(--n100);
+            font-size: 1.1rem; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: background 0.2s;
+        }
+        .close-modal-btn:hover { background: var(--n200); }
+        .modal-alert-row {
+            display: flex; gap: 1rem; padding: 1rem;
+            border-radius: 1rem; background: var(--n50);
+            margin-bottom: 0.75rem;
+        }
+        .modal-alert-row.danger { border-left: 3px solid var(--red); }
+        .modal-alert-row.warn   { border-left: 3px solid var(--yellow); }
+        .modal-alert-row.info   { border-left: 3px solid var(--blue); }
+        .modal-alert-ico { font-size: 1.5rem; }
+        .modal-alert-title { font-weight: 700; font-size: 0.88rem; margin-bottom: 0.2rem; }
+        .modal-alert-desc  { font-size: 0.8rem; color: var(--n500); line-height: 1.4; }
+        .modal-alert-time  { font-size: 0.72rem; color: var(--n500); margin-top: 0.3rem; }
+        .modal-footer-btn {
+            display: block; width: 100%; margin-top: 1.25rem;
+            padding: 0.8rem; border-radius: 999px; border: none;
+            background: var(--purple); color: white;
+            font-weight: 700; font-size: 0.9rem; cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .modal-footer-btn:hover { opacity: 0.85; }
+    </style>
+
+    <div class="alerts-modal-overlay" id="alerts-modal" onclick="if(event.target===this)closeAlertsModal()">
+        <div class="alerts-modal">
+            <div class="alerts-modal-head">
+                <h2>🔔 Todas las Alertas</h2>
+                <button class="close-modal-btn" onclick="closeAlertsModal()">✕</button>
+            </div>
+
+            <div class="modal-alert-row danger">
+                <div class="modal-alert-ico">⚠️</div>
+                <div>
+                    <div class="modal-alert-title">Dificultad en Restas — Miguel</div>
+                    <div class="modal-alert-desc">5 errores consecutivos en restas con dos dígitos. El sistema activó un módulo de refuerzo automáticamente.</div>
+                    <div class="modal-alert-time">Hoy · 10:32 am</div>
+                </div>
+            </div>
+            <div class="modal-alert-row warn">
+                <div class="modal-alert-ico">⏱️</div>
+                <div>
+                    <div class="modal-alert-title">Tiempo elevado en Español — Miguel</div>
+                    <div class="modal-alert-desc">Tiempo promedio por encima de lo esperado en ejercicios de comprensión lectora.</div>
+                    <div class="modal-alert-time">Ayer · 4:15 pm</div>
+                </div>
+            </div>
+            <div class="modal-alert-row info">
+                <div class="modal-alert-ico">🏆</div>
+                <div>
+                    <div class="modal-alert-title">¡Nuevo Nivel Alcanzado! — Miguel</div>
+                    <div class="modal-alert-desc">Miguel subió al Nivel 2 en Matemáticas. ¡Felicitaciones!</div>
+                    <div class="modal-alert-time">Hace 2 días</div>
+                </div>
+            </div>
+            <div class="modal-alert-row warn">
+                <div class="modal-alert-ico">📉</div>
+                <div>
+                    <div class="modal-alert-title">Baja actividad — Valeria</div>
+                    <div class="modal-alert-desc">Valeria no ha iniciado sesión en los últimos 3 días. Se recomienda motivarla.</div>
+                    <div class="modal-alert-time">Hace 3 días</div>
+                </div>
+            </div>
+            <div class="modal-alert-row info">
+                <div class="modal-alert-ico">📅</div>
+                <div>
+                    <div class="modal-alert-title">Evaluación próxima — Ambos</div>
+                    <div class="modal-alert-desc">Evaluación de Matemáticas programada para el próximo lunes. Repaso recomendado.</div>
+                    <div class="modal-alert-time">Hace 4 días</div>
+                </div>
+            </div>
+
+            <button class="modal-footer-btn" onclick="window.location.href='reports-advanced.html'">
+                Ver Reporte Completo →
+            </button>
+        </div>
+    </div>
+    <!-- ==================== FIN MODAL ALERTAS ==================== -->
+
+</body>
+</html>

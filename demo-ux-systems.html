@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo Completa - Sistemas UX NeuroLearn</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Fredoka', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 2rem;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 3rem;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .demo-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 1.5rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        .demo-card h2 {
+            color: #1E293B;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .demo-card p {
+            color: #64748B;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 1rem;
+            border: none;
+            border-radius: 0.75rem;
+            font-family: 'Fredoka', sans-serif;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 0.5rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-success {
+            background: #10B981;
+            color: white;
+        }
+
+        .btn-warning {
+            background: #F59E0B;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #EF4444;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #6366F1;
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .code-block {
+            background: #1E293B;
+            color: #10B981;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            margin-top: 1rem;
+            overflow-x: auto;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: #E0E7FF;
+            color: #4338CA;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        #tutorial-demo {
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        #tutorial-demo:hover {
+            border-color: #7C3AED;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎨 Demo Completa de Sistemas UX</h1>
+            <p>Prueba todos los sistemas de NeuroLearn en acción</p>
+        </div>
+
+        <div class="demo-grid">
+            <!-- 1. Confetti -->
+            <div class="demo-card">
+                <span class="badge">🎉 Celebraciones</span>
+                <h2>NLConfetti</h2>
+                <p>Sistema de celebraciones con animaciones de confetti</p>
+                
+                <button class="btn btn-primary" onclick="NLConfetti.celebrate()">
+                    🎉 Celebración Normal (100 confetti)
+                </button>
+                
+                <button class="btn btn-warning" onclick="NLConfetti.celebrate('mega')">
+                    🎊 MEGA Celebración (200 confetti)
+                </button>
+                
+                <button class="btn btn-success" onclick="NLConfetti.achievementUnlock('🏆', 'Demo Achievement')">
+                    🏆 Desbloquear Logro
+                </button>
+
+                <div class="code-block">
+NLConfetti.celebrate()
+NLConfetti.celebrate('mega')
+NLConfetti.achievementUnlock('🏆', 'Nombre')
+                </div>
+            </div>
+
+            <!-- 2. Sounds -->
+            <div class="demo-card">
+                <span class="badge">🔊 Audio</span>
+                <h2>NLSounds</h2>
+                <p>Sistema de sonidos con Web Audio API</p>
+                
+                <button class="btn btn-success" onclick="NLSounds.play('correct')">
+                    ✅ Sonido Correcto
+                </button>
+                
+                <button class="btn btn-danger" onclick="NLSounds.play('wrong')">
+                    ❌ Sonido Incorrecto
+                </button>
+                
+                <button class="btn btn-warning" onclick="NLSounds.play('achievement')">
+                    🏆 Logro (Acorde C-E-G)
+                </button>
+                
+                <button class="btn btn-secondary" onclick="NLSounds.play('level')">
+                    📈 Subir Nivel (Acorde G-B-D-F)
+                </button>
+
+                <button class="btn btn-primary" onclick="NLSounds.play('notification')">
+                    🔔 Notificación
+                </button>
+
+                <div class="code-block">
+NLSounds.play('correct')
+NLSounds.play('wrong')
+NLSounds.play('achievement')
+NLSounds.play('level')
+                </div>
+            </div>
+
+            <!-- 3. Tutorial -->
+            <div class="demo-card" id="tutorial-demo">
+                <span class="badge">🎓 Tutorial</span>
+                <h2>NLTutorial</h2>
+                <p>Tutorial interactivo con tooltips y overlay</p>
+                
+                <button class="btn btn-primary" onclick="startDemoTutorial()">
+                    📚 Iniciar Tutorial Demo
+                </button>
+                
+                <button class="btn btn-secondary" onclick="localStorage.removeItem('tutorial_completed'); alert('Tutorial reseteado. Recarga la página.')">
+                    🔄 Resetear Tutorial
+                </button>
+
+                <div class="code-block">
+const steps = [
+  { element: '#demo', 
+    title: 'Título',
+    description: 'Descripción' }
+];
+NLTutorial.init(steps);
+                </div>
+            </div>
+
+            <!-- 4. Backup -->
+            <div class="demo-card">
+                <span class="badge">💾 Datos</span>
+                <h2>NLBackup</h2>
+                <p>Exportar e importar datos en formato JSON</p>
+                
+                <button class="btn btn-success" onclick="NLBackup.exportAllData()">
+                    📥 Exportar Todos los Datos
+                </button>
+                
+                <label class="btn btn-primary" style="cursor: pointer;">
+                    📤 Importar Datos
+                    <input type="file" accept=".json" onchange="NLBackup.importData(this.files[0])" style="display: none;">
+                </label>
+
+                <div class="code-block">
+// Exportar
+NLBackup.exportAllData()
+
+// Importar
+NLBackup.importData(file)
+
+// Agregar botones HTML
+NLBackup.addBackupButtons()
+                </div>
+            </div>
+
+            <!-- 5. Transiciones -->
+            <div class="demo-card">
+                <span class="badge">✨ Animaciones</span>
+                <h2>NLTransitions</h2>
+                <p>Transiciones suaves entre páginas (ya activado)</p>
+                
+                <button class="btn btn-primary" onclick="window.location.href='student-dashboard.html'">
+                    → Ir a Dashboard (con transición)
+                </button>
+
+                <p style="margin-top: 1rem; font-size: 0.9rem; color: #10B981;">
+                    ✅ Las transiciones ya están activas. Navega entre páginas para verlas.
+                </p>
+
+                <div class="code-block">
+// Auto-activado al cargar
+NLTransitions.enable()
+
+// Sin transición en link específico
+&lt;a data-no-transition&gt;Link&lt;/a&gt;
+                </div>
+            </div>
+
+            <!-- 6. Calendar (requiere configuración) -->
+            <div class="demo-card">
+                <span class="badge">📅 Calendario</span>
+                <h2>NLCalendar</h2>
+                <p>Integración con Google Calendar (requiere API Keys)</p>
+                
+                <button class="btn btn-warning" onclick="showCalendarInfo()">
+                    ℹ️ Ver Instrucciones de Configuración
+                </button>
+
+                <div class="code-block">
+// 1. Configurar en nl-ux-enhancements.js
+CLIENT_ID: 'tu-client-id'
+API_KEY: 'tu-api-key'
+
+// 2. Usar
+await NLCalendar.init()
+await NLCalendar.addEvent(...)
+                </div>
+            </div>
+        </div>
+
+        <!-- Ejemplo de combinaciones -->
+        <div class="demo-card" style="max-width: 100%;">
+            <span class="badge">🎯 Combo</span>
+            <h2>Ejemplos de Combinaciones</h2>
+            <p>Usa múltiples sistemas juntos para mejores experiencias</p>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+                <button class="btn btn-success" onclick="comboSuccess()">
+                    ✅ Ejercicio Correcto
+                </button>
+                
+                <button class="btn btn-danger" onclick="comboWrong()">
+                    ❌ Ejercicio Incorrecto
+                </button>
+                
+                <button class="btn btn-warning" onclick="comboAchievement()">
+                    🏆 Logro Completo
+                </button>
+                
+                <button class="btn btn-secondary" onclick="comboLevelUp()">
+                    📈 Subir de Nivel
+                </button>
+            </div>
+
+            <div class="code-block">
+// Ejercicio correcto
+function comboSuccess() {
+    NLSounds.play('correct');
+    NLConfetti.celebrate();
+    NLNotifications.success('¡Correcto!', '+10 puntos');
+}
+
+// Logro desbloqueado
+function comboAchievement() {
+    NLSounds.play('achievement');
+    NLConfetti.celebrate('mega');
+    NLNotifications.success('¡Logro desbloqueado!', '🏆 Primera Victoria');
+}
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="nl-notifications.js"></script>
+    <script src="nl-themes.js"></script>
+    <script src="nl-ux-enhancements.js"></script>
+
+    <script>
+        // Tutorial demo
+        function startDemoTutorial() {
+            const steps = [
+                {
+                    element: '.demo-card:first-child',
+                    title: '🎉 Sistema de Confetti',
+                    description: 'Haz click en los botones para ver celebraciones animadas con confetti'
+                },
+                {
+                    element: '.demo-card:nth-child(2)',
+                    title: '🔊 Sistema de Sonidos',
+                    description: 'Reproduce diferentes sonidos para feedback auditivo en tu aplicación'
+                },
+                {
+                    element: '#tutorial-demo',
+                    title: '🎓 Este es el Tutorial',
+                    description: '¡Así funciona el sistema de tutorial! Puedes navegar con los botones'
+                }
+            ];
+            
+            NLTutorial.init(steps);
+        }
+
+        // Combinaciones
+        function comboSuccess() {
+            NLSounds.play('correct');
+            NLConfetti.celebrate();
+            if (typeof NLNotifications !== 'undefined') {
+                NLNotifications.success('¡Correcto!', '✅ +10 puntos');
+            }
+        }
+
+        function comboWrong() {
+            NLSounds.play('wrong');
+            if (typeof NLNotifications !== 'undefined') {
+                NLNotifications.error('Intenta de nuevo', '❌ Respuesta incorrecta');
+            }
+        }
+
+        function comboAchievement() {
+            NLSounds.play('achievement');
+            NLConfetti.celebrate('mega');
+            if (typeof NLNotifications !== 'undefined') {
+                NLNotifications.success('¡Logro desbloqueado!', '🏆 Primera Victoria');
+            }
+        }
+
+        function comboLevelUp() {
+            NLSounds.play('level');
+            NLConfetti.celebrate('mega');
+            if (typeof NLNotifications !== 'undefined') {
+                NLNotifications.success('¡Subiste de nivel!', '📈 Ahora eres Nivel 2');
+            }
+        }
+
+        function showCalendarInfo() {
+            alert(`📅 Configuración de Google Calendar:
+
+1. Ve a Google Cloud Console
+2. Crea un proyecto nuevo
+3. Habilita "Google Calendar API"
+4. Crea credenciales:
+   - API Key
+   - OAuth 2.0 Client ID
+5. Edita nl-ux-enhancements.js:
+   CLIENT_ID: 'tu-client-id-aqui'
+   API_KEY: 'tu-api-key-aqui'
+
+Documentación: https://developers.google.com/calendar/api/quickstart/js`);
+        }
+
+        // Agregar sonidos a todos los botones
+        document.querySelectorAll('.btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                if (!btn.textContent.includes('Sonido')) {
+                    NLSounds.play('click');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

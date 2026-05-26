@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>🧪 Test API — NeuroLearn Kids</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'DM Sans',sans-serif; background:#0F172A; color:#E2E8F0; min-height:100vh; padding:2rem; }
+    h1  { font-family:'Fredoka',sans-serif; font-size:2rem; color:#6C63FF; margin-bottom:0.25rem; }
+    p.sub { color:#64748B; margin-bottom:2rem; font-size:0.9rem; }
+
+    .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(340px,1fr)); gap:1.5rem; }
+
+    .card {
+      background:#1E293B; border-radius:16px; padding:1.5rem;
+      border:1px solid #334155;
+    }
+    .card h3 { font-family:'Fredoka',sans-serif; font-size:1.1rem; margin-bottom:1rem; display:flex; align-items:center; gap:0.5rem; }
+
+    label  { font-size:0.8rem; color:#94A3B8; display:block; margin-bottom:0.3rem; margin-top:0.75rem; }
+    input, select, textarea {
+      width:100%; padding:0.65rem 0.9rem; border-radius:8px;
+      border:1px solid #334155; background:#0F172A; color:#E2E8F0;
+      font-size:0.88rem; font-family:'DM Sans',sans-serif;
+    }
+    textarea { resize:vertical; min-height:60px; }
+
+    button {
+      margin-top:1rem; width:100%; padding:0.75rem;
+      border-radius:10px; border:none; font-weight:700;
+      font-size:0.9rem; cursor:pointer; transition:all 0.2s;
+      font-family:'DM Sans',sans-serif;
+    }
+    .btn-purple { background:#6C63FF; color:white; }
+    .btn-purple:hover { background:#5B52EE; }
+    .btn-green  { background:#22C55E; color:white; }
+    .btn-green:hover  { background:#16A34A; }
+    .btn-red    { background:#EF4444; color:white; }
+    .btn-red:hover    { background:#DC2626; }
+    .btn-blue   { background:#3B82F6; color:white; }
+    .btn-blue:hover   { background:#2563EB; }
+    .btn-yellow { background:#F59E0B; color:#0F172A; }
+    .btn-yellow:hover { background:#D97706; }
+
+    .result {
+      margin-top:1rem; padding:0.85rem; border-radius:8px;
+      font-size:0.78rem; font-family:monospace; white-space:pre-wrap;
+      max-height:200px; overflow-y:auto; display:none;
+      border:1px solid #334155;
+    }
+    .result.ok  { background:#052e16; color:#4ade80; border-color:#166534; }
+    .result.err { background:#2d0f0f; color:#f87171; border-color:#7f1d1d; }
+    .result.inf { background:#1e1b4b; color:#a5b4fc; border-color:#3730a3; }
+
+    .status-bar {
+      display:flex; align-items:center; gap:0.5rem;
+      background:#1E293B; border-radius:10px; padding:0.75rem 1.25rem;
+      margin-bottom:1.5rem; border:1px solid #334155; font-size:0.88rem;
+    }
+    .dot { width:10px; height:10px; border-radius:50%; background:#EF4444; flex-shrink:0; }
+    .dot.online { background:#22C55E; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+
+    .token-display {
+      background:#0F172A; border-radius:8px; padding:0.65rem;
+      font-size:0.72rem; font-family:monospace; color:#6C63FF;
+      margin-top:0.5rem; word-break:break-all;
+      border:1px solid #334155; min-height:40px;
+    }
+
+    .section-label {
+      font-size:0.7rem; font-weight:700; text-transform:uppercase;
+      letter-spacing:0.1em; color:#475569; margin:2rem 0 1rem;
+    }
+  </style>
+</head>
+<body>
+
+<h1>🧪 Panel de Pruebas — NeuroLearn API</h1>
+<p class="sub">Prueba todos los endpoints del backend directamente desde aquí</p>
+
+<!-- Status bar -->
+<div class="status-bar">
+  <div class="dot" id="status-dot"></div>
+  <span id="status-text">Verificando conexión con el backend...</span>
+  <span style="margin-left:auto;color:#475569;font-size:0.78rem">http://localhost:3000</span>
+</div>
+
+<!-- Token activo -->
+<div style="background:#1E293B;border-radius:12px;padding:1rem 1.25rem;margin-bottom:1.5rem;border:1px solid #334155;">
+  <div style="font-size:0.78rem;color:#94A3B8;margin-bottom:0.4rem;">🔑 Token activo (del localStorage)</div>
+  <div class="token-display" id="token-display">Sin token — inicia sesión primero</div>
+  <div style="font-size:0.75rem;color:#475569;margin-top:0.4rem;" id="user-display">—</div>
+</div>
+
+<!-- ══════════════════ AUTENTICACIÓN ══════════════════ -->
+<div class="section-label">🔐 Autenticación</div>
+<div class="grid">
+
+  <!-- Registro -->
+  <div class="card">
+    <h3>👤 Registrar usuario</h3>
+    <label>Nombre</label><input id="r-first" value="Juan">
+    <label>Apellido</label><input id="r-last" value="Pérez">
+    <label>Email</label><input id="r-email" value="juan@test.com">
+    <label>Contraseña</label><input id="r-pass" type="password" value="12345678">
+    <label>Rol</label>
+    <select id="r-role">
+      <option value="STUDENT">Alumno</option>
+      <option value="TEACHER">Maestro</option>
+      <option value="PARENT">Padre/Madre</option>
+    </select>
+    <label>Grado (solo alumno)</label><input id="r-grade" value="2" type="number">
+    <button class="btn-purple" onclick="testRegister()">Registrar →</button>
+    <div class="result" id="res-register"></div>
+  </div>
+
+  <!-- Login -->
+  <div class="card">
+    <h3>🔓 Iniciar sesión</h3>
+    <label>Email</label><input id="l-email" value="juan@test.com">
+    <label>Contraseña</label><input id="l-pass" type="password" value="12345678">
+    <button class="btn-green" onclick="testLogin()">Login → (guarda token)</button>
+    <div class="result" id="res-login"></div>
+  </div>
+
+</div>
+
+<!-- ══════════════════ ESTUDIANTE ══════════════════ -->
+<div class="section-label">🎓 Estudiante</div>
+<div class="grid">
+
+  <div class="card">
+    <h3>📊 Mi perfil de estudiante</h3>
+    <p style="font-size:0.82rem;color:#64748B;">Requiere token de un usuario STUDENT</p>
+    <button class="btn-blue" onclick="testEndpoint('GET','/api/students/profile','res-profile')">Ver mi perfil →</button>
+    <div class="result" id="res-profile"></div>
+  </div>
+
+  <div class="card">
+    <h3>🎮 Guardar puntuación de juego</h3>
+    <label>Tipo de juego</label>
+    <select id="g-type">
+      <option value="MATH_GAME">Math Blaster</option>
+      <option value="MEMORY_GAME">Memory Match</option>
+      <option value="NUMBER_LINE">Number Line Jump</option>
+      <option value="WORD_GAME">Word Builder</option>
+    </select>
+    <label>Puntuación</label><input id="g-score" value="250" type="number">
+    <label>Tiempo (segundos)</label><input id="g-time" value="60" type="number">
+    <label>Precisión (%)</label><input id="g-acc" value="85" type="number">
+    <label>Nivel</label><input id="g-level" value="1" type="number">
+    <button class="btn-green" onclick="testSaveScore()">Guardar puntuación →</button>
+    <div class="result" id="res-score"></div>
+  </div>
+
+  <div class="card">
+    <h3>📚 Mi contenido asignado</h3>
+    <p style="font-size:0.82rem;color:#64748B;">Ver tareas asignadas por el maestro</p>
+    <button class="btn-blue" onclick="testEndpoint('GET','/api/content/my-assignments','res-assignments')">Ver asignaciones →</button>
+    <div class="result" id="res-assignments"></div>
+  </div>
+
+</div>
+
+<!-- ══════════════════ MAESTRO ══════════════════ -->
+<div class="section-label">👩‍🏫 Maestro</div>
+<div class="grid">
+
+  <div class="card">
+    <h3>👥 Mis alumnos</h3>
+    <p style="font-size:0.82rem;color:#64748B;">Requiere token de un TEACHER</p>
+    <button class="btn-blue" onclick="testEndpoint('GET','/api/family/my-students','res-my-students')">Ver mis alumnos →</button>
+    <div class="result" id="res-my-students"></div>
+  </div>
+
+  <div class="card">
+    <h3>➕ Agregar alumno al grupo</h3>
+    <label>Email del alumno</label><input id="add-student-email" placeholder="alumno@ejemplo.com">
+    <button class="btn-green" onclick="testAddStudent()">Agregar alumno →</button>
+    <div class="result" id="res-add-student"></div>
+  </div>
+
+  <div class="card">
+    <h3>📝 Crear contenido</h3>
+    <label>Título</label><input id="c-title" value="Introducción a las sumas">
+    <label>Descripción</label><textarea id="c-desc">Ejercicios básicos de suma para 2° primaria</textarea>
+    <label>Materia</label>
+    <select id="c-subject">
+      <option value="MATH">Matemáticas</option>
+      <option value="SPANISH">Español</option>
+      <option value="MEMORY">Memoria</option>
+    </select>
+    <label>Tipo</label>
+    <select id="c-type">
+      <option value="EXERCISE">Ejercicio</option>
+      <option value="VIDEO">Video</option>
+      <option value="PDF">PDF</option>
+      <option value="GAME">Juego</option>
+      <option value="LINK">Enlace</option>
+    </select>
+    <label>URL (opcional)</label><input id="c-url" placeholder="https://...">
+    <label>Grado</label><input id="c-grade" value="2" type="number">
+    <button class="btn-purple" onclick="testCreateContent()">Crear contenido →</button>
+    <div class="result" id="res-create-content"></div>
+  </div>
+
+  <div class="card">
+    <h3>📋 Mi contenido creado</h3>
+    <button class="btn-blue" onclick="testEndpoint('GET','/api/content/my-content','res-my-content')">Ver mi contenido →</button>
+    <div class="result" id="res-my-content"></div>
+  </div>
+
+  <div class="card">
+    <h3>📤 Asignar contenido a alumno</h3>
+    <label>ID del contenido</label><input id="assign-content-id" placeholder="1" type="number">
+    <label>ID(s) del alumno (userId, separados por coma)</label><input id="assign-student-ids" placeholder="3,4,5">
+    <label>Fecha límite (opcional)</label><input id="assign-due" type="date">
+    <button class="btn-yellow" onclick="testAssignContent()">Asignar →</button>
+    <div class="result" id="res-assign-content"></div>
+  </div>
+
+  <div class="card">
+    <h3>👨‍🎓 Ver todos los estudiantes</h3>
+    <p style="font-size:0.82rem;color:#64748B;">Lista global (todos los registrados)</p>
+    <button class="btn-blue" onclick="testEndpoint('GET','/api/students/all','res-all-students')">Ver todos →</button>
+    <div class="result" id="res-all-students"></div>
+  </div>
+
+</div>
+
+<!-- ══════════════════ PADRE ══════════════════ -->
+<div class="section-label">👨‍👩‍👧 Padre/Madre</div>
+<div class="grid">
+
+  <div class="card">
+    <h3>➕ Vincular hijo</h3>
+    <label>Email del hijo (debe ser STUDENT registrado)</label>
+    <input id="add-child-email" placeholder="hijo@ejemplo.com">
+    <button class="btn-green" onclick="testAddChild()">Vincular hijo →</button>
+    <div class="result" id="res-add-child"></div>
+  </div>
+
+  <div class="card">
+    <h3>👨‍👩‍👧 Mis hijos</h3>
+    <p style="font-size:0.82rem;color:#64748B;">Requiere token de un PARENT</p>
+    <button class="btn-blue" onclick="testEndpoint('GET','/api/family/my-children','res-my-children')">Ver mis hijos →</button>
+    <div class="result" id="res-my-children"></div>
+  </div>
+
+</div>
+
+<!-- ══════════════════ EVALUACIONES ══════════════════ -->
+<div class="section-label">📝 Evaluaciones y Calificaciones</div>
+<div class="grid">
+
+  <div class="card">
+    <h3>➕ Crear evaluación</h3>
+    <label>Título</label><input id="ev-title" value="Evaluación de Sumas — Unidad 1">
+    <label>Materia</label>
+    <select id="ev-subject">
+      <option value="MATH">Matemáticas</option>
+      <option value="SPANISH">Español</option>
+    </select>
+    <label>Grado</label><input id="ev-grade" value="2" type="number">
+    <label>Tiempo límite (min, vacío=sin límite)</label><input id="ev-time" value="30" type="number">
+    <label>Mínimo para aprobar (%)</label><input id="ev-passing" value="60" type="number">
+    <label>Fecha límite</label><input id="ev-due" type="date">
+    <button class="btn-purple" onclick="testCreateEvaluation()">Crear evaluación →</button>
+    <div class="result" id="res-create-eval"></div>
+  </div>
+
+  <div class="card">
+    <h3>📋 Mis evaluaciones (maestro)</h3>
+    <button class="btn-blue" onclick="testEndpoint('GET','/api/evaluations/my-evaluations','res-my-evals')">Ver mis evaluaciones →</button>
+    <div class="result" id="res-my-evals"></div>
+  </div>
+
+  <div class="card">
+    <h3>📤 Asignar evaluación a alumno</h3>
+    <label>ID de la evaluación</label><input id="assign-eval-id" placeholder="1" type="number">
+    <label>ID(s) del alumno (userId, separados por coma)</label><input id="assign-eval-students" placeholder="3,4">
+    <button class="btn-yellow" onclick="testAssignEvaluation()">Asignar →</button>
+    <div class="result" id="res-assign-eval"></div>
+  </div>
+
+  <div class="card">
+    <h3>📊 Resultados de evaluación (maestro)</h3>
+    <label>ID de la evaluación</label><input id="results-eval-id" placeholder="1" type="number">
+    <button class="btn-blue" onclick="testGetResults()">Ver resultados →</button>
+    <div class="result" id="res-eval-results"></div>
+  </div>
+
+  <div class="card">
+    <h3>📚 Mis evaluaciones (alumno)</h3>
+    <p style="font-size:0.82rem;color:#64748B;">Requiere token de STUDENT</p>
+    <button class="btn-blue" onclick="testEndpoint('GET','/api/evaluations/assigned','res-assigned-evals')">Ver mis evaluaciones →</button>
+    <div class="result" id="res-assigned-evals"></div>
+  </div>
+
+  <div class="card">
+    <h3>▶ Iniciar evaluación (alumno)</h3>
+    <label>ID de la evaluación</label><input id="start-eval-id" placeholder="1" type="number">
+    <button class="btn-green" onclick="testStartEval()">Iniciar →</button>
+    <div class="result" id="res-start-eval"></div>
+  </div>
+
+  <div class="card">
+    <h3>📨 Enviar respuestas (alumno)</h3>
+    <label>ID de la asignación (assignmentId del inicio)</label><input id="submit-assign-id" placeholder="1" type="number">
+    <label>Respuestas (JSON)</label>
+    <textarea id="submit-answers" style="height:80px">[{"questionId":1,"selectedOptionId":2},{"questionId":2,"selectedOptionId":5}]</textarea>
+    <button class="btn-green" onclick="testSubmitEval()">Enviar respuestas →</button>
+    <div class="result" id="res-submit-eval"></div>
+  </div>
+
+  <div class="card">
+    <h3>🏆 Ver mi resultado (alumno)</h3>
+    <label>ID de la asignación</label><input id="result-assign-id" placeholder="1" type="number">
+    <button class="btn-blue" onclick="testGetMyResult()">Ver resultado →</button>
+    <div class="result" id="res-my-result"></div>
+  </div>
+
+</div>
+
+<!-- ══════════════════ GENERAL ══════════════════ -->
+<div class="section-label">🔧 General</div>
+<div class="grid">
+
+  <div class="card">
+    <h3>🗑️ Limpiar sesión</h3>
+    <p style="font-size:0.82rem;color:#64748B;">Elimina el token del localStorage</p>
+    <button class="btn-red" onclick="clearSession()">Cerrar sesión →</button>
+    <div class="result" id="res-clear"></div>
+  </div>
+
+  <div class="card">
+    <h3>🏓 Ping al servidor</h3>
+    <button class="btn-blue" onclick="checkServer()">Verificar conexión →</button>
+    <div class="result" id="res-ping"></div>
+  </div>
+
+</div>
+
+<script src="api-config.js"></script>
+<script>
+const BASE = 'http://localhost:3000';
+
+// ── Mostrar token y usuario al cargar ──────────────────
+function refreshTokenDisplay() {
+  const token = localStorage.getItem('token');
+  const userStr = localStorage.getItem('user');
+  const tokenEl = document.getElementById('token-display');
+  const userEl  = document.getElementById('user-display');
+
+  if (token) {
+    tokenEl.textContent = token.substring(0, 60) + '...';
+    if (userStr) {
+      const u = JSON.parse(userStr);
+      userEl.textContent = `👤 ${u.firstName} ${u.lastName} — Rol: ${u.role} — ID: ${u.id}`;
+    }
+  } else {
+    tokenEl.textContent = 'Sin token — inicia sesión primero';
+    userEl.textContent = '—';
+  }
+}
+
+// ── Verificar servidor ─────────────────────────────────
+async function checkServer() {
+  showResult('res-ping', 'Verificando...', 'inf');
+  try {
+    const r = await fetch(`${BASE}/api/auth/register`, { method:'OPTIONS' });
+    showResult('res-ping', `✅ Servidor respondió con status ${r.status}`, 'ok');
+    setOnline(true);
+  } catch(e) {
+    showResult('res-ping', `❌ No se pudo conectar: ${e.message}`, 'err');
+    setOnline(false);
+  }
+}
+
+function setOnline(online) {
+  const dot  = document.getElementById('status-dot');
+  const text = document.getElementById('status-text');
+  dot.className  = 'dot' + (online ? ' online' : '');
+  text.textContent = online ? '✅ Backend conectado en http://localhost:3000' : '❌ Backend no disponible — ¿está corriendo npm run dev?';
+}
+
+// ── Helper genérico ────────────────────────────────────
+function testGetHeaders() {
+  const token = localStorage.getItem('token');
+  const h = { 'Content-Type': 'application/json' };
+  if (token) h['Authorization'] = `Bearer ${token}`;
+  return h;
+}
+
+async function testEndpoint(method, path, resultId, body = null) {
+  showResult(resultId, 'Cargando...', 'inf');
+  try {
+    const opts = { method, headers: testGetHeaders() };
+    if (body) opts.body = JSON.stringify(body);
+    const r    = await fetch(`${BASE}${path}`, opts);
+    const data = await r.json();
+    showResult(resultId, JSON.stringify(data, null, 2), r.ok ? 'ok' : 'err');
+  } catch(e) {
+    showResult(resultId, `❌ Error: ${e.message}`, 'err');
+  }
+}
+
+function showResult(id, text, type) {
+  const el = document.getElementById(id);
+  el.textContent = text;
+  el.className   = `result ${type}`;
+  el.style.display = 'block';
+}
+
+// ── AUTENTICACIÓN ──────────────────────────────────────
+async function testRegister() {
+  const body = {
+    firstName: document.getElementById('r-first').value,
+    lastName:  document.getElementById('r-last').value,
+    email:     document.getElementById('r-email').value,
+    password:  document.getElementById('r-pass').value,
+    role:      document.getElementById('r-role').value,
+    grade:     parseInt(document.getElementById('r-grade').value) || null
+  };
+  showResult('res-register', 'Registrando...', 'inf');
+  try {
+    const r    = await fetch(`${BASE}/api/auth/register`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body) });
+    const data = await r.json();
+    if (r.ok && data.token) {
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+      refreshTokenDisplay();
+      showResult('res-register', '✅ Registrado y logueado\n\n' + JSON.stringify(data, null, 2), 'ok');
+      setOnline(true);
+    } else {
+      showResult('res-register', '❌ Error\n\n' + JSON.stringify(data, null, 2), 'err');
+    }
+  } catch(e) { showResult('res-register', `❌ ${e.message}`, 'err'); }
+}
+
+async function testLogin() {
+  showResult('res-login', 'Iniciando sesión...', 'inf');
+  try {
+    const r    = await fetch(`${BASE}/api/auth/login`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ email: document.getElementById('l-email').value, password: document.getElementById('l-pass').value })
+    });
+    const data = await r.json();
+    if (r.ok && data.token) {
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+      refreshTokenDisplay();
+      showResult('res-login', '✅ Login exitoso — token guardado\n\n' + JSON.stringify(data, null, 2), 'ok');
+      setOnline(true);
+    } else {
+      showResult('res-login', '❌ ' + JSON.stringify(data, null, 2), 'err');
+    }
+  } catch(e) { showResult('res-login', `❌ ${e.message}`, 'err'); }
+}
+
+// ── JUEGO ──────────────────────────────────────────────
+async function testSaveScore() {
+  const body = {
+    gameType:  document.getElementById('g-type').value,
+    score:     parseInt(document.getElementById('g-score').value),
+    timeSpent: parseInt(document.getElementById('g-time').value),
+    accuracy:  parseInt(document.getElementById('g-acc').value),
+    level:     parseInt(document.getElementById('g-level').value)
+  };
+  testEndpoint('POST', '/api/games/score', 'res-score', body);
+}
+
+// ── CONTENIDO ──────────────────────────────────────────
+async function testCreateContent() {
+  const body = {
+    title:       document.getElementById('c-title').value,
+    description: document.getElementById('c-desc').value,
+    subject:     document.getElementById('c-subject').value,
+    type:        document.getElementById('c-type').value,
+    url:         document.getElementById('c-url').value || null,
+    grade:       parseInt(document.getElementById('c-grade').value),
+    isPublished: true
+  };
+  testEndpoint('POST', '/api/content', 'res-create-content', body);
+}
+
+async function testAssignContent() {
+  const ids = document.getElementById('assign-student-ids').value
+    .split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n));
+  const body = {
+    contentId:  parseInt(document.getElementById('assign-content-id').value),
+    studentIds: ids,
+    dueDate:    document.getElementById('assign-due').value || null
+  };
+  testEndpoint('POST', '/api/content/assign', 'res-assign-content', body);
+}
+
+// ── FAMILIA ────────────────────────────────────────────
+async function testAddChild() {
+  testEndpoint('POST', '/api/family/add-child', 'res-add-child',
+    { studentEmail: document.getElementById('add-child-email').value });
+}
+
+async function testAddStudent() {
+  testEndpoint('POST', '/api/family/add-student', 'res-add-student',
+    { studentEmail: document.getElementById('add-student-email').value });
+}
+
+// ── EVALUACIONES ──────────────────────────────────────
+async function testCreateEvaluation() {
+  const body = {
+    title:        document.getElementById('ev-title').value,
+    description:  'Evaluación creada desde el panel de pruebas',
+    subject:      document.getElementById('ev-subject').value,
+    grade:        parseInt(document.getElementById('ev-grade').value),
+    timeLimit:    parseInt(document.getElementById('ev-time').value) || null,
+    passingScore: parseInt(document.getElementById('ev-passing').value),
+    dueDate:      document.getElementById('ev-due').value || null,
+    isPublished:  true,
+    questions: [
+      { text:'¿Cuánto es 5 + 3?', type:'MULTIPLE_CHOICE', points:10,
+        options:[{text:'6',isCorrect:false},{text:'8',isCorrect:true},{text:'9',isCorrect:false},{text:'7',isCorrect:false}] },
+      { text:'¿Cuánto es 10 - 4?', type:'MULTIPLE_CHOICE', points:10,
+        options:[{text:'5',isCorrect:false},{text:'7',isCorrect:false},{text:'6',isCorrect:true},{text:'8',isCorrect:false}] },
+      { text:'¿El número 0 es par?', type:'TRUE_FALSE', points:10,
+        options:[{text:'Verdadero',isCorrect:true},{text:'Falso',isCorrect:false}] }
+    ]
+  };
+  testEndpoint('POST', '/api/evaluations', 'res-create-eval', body);
+}
+
+function testAssignEvaluation() {
+  const ids = document.getElementById('assign-eval-students').value
+    .split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n));
+  testEndpoint('POST', `/api/evaluations/${document.getElementById('assign-eval-id').value}/assign`, 'res-assign-eval', { studentIds: ids });
+}
+
+function testGetResults() {
+  testEndpoint('GET', `/api/evaluations/${document.getElementById('results-eval-id').value}/results`, 'res-eval-results');
+}
+
+function testStartEval() {
+  testEndpoint('POST', `/api/evaluations/${document.getElementById('start-eval-id').value}/start`, 'res-start-eval', {});
+}
+
+function testSubmitEval() {
+  try {
+    const answers = JSON.parse(document.getElementById('submit-answers').value);
+    testEndpoint('POST', `/api/evaluations/submit/${document.getElementById('submit-assign-id').value}`, 'res-submit-eval', { answers });
+  } catch(e) { showResult('res-submit-eval', '❌ JSON inválido: ' + e.message, 'err'); }
+}
+
+function testGetMyResult() {
+  testEndpoint('GET', `/api/evaluations/result/${document.getElementById('result-assign-id').value}`, 'res-my-result');
+}
+
+// ── SESIÓN ─────────────────────────────────────────────
+function clearSession() {
+  localStorage.removeItem('token');
+  localStorage.removeItem('user');
+  refreshTokenDisplay();
+  showResult('res-clear', '✅ Sesión cerrada — token eliminado', 'ok');
+}
+
+// ── INIT ───────────────────────────────────────────────
+refreshTokenDisplay();
+checkServer();
+</script>
+</body>
+</html>

@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comunicación con Maestros - NeuroLearn Kids</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;600;700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #F8FAFC;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            height: 100vh;
+        }
+
+        /* Sidebar - Teachers List */
+        .teachers-sidebar {
+            background: white;
+            border-right: 1px solid #E2E8F0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-header {
+            padding: 2rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .sidebar-header h1 {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .back-btn {
+            padding: 0.75rem 1.25rem;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            border-radius: 999px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .back-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .search-box {
+            padding: 1.5rem;
+            border-bottom: 1px solid #E2E8F0;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid #E2E8F0;
+            border-radius: 999px;
+            font-size: 0.95rem;
+        }
+
+        .teachers-list {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .teacher-item {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid #E2E8F0;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .teacher-item:hover {
+            background: #F8FAFC;
+        }
+
+        .teacher-item.active {
+            background: rgba(124,58,237,0.1);
+            border-left: 3px solid #7C3AED;
+        }
+
+        .teacher-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .teacher-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .teacher-name {
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+            color: #1E293B;
+        }
+
+        .teacher-subject {
+            font-size: 0.85rem;
+            color: #64748B;
+            margin-bottom: 0.25rem;
+        }
+
+        .teacher-status {
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .status-online {
+            background: #10B981;
+        }
+
+        .status-offline {
+            background: #94A3B8;
+        }
+
+        .unread-badge {
+            background: #EF4444;
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        /* Chat Area */
+        .chat-area {
+            display: flex;
+            flex-direction: column;
+            background: #F8FAFC;
+        }
+
+        .chat-header {
+            background: white;
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid #E2E8F0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-teacher-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .chat-teacher-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+
+        .chat-teacher-details h2 {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.3rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .chat-teacher-details p {
+            color: #64748B;
+            font-size: 0.9rem;
+        }
+
+        .chat-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .action-btn {
+            padding: 0.75rem 1.5rem;
+            border: 2px solid #E2E8F0;
+            background: white;
+            border-radius: 999px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .action-btn:hover {
+            border-color: #7C3AED;
+            color: #7C3AED;
+        }
+
+        /* Messages */
+        .messages-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 2rem;
+            background: #F8FAFC;
+        }
+
+        .message {
+            margin-bottom: 1.5rem;
+            display: flex;
+            gap: 1rem;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.sent {
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+
+        .message.sent .message-avatar {
+            background: linear-gradient(135deg, #10B981, #059669);
+        }
+
+        .message-content {
+            max-width: 60%;
+        }
+
+        .message-bubble {
+            background: white;
+            padding: 1rem 1.25rem;
+            border-radius: 1.25rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .message.sent .message-bubble {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .message-text {
+            line-height: 1.6;
+            margin-bottom: 0.5rem;
+        }
+
+        .message-time {
+            font-size: 0.75rem;
+            color: #94A3B8;
+        }
+
+        .message.sent .message-time {
+            color: rgba(255,255,255,0.7);
+            text-align: right;
+        }
+
+        /* Date Separator */
+        .date-separator {
+            text-align: center;
+            margin: 2rem 0;
+            position: relative;
+        }
+
+        .date-separator::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: #E2E8F0;
+        }
+
+        .date-separator span {
+            background: #F8FAFC;
+            padding: 0.5rem 1rem;
+            border-radius: 999px;
+            font-size: 0.85rem;
+            color: #64748B;
+            position: relative;
+            font-weight: 600;
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            padding: 1rem 2rem;
+            background: white;
+            border-top: 1px solid #E2E8F0;
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .quick-action {
+            padding: 0.75rem 1.25rem;
+            background: rgba(124,58,237,0.1);
+            border: none;
+            border-radius: 999px;
+            color: #7C3AED;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .quick-action:hover {
+            background: rgba(124,58,237,0.2);
+        }
+
+        /* Input Area */
+        .input-area {
+            background: white;
+            padding: 1.5rem 2rem;
+            border-top: 1px solid #E2E8F0;
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .input-area input {
+            flex: 1;
+            padding: 1rem 1.5rem;
+            border: 2px solid #E2E8F0;
+            border-radius: 999px;
+            font-size: 1rem;
+        }
+
+        .input-area input:focus {
+            outline: none;
+            border-color: #7C3AED;
+        }
+
+        .send-btn {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .send-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 10px 30px rgba(102,126,234,0.3);
+        }
+
+        .attach-btn {
+            width: 50px;
+            height: 50px;
+            background: #F8FAFC;
+            border: 2px solid #E2E8F0;
+            border-radius: 50%;
+            color: #64748B;
+            font-size: 1.25rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .attach-btn:hover {
+            border-color: #7C3AED;
+            color: #7C3AED;
+        }
+
+        /* Empty State */
+        .empty-state {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            color: #94A3B8;
+        }
+
+        .empty-state-icon {
+            font-size: 5rem;
+            margin-bottom: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+            .teachers-sidebar {
+                display: none;
+            }
+            .message-content {
+                max-width: 80%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Teachers Sidebar -->
+        <div class="teachers-sidebar">
+            <div class="sidebar-header">
+                <a href="landing-page-v2.html" class="back-btn" onclick="return confirm('¿Seguro que quieres cerrar sesión?')" style="background: #EF4444; margin-left: 1rem;">🚪 Cerrar Sesión</a>
+            <a href="parent-dashboard.html" class="back-btn">← Volver</a>
+                <h1>Maestros</h1>
+                <p style="opacity: 0.9; font-size: 0.9rem;">Comunicación directa</p>
+            </div>
+
+            <div class="search-box">
+                <input type="text" placeholder="🔍 Buscar maestro..." id="searchTeacher" onkeyup="searchTeachers()">
+            </div>
+
+            <div class="teachers-list" id="teachersList">
+                <div class="teacher-item active" onclick="selectTeacher('maria', this)">
+                    <div class="teacher-avatar">👩‍🏫</div>
+                    <div class="teacher-info">
+                        <div class="teacher-name">Profa. María González</div>
+                        <div class="teacher-subject">Matemáticas • 2° A</div>
+                        <div class="teacher-status">
+                            <span class="status-indicator status-online"></span>
+                            <span>En línea</span>
+                        </div>
+                    </div>
+                    <div class="unread-badge">2</div>
+                </div>
+
+                <div class="teacher-item" onclick="selectTeacher('carlos', this)">
+                    <div class="teacher-avatar">👨‍🏫</div>
+                    <div class="teacher-info">
+                        <div class="teacher-name">Prof. Carlos Ramírez</div>
+                        <div class="teacher-subject">Español • 2° A</div>
+                        <div class="teacher-status">
+                            <span class="status-indicator status-offline"></span>
+                            <span>Desconectado</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="teacher-item" onclick="selectTeacher('ana', this)">
+                    <div class="teacher-avatar">👩‍🏫</div>
+                    <div class="teacher-info">
+                        <div class="teacher-name">Profa. Ana Martínez</div>
+                        <div class="teacher-subject">Ciencias • 2° A</div>
+                        <div class="teacher-status">
+                            <span class="status-indicator status-online"></span>
+                            <span>En línea</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat Area -->
+        <div class="chat-area">
+            <div class="chat-header">
+                <div class="chat-teacher-info">
+                    <div class="chat-teacher-avatar">👩‍🏫</div>
+                    <div class="chat-teacher-details">
+                        <h2 id="chatTeacherName">Profa. María González</h2>
+                        <p id="chatTeacherSubject">Matemáticas • 2° A</p>
+                    </div>
+                </div>
+                <div class="chat-actions">
+                    <button class="action-btn" onclick="requestMeeting()">📅 Solicitar Cita</button>
+                    <button class="action-btn" onclick="viewGrades()">📊 Ver Calificaciones</button>
+                </div>
+            </div>
+
+            <div class="messages-container" id="messagesContainer">
+                <div class="date-separator">
+                    <span>Hoy, 9 de Marzo</span>
+                </div>
+
+                <div class="message">
+                    <div class="message-avatar">👩‍🏫</div>
+                    <div class="message-content">
+                        <div class="message-bubble">
+                            <div class="message-text">
+                                Buenos días, Laura. Quería comentarle que Miguel ha mostrado un gran progreso en las tablas de multiplicar esta semana. ¡Felicitaciones! 🎉
+                            </div>
+                            <div class="message-time">10:30 AM</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="message sent">
+                    <div class="message-avatar">👩</div>
+                    <div class="message-content">
+                        <div class="message-bubble">
+                            <div class="message-text">
+                                ¡Muchas gracias, Profa. María! Nos da mucho gusto. Hemos estado practicando en casa con la plataforma.
+                            </div>
+                            <div class="message-time">10:35 AM</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="message">
+                    <div class="message-avatar">👩‍🏫</div>
+                    <div class="message-content">
+                        <div class="message-bubble">
+                            <div class="message-text">
+                                Eso se nota mucho. Le recomiendo que ahora practiquen las divisiones básicas. Ya está listo para ese nivel.
+                            </div>
+                            <div class="message-time">10:37 AM</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="message sent">
+                    <div class="message-avatar">👩</div>
+                    <div class="message-content">
+                        <div class="message-bubble">
+                            <div class="message-text">
+                                Perfecto, empezamos hoy mismo. ¿Hay algún recurso específico que recomiende?
+                            </div>
+                            <div class="message-time">10:40 AM</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="quick-actions">
+                <button class="quick-action" onclick="sendQuickMessage('¿Cómo va el progreso de mi hijo?')">¿Cómo va el progreso?</button>
+                <button class="quick-action" onclick="sendQuickMessage('¿Cuándo es la próxima evaluación?')">Próxima evaluación</button>
+                <button class="quick-action" onclick="sendQuickMessage('Reportar ausencia')">Reportar ausencia</button>
+            </div>
+
+            <div class="input-area">
+                <button class="attach-btn" onclick="attachFile()">📎</button>
+                <input type="text" id="messageInput" placeholder="Escribe un mensaje..." onkeypress="handleEnter(event)">
+                <button class="send-btn" onclick="sendMessage()">📤</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function selectTeacher(id, element) {
+            // Remove active class from all items
+            document.querySelectorAll('.teacher-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Add active class to clicked item
+            element.classList.add('active');
+            
+            // Update chat header (you would load actual chat data here)
+            const teachers = {
+                'maria': { name: 'Profa. María González', subject: 'Matemáticas • 2° A', avatar: '👩‍🏫' },
+                'carlos': { name: 'Prof. Carlos Ramírez', subject: 'Español • 2° A', avatar: '👨‍🏫' },
+                'ana': { name: 'Profa. Ana Martínez', subject: 'Ciencias • 2° A', avatar: '👩‍🏫' }
+            };
+            
+            const teacher = teachers[id];
+            document.getElementById('chatTeacherName').textContent = teacher.name;
+            document.getElementById('chatTeacherSubject').textContent = teacher.subject;
+            document.querySelector('.chat-teacher-avatar').textContent = teacher.avatar;
+            
+            // Remove unread badge
+            const badge = element.querySelector('.unread-badge');
+            if (badge) badge.remove();
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            const container = document.getElementById('messagesContainer');
+            const now = new Date();
+            const time = now.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' });
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message sent';
+            messageDiv.innerHTML = `
+                <div class="message-avatar">👩</div>
+                <div class="message-content">
+                    <div class="message-bubble">
+                        <div class="message-text">${message}</div>
+                        <div class="message-time">${time}</div>
+                    </div>
+                </div>
+            `;
+            
+            container.appendChild(messageDiv);
+            container.scrollTop = container.scrollHeight;
+            
+            input.value = '';
+            
+            // Simulate teacher response after 2 seconds
+            setTimeout(() => {
+                const responseDiv = document.createElement('div');
+                responseDiv.className = 'message';
+                responseDiv.innerHTML = `
+                    <div class="message-avatar">👩‍🏫</div>
+                    <div class="message-content">
+                        <div class="message-bubble">
+                            <div class="message-text">Gracias por su mensaje. Le responderé con más detalles pronto.</div>
+                            <div class="message-time">${time}</div>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(responseDiv);
+                container.scrollTop = container.scrollHeight;
+            }, 2000);
+        }
+
+        function handleEnter(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        function sendQuickMessage(message) {
+            document.getElementById('messageInput').value = message;
+            sendMessage();
+        }
+
+        function requestMeeting() {
+            alert('📅 Funcionalidad de solicitar cita próximamente. Se enviará un email al maestro con opciones de horario.');
+        }
+
+        function viewGrades() {
+            alert('📊 Redirigiendo a la página de calificaciones...');
+            window.location.href = 'progress-report.html';
+        }
+
+        function attachFile() {
+            alert('📎 Funcionalidad de adjuntar archivos próximamente. Podrás enviar PDFs, imágenes y documentos.');
+        }
+
+        function searchTeachers() {
+            const input = document.getElementById('searchTeacher').value.toLowerCase();
+            const items = document.querySelectorAll('.teacher-item');
+            
+            items.forEach(item => {
+                const name = item.querySelector('.teacher-name').textContent.toLowerCase();
+                const subject = item.querySelector('.teacher-subject').textContent.toLowerCase();
+                
+                if (name.includes(input) || subject.includes(input)) {
+                    item.style.display = 'flex';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        // Auto-scroll to bottom on load
+        window.onload = function() {
+            const container = document.getElementById('messagesContainer');
+            container.scrollTop = container.scrollHeight;
+        };
+    </script>
+    <!-- NeuroLearn Systems -->
+    <script src="nl-notifications.js"></script>
+</body>
+</html>

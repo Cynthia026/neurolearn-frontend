@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planes y Precios - NeuroLearn Kids</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;600;700&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --primary: #7C3AED;
+            --secondary: #EC4899;
+            --success: #10B981;
+            --dark: #0F172A;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .back-btn {
+            padding: 1rem 2rem;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            border-radius: 999px;
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            margin-bottom: 3rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .back-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateX(-5px);
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 4rem;
+            animation: fadeInDown 0.8s ease;
+        }
+
+        .header h1 {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 4rem;
+            color: white;
+            margin-bottom: 1rem;
+            text-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+
+        .header p {
+            font-size: 1.3rem;
+            color: rgba(255,255,255,0.9);
+            margin-bottom: 3rem;
+        }
+
+        /* Toggle */
+        .billing-toggle {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 4rem;
+        }
+
+        .toggle-label {
+            color: white;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .toggle-switch {
+            width: 60px;
+            height: 32px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 999px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .toggle-switch.active {
+            background: white;
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            width: 24px;
+            height: 24px;
+            background: white;
+            border-radius: 50%;
+            transition: all 0.3s;
+        }
+
+        .toggle-switch.active::after {
+            left: 32px;
+            background: var(--primary);
+        }
+
+        .discount-badge {
+            background: #10B981;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 999px;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        /* Plans Grid */
+        .plans-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .plan-card {
+            background: white;
+            border-radius: 2rem;
+            padding: 2.5rem;
+            position: relative;
+            transition: all 0.3s;
+            animation: fadeInUp 0.6s ease;
+        }
+
+        .plan-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 25px 60px rgba(0,0,0,0.2);
+        }
+
+        .plan-card.popular {
+            border: 3px solid #FFD700;
+            transform: scale(1.05);
+        }
+
+        .plan-card.popular::before {
+            content: '⭐ Más Popular';
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: #333;
+            padding: 0.5rem 1.5rem;
+            border-radius: 999px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            box-shadow: 0 4px 15px rgba(255,215,0,0.4);
+        }
+
+        .plan-icon {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .plan-name {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+
+        .plan-desc {
+            color: #64748B;
+            margin-bottom: 1.5rem;
+            min-height: 40px;
+        }
+
+        .plan-price {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .plan-price span {
+            font-size: 1.2rem;
+            color: #64748B;
+        }
+
+        .plan-period {
+            color: #64748B;
+            margin-bottom: 2rem;
+        }
+
+        .plan-features {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+
+        .plan-features li {
+            padding: 0.75rem 0;
+            display: flex;
+            align-items: start;
+            gap: 0.75rem;
+            color: #475569;
+        }
+
+        .plan-features li::before {
+            content: '✓';
+            color: #10B981;
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+
+        .plan-features li.disabled {
+            opacity: 0.4;
+        }
+
+        .plan-features li.disabled::before {
+            content: '✗';
+            color: #EF4444;
+        }
+
+        .plan-btn {
+            width: 100%;
+            padding: 1.25rem;
+            border: none;
+            border-radius: 999px;
+            font-family: 'Fredoka', sans-serif;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .plan-btn.primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: 0 10px 30px rgba(124,58,237,0.3);
+        }
+
+        .plan-btn.primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(124,58,237,0.4);
+        }
+
+        .plan-btn.secondary {
+            background: white;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .plan-btn.secondary:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Comparison Table */
+        .comparison-section {
+            background: white;
+            border-radius: 2rem;
+            padding: 3rem;
+            margin-bottom: 3rem;
+            animation: fadeIn 0.8s ease;
+        }
+
+        .comparison-section h2 {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 1.5rem;
+            text-align: center;
+            border-bottom: 1px solid #E2E8F0;
+        }
+
+        .comparison-table th {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.2rem;
+            background: rgba(124,58,237,0.05);
+        }
+
+        .comparison-table td:first-child {
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .check-icon {
+            color: #10B981;
+            font-size: 1.5rem;
+        }
+
+        .cross-icon {
+            color: #EF4444;
+            font-size: 1.5rem;
+        }
+
+        /* FAQ */
+        .faq-section {
+            background: white;
+            border-radius: 2rem;
+            padding: 3rem;
+        }
+
+        .faq-section h2 {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .faq-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+        }
+
+        .faq-item {
+            padding: 1.5rem;
+            background: rgba(124,58,237,0.05);
+            border-radius: 1rem;
+        }
+
+        .faq-item h3 {
+            font-family: 'Fredoka', sans-serif;
+            margin-bottom: 0.75rem;
+            color: var(--dark);
+        }
+
+        .faq-item p {
+            color: #64748B;
+            line-height: 1.6;
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @media (max-width: 1200px) {
+            .plans-grid { grid-template-columns: repeat(2, 1fr); }
+            .plan-card.popular { transform: scale(1); }
+        }
+
+        @media (max-width: 768px) {
+            .plans-grid { grid-template-columns: 1fr; }
+            .faq-grid { grid-template-columns: 1fr; }
+            .header h1 { font-size: 2.5rem; }
+            .comparison-section { overflow-x: auto; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="landing-page-v2.html" class="back-btn">← Volver</a>
+
+        <!-- Header -->
+        <div class="header">
+            <h1>Elige el Plan Perfecto</h1>
+            <p>Planes flexibles para familias y escuelas. Cambia o cancela en cualquier momento.</p>
+
+            <!-- Billing Toggle -->
+            <div class="billing-toggle">
+                <span class="toggle-label">Mensual</span>
+                <div class="toggle-switch" id="billingToggle" onclick="toggleBilling()"></div>
+                <span class="toggle-label">Anual</span>
+                <span class="discount-badge">Ahorra 20%</span>
+            </div>
+        </div>
+
+        <!-- Plans Grid -->
+        <div class="plans-grid">
+            <!-- Plan Gratis -->
+            <div class="plan-card">
+                <div class="plan-icon">🎈</div>
+                <h3 class="plan-name">Gratis</h3>
+                <p class="plan-desc">Para probar la plataforma</p>
+                <div class="plan-price">$0</div>
+                <p class="plan-period">Por siempre</p>
+                <ul class="plan-features">
+                    <li>10 ejercicios al día</li>
+                    <li>1 hijo</li>
+                    <li>Reportes básicos</li>
+                    <li class="disabled">Sin adaptación IA</li>
+                    <li class="disabled">Sin logros</li>
+                    <li class="disabled">Sin soporte</li>
+                </ul>
+                <button class="plan-btn secondary" onclick="selectPlan('gratis')">Comenzar Gratis</button>
+            </div>
+
+            <!-- Plan Básico -->
+            <div class="plan-card">
+                <div class="plan-icon">🌟</div>
+                <h3 class="plan-name">Básico</h3>
+                <p class="plan-desc">Ideal para 1 hijo</p>
+                <div class="plan-price" id="price-basic">$299<span>/mes</span></div>
+                <p class="plan-period">Facturación mensual</p>
+                <ul class="plan-features">
+                    <li>Ejercicios ilimitados</li>
+                    <li>1 hijo</li>
+                    <li>Adaptación básica</li>
+                    <li>Reportes semanales</li>
+                    <li>Logros y gamificación</li>
+                    <li class="disabled">Sin chat con maestros</li>
+                </ul>
+                <button class="plan-btn secondary" onclick="selectPlan('basico')">Seleccionar Básico</button>
+            </div>
+
+            <!-- Plan Familiar (Popular) -->
+            <div class="plan-card popular">
+                <div class="plan-icon">👨‍👩‍👧‍👦</div>
+                <h3 class="plan-name">Familiar</h3>
+                <p class="plan-desc">Perfecto para familias</p>
+                <div class="plan-price" id="price-familiar">$499<span>/mes</span></div>
+                <p class="plan-period">Facturación mensual</p>
+                <ul class="plan-features">
+                    <li>Ejercicios ilimitados</li>
+                    <li>Hasta 3 hijos</li>
+                    <li>Adaptación avanzada</li>
+                    <li>Reportes diarios</li>
+                    <li>Logros premium</li>
+                    <li>Chat con maestros</li>
+                </ul>
+                <button class="plan-btn primary" onclick="selectPlan('familiar')">Seleccionar Familiar</button>
+            </div>
+
+            <!-- Plan Escuela -->
+            <div class="plan-card">
+                <div class="plan-icon">🏫</div>
+                <h3 class="plan-name">Escuela</h3>
+                <p class="plan-desc">Para instituciones</p>
+                <div class="plan-price" id="price-escuela">$2,999<span>/mes</span></div>
+                <p class="plan-period">Facturación mensual</p>
+                <ul class="plan-features">
+                    <li>Todo incluido</li>
+                    <li>Hasta 30 alumnos</li>
+                    <li>Dashboard docente</li>
+                    <li>Reportes personalizados</li>
+                    <li>Soporte prioritario</li>
+                    <li>Capacitación incluida</li>
+                </ul>
+                <button class="plan-btn secondary" onclick="selectPlan('escuela')">Contactar Ventas</button>
+            </div>
+        </div>
+
+        <!-- Comparison Table -->
+        <div class="comparison-section">
+            <h2>Comparación Detallada</h2>
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Característica</th>
+                        <th>Gratis</th>
+                        <th>Básico</th>
+                        <th>Familiar</th>
+                        <th>Escuela</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Ejercicios diarios</td>
+                        <td>10</td>
+                        <td>Ilimitados</td>
+                        <td>Ilimitados</td>
+                        <td>Ilimitados</td>
+                    </tr>
+                    <tr>
+                        <td>Número de hijos/alumnos</td>
+                        <td>1</td>
+                        <td>1</td>
+                        <td>3</td>
+                        <td>30</td>
+                    </tr>
+                    <tr>
+                        <td>Adaptación con IA</td>
+                        <td><span class="cross-icon">✗</span></td>
+                        <td><span class="check-icon">✓</span> Básica</td>
+                        <td><span class="check-icon">✓</span> Avanzada</td>
+                        <td><span class="check-icon">✓</span> Premium</td>
+                    </tr>
+                    <tr>
+                        <td>Gamificación y logros</td>
+                        <td><span class="cross-icon">✗</span></td>
+                        <td><span class="check-icon">✓</span></td>
+                        <td><span class="check-icon">✓</span> Premium</td>
+                        <td><span class="check-icon">✓</span></td>
+                    </tr>
+                    <tr>
+                        <td>Reportes</td>
+                        <td>Básicos</td>
+                        <td>Semanales</td>
+                        <td>Diarios</td>
+                        <td>Personalizados</td>
+                    </tr>
+                    <tr>
+                        <td>Chat con maestros</td>
+                        <td><span class="cross-icon">✗</span></td>
+                        <td><span class="cross-icon">✗</span></td>
+                        <td><span class="check-icon">✓</span></td>
+                        <td><span class="check-icon">✓</span></td>
+                    </tr>
+                    <tr>
+                        <td>Dashboard docente</td>
+                        <td><span class="cross-icon">✗</span></td>
+                        <td><span class="cross-icon">✗</span></td>
+                        <td><span class="cross-icon">✗</span></td>
+                        <td><span class="check-icon">✓</span></td>
+                    </tr>
+                    <tr>
+                        <td>Soporte</td>
+                        <td>Email</td>
+                        <td>Email</td>
+                        <td>Email + Chat</td>
+                        <td>Prioritario</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- FAQ -->
+        <div class="faq-section">
+            <h2>Preguntas Frecuentes</h2>
+            <div class="faq-grid">
+                <div class="faq-item">
+                    <h3>¿Puedo cambiar de plan?</h3>
+                    <p>Sí, puedes cambiar tu plan en cualquier momento. Los cambios se reflejan inmediatamente.</p>
+                </div>
+                <div class="faq-item">
+                    <h3>¿Cómo funciona la facturación anual?</h3>
+                    <p>Pagas por adelantado los 12 meses y ahorras 20%. Puedes cancelar y te devolvemos la parte proporcional.</p>
+                </div>
+                <div class="faq-item">
+                    <h3>¿Qué métodos de pago aceptan?</h3>
+                    <p>Aceptamos todas las tarjetas de crédito y débito, así como PayPal y transferencias bancarias.</p>
+                </div>
+                <div class="faq-item">
+                    <h3>¿Ofrecen descuentos para escuelas?</h3>
+                    <p>Sí, para grupos de más de 30 alumnos ofrecemos descuentos especiales. Contacta a ventas.</p>
+                </div>
+                <div class="faq-item">
+                    <h3>¿Puedo probar antes de pagar?</h3>
+                    <p>Sí, el plan Gratis no requiere tarjeta. También ofrecemos 14 días de prueba en planes de pago.</p>
+                </div>
+                <div class="faq-item">
+                    <h3>¿Qué incluye el soporte prioritario?</h3>
+                    <p>Respuesta en menos de 2 horas, gerente de cuenta dedicado y capacitación personalizada.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let isAnnual = false;
+
+        const prices = {
+            basico: { monthly: 299, annual: 2390 },
+            familiar: { monthly: 499, annual: 3990 },
+            escuela: { monthly: 2999, annual: 23990 }
+        };
+
+        function toggleBilling() {
+            isAnnual = !isAnnual;
+            const toggle = document.getElementById('billingToggle');
+            toggle.classList.toggle('active');
+            updatePrices();
+        }
+
+        function updatePrices() {
+            const period = isAnnual ? 'annual' : 'monthly';
+            const suffix = isAnnual ? '/año' : '/mes';
+
+            document.getElementById('price-basic').innerHTML = `$${prices.basico[period].toLocaleString()}<span>${suffix}</span>`;
+            document.getElementById('price-familiar').innerHTML = `$${prices.familiar[period].toLocaleString()}<span>${suffix}</span>`;
+            document.getElementById('price-escuela').innerHTML = `$${prices.escuela[period].toLocaleString()}<span>${suffix}</span>`;
+
+            // Update period text
+            const periodText = isAnnual ? 'Facturación anual (ahorra 20%)' : 'Facturación mensual';
+            document.querySelectorAll('.plan-period').forEach(el => {
+                if (!el.textContent.includes('siempre')) {
+                    el.textContent = periodText;
+                }
+            });
+        }
+
+        function selectPlan(plan) {
+            const billing = isAnnual ? 'annual' : 'monthly';
+            alert(`Has seleccionado el plan ${plan.toUpperCase()} con facturación ${billing === 'annual' ? 'anual' : 'mensual'}.`);
+            window.location.href = 'login-register.html?plan=' + plan + '&billing=' + billing;
+        }
+
+        // Animate cards on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animationDelay = index * 0.1 + 's';
+                    entry.target.style.opacity = '1';
+                }
+            });
+        });
+
+        document.querySelectorAll('.plan-card').forEach(card => {
+            card.style.opacity = '0';
+            observer.observe(card);
+        });
+    </script>
+
+    <!-- NeuroLearn Systems -->
+    <script src="nl-notifications.js"></script>
+    <script src="nl-themes.js"></script>
+    <script src="nl-ux-enhancements.js"></script>
+</body>
+</html>

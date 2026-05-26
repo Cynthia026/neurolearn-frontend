@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spell Master - NeuroLearn Kids</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Fredoka', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 1rem;
+        }
+
+        .game-container {
+            background: white;
+            border-radius: 2rem;
+            padding: 2rem;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 800px;
+            width: 100%;
+        }
+
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 3px solid #E2E8F0;
+        }
+
+        .back-btn {
+            padding: 0.75rem 1.5rem;
+            background: #7C3AED;
+            color: white;
+            border: none;
+            border-radius: 999px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .back-btn:hover { background: #6D28D9; transform: translateY(-2px); }
+        
+        .game-title { font-size: 2.5rem; color: #1E293B; }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat {
+            text-align: center;
+            padding: 1rem;
+            background: rgba(124,58,237,0.1);
+            border-radius: 1rem;
+        }
+
+        .stat-label { font-size: 0.85rem; color: #64748B; margin-bottom: 0.5rem; }
+        .stat-value { font-size: 1.8rem; color: #7C3AED; font-weight: 700; }
+
+        .lives {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+        }
+
+        .heart {
+            font-size: 2rem;
+            animation: pulse 2s infinite;
+        }
+
+        .heart.lost {
+            opacity: 0.2;
+            animation: none;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .word-display {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 2rem;
+            background: linear-gradient(135deg, rgba(102,126,234,0.1), rgba(118,75,162,0.1));
+            border-radius: 1.5rem;
+        }
+
+        .speaker-btn {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 3rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 0 auto 1rem;
+            display: block;
+            box-shadow: 0 10px 30px rgba(124,58,237,0.3);
+        }
+
+        .speaker-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 15px 40px rgba(124,58,237,0.4);
+        }
+
+        .speaker-btn:active {
+            transform: scale(0.95);
+        }
+
+        .speaker-btn.speaking {
+            animation: speaking 0.5s ease-in-out infinite;
+        }
+
+        @keyframes speaking {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+        }
+
+        .hint-text {
+            color: #64748B;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .definition {
+            background: white;
+            padding: 1rem;
+            border-radius: 1rem;
+            border: 2px solid #E2E8F0;
+            color: #475569;
+            font-size: 0.95rem;
+            margin-top: 1rem;
+        }
+
+        .spelling-input {
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto 2rem;
+            display: block;
+        }
+
+        .letter-boxes {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+
+        .letter-box {
+            width: 60px;
+            height: 70px;
+            border: 3px solid #E2E8F0;
+            border-radius: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: 700;
+            background: white;
+            text-transform: uppercase;
+            transition: all 0.3s;
+        }
+
+        .letter-box.filled {
+            border-color: #7C3AED;
+            background: rgba(124,58,237,0.05);
+        }
+
+        .letter-box.correct {
+            border-color: #10B981;
+            background: #D1FAE5;
+            animation: bounce 0.5s;
+        }
+
+        .letter-box.wrong {
+            border-color: #EF4444;
+            background: #FEE2E2;
+            animation: shake 0.5s;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .keyboard {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 0.5rem;
+            max-width: 700px;
+            margin: 0 auto 2rem;
+        }
+
+        .key-btn {
+            aspect-ratio: 1;
+            background: white;
+            border: 2px solid #E2E8F0;
+            border-radius: 0.5rem;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+        }
+
+        .key-btn:hover {
+            border-color: #7C3AED;
+            transform: translateY(-3px);
+        }
+
+        .key-btn.used {
+            background: #F1F5F9;
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .action-btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 999px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .action-btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .action-btn-secondary {
+            background: white;
+            color: #7C3AED;
+            border: 2px solid #E2E8F0;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-3px);
+        }
+
+        .game-over {
+            display: none;
+            text-align: center;
+            padding: 3rem;
+        }
+
+        .game-over.active { display: block; }
+
+        .game-over h2 {
+            font-size: 3rem;
+            color: #7C3AED;
+            margin-bottom: 1rem;
+        }
+
+        .final-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .final-stat {
+            text-align: center;
+        }
+
+        .final-stat-value {
+            font-size: 3rem;
+            color: #1E293B;
+            font-weight: 700;
+        }
+
+        .final-stat-label {
+            color: #64748B;
+            margin-top: 0.5rem;
+        }
+
+        .play-again-btn {
+            padding: 1.5rem 3rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 999px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .play-again-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(102,126,234,0.4);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #E2E8F0;
+            border-radius: 999px;
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #10B981, #059669);
+            transition: width 0.5s;
+            border-radius: 999px;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div id="gameScreen">
+            <div class="game-header">
+                <button class="back-btn" onclick="window.location.href='student-dashboard.html'">← Volver</button>
+                <h1 class="game-title">🎤 Spell Master</h1>
+                <div></div>
+            </div>
+
+            <div class="stats">
+                <div class="stat">
+                    <div class="stat-label">Palabras</div>
+                    <div class="stat-value" id="wordsCompleted">0/10</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">Correctas</div>
+                    <div class="stat-value" id="correctWords">0</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">Puntos</div>
+                    <div class="stat-value" id="score">0</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">Vidas</div>
+                    <div class="lives" id="lives">
+                        <span class="heart">❤️</span>
+                        <span class="heart">❤️</span>
+                        <span class="heart">❤️</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressBar" style="width: 0%"></div>
+            </div>
+
+            <div class="word-display">
+                <button class="speaker-btn" id="speakerBtn" onclick="speakWord()">🔊</button>
+                <p class="hint-text">Escucha la palabra y deletréala correctamente</p>
+                <div class="definition" id="definition">
+                    Presiona el botón para escuchar la palabra
+                </div>
+            </div>
+
+            <div class="letter-boxes" id="letterBoxes"></div>
+
+            <div class="keyboard" id="keyboard"></div>
+
+            <div class="actions">
+                <button class="action-btn action-btn-secondary" onclick="clearWord()">🔄 Borrar</button>
+                <button class="action-btn action-btn-secondary" onclick="speakWord()">🔊 Repetir</button>
+                <button class="action-btn action-btn-primary" onclick="checkSpelling()">✓ Verificar</button>
+                <button class="action-btn action-btn-secondary" onclick="giveHint()">💡 Pista</button>
+            </div>
+        </div>
+
+        <div class="game-over" id="gameOver">
+            <h2 id="gameOverTitle">🎉 ¡Juego Terminado!</h2>
+            <div class="final-stats">
+                <div class="final-stat">
+                    <div class="final-stat-value" id="finalCorrect">0</div>
+                    <div class="final-stat-label">Palabras Correctas</div>
+                </div>
+                <div class="final-stat">
+                    <div class="final-stat-value" id="finalScore">0</div>
+                    <div class="final-stat-label">Puntos Totales</div>
+                </div>
+            </div>
+            <p id="performanceMessage" style="font-size: 1.2rem; margin: 2rem 0;"></p>
+            <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                <button class="play-again-btn" onclick="restartGame()">🔄 Jugar de Nuevo</button>
+                <button class="play-again-btn" onclick="window.location.href='student-dashboard.html'" style="background: linear-gradient(135deg, #10B981, #059669);">← Regresar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 50 palabras comunes de 2° primaria
+        const words = [
+            { word: 'CASA', definition: 'Lugar donde vivimos con nuestra familia' },
+            { word: 'PERRO', definition: 'Animal doméstico que ladra y es muy fiel' },
+            { word: 'GATO', definition: 'Animal doméstico que maúlla y le gusta la leche' },
+            { word: 'MESA', definition: 'Mueble con superficie plana donde comemos' },
+            { word: 'SILLA', definition: 'Mueble para sentarse' },
+            { word: 'AGUA', definition: 'Líquido transparente que bebemos' },
+            { word: 'LIBRO', definition: 'Objeto con páginas para leer historias' },
+            { word: 'ÁRBOL', definition: 'Planta grande con tronco y ramas' },
+            { word: 'FLOR', definition: 'Parte colorida y bonita de las plantas' },
+            { word: 'SOL', definition: 'Estrella que nos da luz y calor durante el día' },
+            { word: 'LUNA', definition: 'Satélite que vemos brillar en la noche' },
+            { word: 'ESTRELLA', definition: 'Punto brillante que vemos en el cielo nocturno' },
+            { word: 'CIELO', definition: 'Espacio azul que vemos arriba' },
+            { word: 'TIERRA', definition: 'Planeta donde vivimos' },
+            { word: 'MAR', definition: 'Gran extensión de agua salada' },
+            { word: 'RÍO', definition: 'Corriente de agua dulce' },
+            { word: 'MONTAÑA', definition: 'Elevación muy grande de terreno' },
+            { word: 'CAMPO', definition: 'Terreno grande con plantas o cultivos' },
+            { word: 'CIUDAD', definition: 'Lugar con muchas casas y edificios' },
+            { word: 'CALLE', definition: 'Camino en la ciudad por donde pasan los carros' },
+            { word: 'ESCUELA', definition: 'Lugar donde los niños van a aprender' },
+            { word: 'MAESTRO', definition: 'Persona que enseña en la escuela' },
+            { word: 'NIÑO', definition: 'Persona pequeña que está creciendo' },
+            { word: 'MAMÁ', definition: 'Mujer que nos dio la vida y nos cuida' },
+            { word: 'PAPÁ', definition: 'Hombre que nos dio la vida y nos cuida' },
+            { word: 'FAMILIA', definition: 'Grupo de personas unidas por amor' },
+            { word: 'AMIGO', definition: 'Persona con quien jugamos y compartimos' },
+            { word: 'JUEGO', definition: 'Actividad divertida que hacemos para pasarla bien' },
+            { word: 'PELOTA', definition: 'Objeto redondo para jugar' },
+            { word: 'CARRO', definition: 'Vehículo con cuatro ruedas' },
+            { word: 'BICICLETA', definition: 'Vehículo de dos ruedas que se mueve pedaleando' },
+            { word: 'AVIÓN', definition: 'Máquina que vuela por el aire' },
+            { word: 'BARCO', definition: 'Vehículo que navega en el agua' },
+            { word: 'TREN', definition: 'Vehículo largo que viaja sobre rieles' },
+            { word: 'COMIDA', definition: 'Alimentos que comemos para nutrirnos' },
+            { word: 'PAN', definition: 'Alimento hecho con harina que se hornea' },
+            { word: 'LECHE', definition: 'Líquido blanco nutritivo' },
+            { word: 'FRUTA', definition: 'Alimento dulce que crece en las plantas' },
+            { word: 'MANZANA', definition: 'Fruta redonda, puede ser roja o verde' },
+            { word: 'PLÁTANO', definition: 'Fruta amarilla y alargada' },
+            { word: 'COLOR', definition: 'Propiedad visual de las cosas (rojo, azul, etc.)' },
+            { word: 'ROJO', definition: 'Color del fuego y de algunas flores' },
+            { word: 'AZUL', definition: 'Color del cielo y del mar' },
+            { word: 'VERDE', definition: 'Color de las hojas y del pasto' },
+            { word: 'AMARILLO', definition: 'Color del sol y los plátanos' },
+            { word: 'NÚMERO', definition: 'Símbolo para contar (1, 2, 3...)' },
+            { word: 'UNO', definition: 'Primer número, cantidad singular' },
+            { word: 'DOS', definition: 'Número que sigue al uno' },
+            { word: 'TRES', definition: 'Número que sigue al dos' },
+            { word: 'AMOR', definition: 'Sentimiento bonito hacia alguien' }
+        ];
+
+        const keyboard = 'ABCDEFGHIJKLMNÑOPQRSTUVWXYZÁÉÍÓÚ'.split('');
+
+        let gameState = {
+            currentWordIndex: 0,
+            currentWord: null,
+            userInput: [],
+            usedLetters: [],
+            lives: 3,
+            score: 0,
+            correctWords: 0,
+            wordsCompleted: 0,
+            totalWords: 10,
+            usedWords: [],
+            hintsUsed: 0
+        };
+
+        // Text-to-Speech
+        const synth = window.speechSynthesis;
+
+        function speakWord() {
+            if (!gameState.currentWord) return;
+            
+            const utterance = new SpeechSynthesisUtterance(gameState.currentWord.word);
+            utterance.lang = 'es-MX';
+            utterance.rate = 0.7;
+            utterance.pitch = 1.1;
+            
+            const speakerBtn = document.getElementById('speakerBtn');
+            speakerBtn.classList.add('speaking');
+            
+            utterance.onend = () => {
+                speakerBtn.classList.remove('speaking');
+            };
+            
+            synth.speak(utterance);
+            playSound('notification');
+        }
+
+        function initGame() {
+            pickNewWord();
+            createKeyboard();
+            updateUI();
+        }
+
+        function pickNewWord() {
+            const available = words.filter(w => !gameState.usedWords.includes(w.word));
+            
+            if (available.length === 0 || gameState.wordsCompleted >= gameState.totalWords) {
+                endGame();
+                return;
+            }
+
+            const word = available[Math.floor(Math.random() * available.length)];
+            gameState.currentWord = word;
+            gameState.userInput = [];
+            gameState.usedLetters = [];
+            gameState.hintsUsed = 0;
+
+            createLetterBoxes(word.word.length);
+            document.getElementById('definition').textContent = word.definition;
+            
+            // Auto-speak word
+            setTimeout(() => speakWord(), 500);
+        }
+
+        function createLetterBoxes(length) {
+            const container = document.getElementById('letterBoxes');
+            container.innerHTML = '';
+
+            for (let i = 0; i < length; i++) {
+                const box = document.createElement('div');
+                box.className = 'letter-box';
+                box.id = `box-${i}`;
+                container.appendChild(box);
+            }
+        }
+
+        function createKeyboard() {
+            const container = document.getElementById('keyboard');
+            container.innerHTML = '';
+
+            keyboard.forEach(letter => {
+                const btn = document.createElement('button');
+                btn.className = 'key-btn';
+                btn.textContent = letter;
+                btn.onclick = () => typeLetter(letter);
+                btn.id = `key-${letter}`;
+                container.appendChild(btn);
+            });
+        }
+
+        function typeLetter(letter) {
+            const btn = document.getElementById(`key-${letter}`);
+            // CAMBIO: Permitir reutilizar letras
+            // if (btn.classList.contains('used')) return;
+
+            if (gameState.userInput.length < gameState.currentWord.word.length) {
+                gameState.userInput.push(letter);
+                gameState.usedLetters.push(letter);
+                
+                const index = gameState.userInput.length - 1;
+                const box = document.getElementById(`box-${index}`);
+                box.textContent = letter;
+                box.classList.add('filled');
+                
+                // CAMBIO: No marcar como usada
+                // btn.classList.add('used');
+                playSound('click');
+                
+                // Auto-check if word is complete
+                if (gameState.userInput.length === gameState.currentWord.word.length) {
+                    setTimeout(() => checkSpelling(), 500);
+                }
+            }
+        }
+
+        function clearWord() {
+            gameState.userInput = [];
+            gameState.usedLetters.forEach(letter => {
+                const btn = document.getElementById(`key-${letter}`);
+                if (btn) btn.classList.remove('used');
+            });
+            gameState.usedLetters = [];
+
+            document.querySelectorAll('.letter-box').forEach(box => {
+                box.textContent = '';
+                box.classList.remove('filled', 'correct', 'wrong');
+            });
+            
+            playSound('click');
+        }
+
+        function checkSpelling() {
+            const userWord = gameState.userInput.join('');
+            const correctWord = gameState.currentWord.word;
+
+            if (userWord.length !== correctWord.length) {
+                alert('Completa todas las letras primero');
+                return;
+            }
+
+            let isCorrect = true;
+
+            for (let i = 0; i < correctWord.length; i++) {
+                const box = document.getElementById(`box-${i}`);
+                if (userWord[i] === correctWord[i]) {
+                    box.classList.add('correct');
+                    box.classList.remove('wrong');
+                } else {
+                    box.classList.add('wrong');
+                    box.classList.remove('correct');
+                    isCorrect = false;
+                }
+            }
+
+            if (isCorrect) {
+                playSound('achievement');
+                gameState.score += 10 - gameState.hintsUsed;
+                gameState.correctWords++;
+                gameState.wordsCompleted++;
+                gameState.usedWords.push(correctWord);
+                
+                // ✨ NUEVO: Confetti en palabra correcta
+                if (typeof NLConfetti !== 'undefined') {
+                    NLConfetti.celebrate();
+                }
+                
+                // ✨ NUEVO: Mega confetti cada 5 palabras correctas
+                if (gameState.correctWords > 0 && gameState.correctWords % 5 === 0) {
+                    if (typeof NLConfetti !== 'undefined') {
+                        NLConfetti.celebrate('mega');
+                    }
+                    if (typeof NLSounds !== 'undefined') {
+                        NLSounds.play('level');
+                    }
+                }
+                
+                setTimeout(() => {
+                    if (gameState.wordsCompleted >= gameState.totalWords) {
+                        endGame();
+                    } else {
+                        pickNewWord();
+                    }
+                }, 1500);
+            } else {
+                playSound('wrong');
+                gameState.lives--;
+                updateLives();
+                
+                if (gameState.lives <= 0) {
+                    endGame();
+                } else {
+                    setTimeout(() => {
+                        clearWord();
+                        speakWord();
+                    }, 1500);
+                }
+            }
+
+            updateUI();
+        }
+
+        function giveHint() {
+            if (gameState.hintsUsed >= 2) {
+                alert('Ya usaste todas las pistas disponibles');
+                return;
+            }
+
+            const correctWord = gameState.currentWord.word;
+            const emptyIndices = [];
+            
+            for (let i = 0; i < correctWord.length; i++) {
+                if (!gameState.userInput[i]) {
+                    emptyIndices.push(i);
+                }
+            }
+
+            if (emptyIndices.length === 0) return;
+
+            const randomIndex = emptyIndices[Math.floor(Math.random() * emptyIndices.length)];
+            const hintLetter = correctWord[randomIndex];
+            
+            // Auto-fill the hint letter
+            const box = document.getElementById(`box-${randomIndex}`);
+            box.textContent = hintLetter;
+            box.classList.add('filled');
+            box.style.background = '#FEF3C7';
+            
+            gameState.userInput[randomIndex] = hintLetter;
+            gameState.hintsUsed++;
+            
+            playSound('notification');
+            alert(`💡 Pista: La letra en posición ${randomIndex + 1} es "${hintLetter}"`);
+        }
+
+        function updateLives() {
+            const hearts = document.querySelectorAll('.heart');
+            hearts.forEach((heart, index) => {
+                if (index >= gameState.lives) {
+                    heart.classList.add('lost');
+                } else {
+                    heart.classList.remove('lost');
+                }
+            });
+        }
+
+        function updateUI() {
+            document.getElementById('wordsCompleted').textContent = 
+                `${gameState.wordsCompleted}/${gameState.totalWords}`;
+            document.getElementById('correctWords').textContent = gameState.correctWords;
+            document.getElementById('score').textContent = gameState.score;
+            
+            const progress = (gameState.wordsCompleted / gameState.totalWords) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+        }
+
+        function endGame() {
+            synth.cancel();
+            document.getElementById('gameScreen').style.display = 'none';
+            document.getElementById('gameOver').classList.add('active');
+            
+            document.getElementById('finalCorrect').textContent = gameState.correctWords;
+            document.getElementById('finalScore').textContent = gameState.score;
+
+            let title = '🎉 ¡Juego Terminado!';
+            let message = '';
+            
+            if (gameState.lives <= 0) {
+                title = '😢 Sin Vidas';
+                message = 'No te desanimes, ¡sigue practicando!';
+            } else if (gameState.correctWords === gameState.totalWords) {
+                title = '🏆 ¡PERFECTO!';
+                message = '¡Deletreaste todas las palabras correctamente! ¡Eres un maestro!';
+            } else if (gameState.correctWords >= 7) {
+                message = '🌟 ¡Excelente trabajo! Sigue así.';
+            } else if (gameState.correctWords >= 5) {
+                message = '👍 ¡Buen intento! Puedes mejorar.';
+            } else {
+                message = '💪 ¡Sigue practicando! Cada vez será más fácil.';
+            }
+
+            document.getElementById('gameOverTitle').textContent = title;
+            document.getElementById('performanceMessage').textContent = message;
+        }
+
+        function restartGame() {
+            gameState = {
+                currentWordIndex: 0,
+                currentWord: null,
+                userInput: [],
+                usedLetters: [],
+                lives: 3,
+                score: 0,
+                correctWords: 0,
+                wordsCompleted: 0,
+                totalWords: 10,
+                usedWords: [],
+                hintsUsed: 0
+            };
+
+            document.getElementById('gameScreen').style.display = 'block';
+            document.getElementById('gameOver').classList.remove('active');
+            
+            updateLives();
+            initGame();
+        }
+
+        function playSound(type) {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            const sounds = {
+                correct: { freq: 800, duration: 0.3 },
+                wrong: { freq: 200, duration: 0.4 },
+                click: { freq: 500, duration: 0.1 },
+                achievement: { freq: 880, duration: 0.5 },
+                notification: { freq: 600, duration: 0.2 }
+            };
+            
+            const sound = sounds[type] || sounds.click;
+            
+            oscillator.frequency.value = sound.freq;
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + sound.duration);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + sound.duration);
+        }
+
+        // Initialize game
+        initGame();
+        
+        // ✨ NUEVO: Soporte para teclado físico
+        document.addEventListener('keydown', (e) => {
+            // Ignorar si el juego no está activo
+            if (!gameState.isPlaying) return;
+            
+            let key = e.key.toUpperCase();
+            
+            // Mapear teclas con acentos
+            const accentMap = {
+                '1': 'Á', '2': 'É', '3': 'Í', '4': 'Ó', '5': 'Ú'
+            };
+            
+            if (accentMap[e.key]) {
+                key = accentMap[e.key];
+            }
+            
+            // Verificar si es una letra válida del teclado virtual
+            const validKeys = 'ABCDEFGHIJKLMNÑOPQRSTUVWXYZÁÉÍÓÚ';
+            if (validKeys.includes(key)) {
+                typeLetter(key);
+            }
+            
+            // Retroceso para borrar
+            if (e.key === 'Backspace') {
+                e.preventDefault();
+                deleteLast();
+            }
+            
+            // Enter para verificar
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                if (gameState.userInput.length === gameState.currentWord.word.length) {
+                    checkSpelling();
+                }
+            }
+        });
+    </script>
+    
+    <!-- NeuroLearn Systems -->
+    <script src="nl-notifications.js"></script>
+    <script src="nl-ux-enhancements.js"></script>
+</body>
+</html>

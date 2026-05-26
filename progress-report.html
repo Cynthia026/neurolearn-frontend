@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reporte de Progreso - NeuroLearn Kids</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+
+        :root {
+            --purple:#7C3AED; --blue:#3B82F6; --pink:#EC4899;
+            --cyan:#06B6D4; --green:#10B981; --red:#EF4444;
+            --yellow:#FBBF24; --n50:#F8FAFC; --n100:#F1F5F9;
+            --n200:#E2E8F0; --n500:#64748B; --n700:#334155; --n900:#0F172A;
+        }
+
+        body {
+            font-family:'DM Sans', sans-serif;
+            background: var(--n50);
+            color: var(--n900);
+            padding: 2.5rem;
+        }
+
+        .container { max-width: 1100px; margin: 0 auto; }
+
+        /* REPORT HEADER */
+        .report-header {
+            background: linear-gradient(135deg,#667eea,#764ba2);
+            border-radius: 2rem;
+            padding: 3rem;
+            color: white;
+            margin-bottom: 2.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .report-header::before {
+            content:'';
+            position:absolute;
+            width:300px; height:300px;
+            border-radius:50%;
+            background:rgba(255,255,255,0.07);
+            top:-80px; right:-80px;
+        }
+
+        .rh-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .rh-student {
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+        }
+
+        .rh-avatar {
+            width: 72px; height: 72px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            border: 3px solid rgba(255,255,255,0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.25rem;
+        }
+
+        .rh-name {
+            font-family:'Fredoka', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .rh-meta {
+            opacity: 0.85;
+            font-size: 0.95rem;
+        }
+
+        .rh-actions { display: flex; gap: 1rem; }
+
+        .btn-download {
+            padding: 0.875rem 1.75rem;
+            background: rgba(255,255,255,0.2);
+            border: 2px solid rgba(255,255,255,0.4);
+            border-radius: 999px;
+            color: white;
+            font-family:'Fredoka', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-download:hover { background: rgba(255,255,255,0.3); }
+
+        .btn-share {
+            padding: 0.875rem 1.75rem;
+            background: white;
+            border: none;
+            border-radius: 999px;
+            color: var(--purple);
+            font-family:'Fredoka', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-share:hover { transform: translateY(-2px); }
+
+        /* SUMMARY METRICS */
+        .rh-metrics {
+            display: grid;
+            grid-template-columns: repeat(4,1fr);
+            gap: 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .rh-metric {
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 1.25rem;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .rh-m-val {
+            font-family:'Fredoka', sans-serif;
+            font-size: 2.25rem;
+            font-weight: 700;
+            display: block;
+        }
+
+        .rh-m-lbl {
+            font-size: 0.8rem;
+            opacity: 0.85;
+            margin-top: 0.25rem;
+        }
+
+        /* RISK LEVEL BANNER */
+        .risk-banner {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 2rem;
+            margin-bottom: 2.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .risk-indicator {
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .risk-circle {
+            width: 100px; height: 100px;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family:'Fredoka', sans-serif;
+            margin: 0 auto 0.75rem;
+            border: 6px solid;
+        }
+
+        .risk-circle.low { border-color: var(--green); background: rgba(16,185,129,0.07); }
+        .risk-circle.med { border-color: var(--yellow); background: rgba(251,191,36,0.07); }
+        .risk-circle.hi  { border-color: var(--red); background: rgba(239,68,68,0.07); }
+
+        .risk-val { font-size: 1.75rem; font-weight: 700; }
+        .risk-val.low { color: var(--green); }
+        .risk-val.med { color: var(--yellow); }
+        .risk-val.hi  { color: var(--red); }
+
+        .risk-lbl { font-size: 0.7rem; font-weight: 600; text-transform: uppercase; }
+        .risk-title { font-family:'Fredoka', sans-serif; font-size: 0.95rem; color: var(--n700); }
+
+        .risk-body h3 {
+            font-family:'Fredoka', sans-serif;
+            font-size: 1.4rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .risk-body p { color: var(--n500); font-size: 0.9rem; line-height: 1.6; max-width: 600px; }
+
+        .risk-tags { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 1rem; }
+
+        .risk-tag {
+            padding: 0.35rem 0.875rem;
+            border-radius: 999px;
+            font-size: 0.78rem;
+            font-weight: 600;
+        }
+
+        .risk-tag.strength { background: rgba(16,185,129,0.1); color: var(--green); }
+        .risk-tag.improve  { background: rgba(239,68,68,0.1); color: var(--red); }
+
+        /* MAIN GRID */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+        }
+
+        .card-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.75rem;
+        }
+
+        .card-head h3 {
+            font-family:'Fredoka', sans-serif;
+            font-size: 1.35rem;
+        }
+
+        /* RADIAL CHARTS (fake CSS) */
+        .radial-charts {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+        }
+
+        .radial-item { text-align: center; }
+
+        .radial {
+            width: 110px; height: 110px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 0.75rem;
+            position: relative;
+            font-family:'Fredoka', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .radial-val { position: relative; z-index: 1; }
+
+        .radial-math {
+            background: conic-gradient(#7C3AED 0deg, #7C3AED 309deg, #F1F5F9 309deg);
+            box-shadow: inset 0 0 0 16px white;
+        }
+
+        .radial-esp {
+            background: conic-gradient(#EC4899 0deg, #EC4899 331deg, #F1F5F9 331deg);
+            box-shadow: inset 0 0 0 16px white;
+        }
+
+        .radial-lbl {
+            font-weight: 700;
+            font-size: 1rem;
+            margin-bottom: 0.2rem;
+        }
+
+        .radial-sub { font-size: 0.78rem; color: var(--n500); }
+
+        /* TIMELINE */
+        .timeline { position: relative; }
+
+        .timeline::before {
+            content:'';
+            position: absolute;
+            left: 20px; top: 0; bottom: 0;
+            width: 2px;
+            background: var(--n200);
+        }
+
+        .timeline-item {
+            display: flex;
+            gap: 1.25rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .tl-dot {
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .tl-dot.good { background: rgba(16,185,129,0.15); }
+        .tl-dot.warn { background: rgba(251,191,36,0.15); }
+        .tl-dot.bad  { background: rgba(239,68,68,0.15); }
+
+        .tl-body { flex: 1; padding-top: 0.35rem; }
+        .tl-title { font-weight: 700; font-size: 0.9rem; margin-bottom: 0.2rem; }
+        .tl-desc { font-size: 0.8rem; color: var(--n500); line-height: 1.5; }
+        .tl-time { font-size: 0.72rem; color: var(--n500); margin-top: 0.3rem; }
+
+        /* ERROR PATTERNS */
+        .error-grid {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .error-row {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: var(--n50);
+            border-radius: 1rem;
+        }
+
+        .error-icon { font-size: 1.75rem; }
+
+        .error-info { flex: 1; }
+        .error-name { font-weight: 700; font-size: 0.9rem; }
+        .error-desc { font-size: 0.78rem; color: var(--n500); }
+
+        .error-bar-wrap { width: 120px; }
+        .error-count { font-size: 0.75rem; font-weight: 700; text-align: right; margin-bottom: 0.25rem; }
+
+        .e-bar {
+            height: 6px;
+            border-radius: 999px;
+            background: var(--n200);
+            overflow: hidden;
+        }
+
+        .e-fill { height: 100%; border-radius: 999px; }
+        .e-fill.high { background: var(--red); }
+        .e-fill.med  { background: var(--yellow); }
+        .e-fill.low  { background: var(--green); }
+
+        /* RECOMMENDATIONS */
+        .rec-card {
+            background: linear-gradient(135deg,#43e97b,#38f9d7);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .rec-card h3 {
+            font-family:'Fredoka', sans-serif;
+            font-size: 1.5rem;
+            color: var(--n900);
+            margin-bottom: 1.5rem;
+        }
+
+        .rec-grid {
+            display: grid;
+            grid-template-columns: repeat(3,1fr);
+            gap: 1rem;
+        }
+
+        .rec-item {
+            background: rgba(255,255,255,0.6);
+            backdrop-filter: blur(10px);
+            border-radius: 1.25rem;
+            padding: 1.5rem;
+        }
+
+        .rec-ico { font-size: 2rem; margin-bottom: 0.75rem; }
+        .rec-title { font-family:'Fredoka', sans-serif; font-size: 1rem; margin-bottom: 0.5rem; color: var(--n900); }
+        .rec-text { font-size: 0.8rem; color: var(--n700); line-height: 1.5; }
+
+        /* WEEKLY CALENDAR */
+        .weekly-grid {
+            display: grid;
+            grid-template-columns: repeat(7,1fr);
+            gap: 0.75rem;
+        }
+
+        .day-col { text-align: center; }
+        .day-name { font-size: 0.72rem; font-weight: 700; color: var(--n500); text-transform: uppercase; margin-bottom: 0.5rem; }
+
+        .day-cell {
+            aspect-ratio: 1;
+            border-radius: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .day-cell.high { background: var(--purple); color: white; }
+        .day-cell.med  { background: rgba(124,58,237,0.4); color: white; }
+        .day-cell.low  { background: rgba(124,58,237,0.15); color: var(--purple); }
+        .day-cell.none { background: var(--n100); color: var(--n500); }
+        .day-cell.today { box-shadow: 0 0 0 3px var(--purple); }
+
+        .day-pct { font-size: 0.7rem; color: var(--n500); margin-top: 0.3rem; }
+
+        @media (max-width: 900px) {
+            .rh-metrics { grid-template-columns: repeat(2,1fr); }
+            .main-grid { grid-template-columns: 1fr; }
+            .rec-grid { grid-template-columns: 1fr; }
+            .risk-banner { flex-direction: column; text-align: center; }
+        }
+    </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+</head>
+<body>
+<div class="container">
+
+    <!-- REPORT HEADER -->
+    <div class="report-header">
+        <div class="rh-top">
+            <div class="rh-student">
+                <div class="rh-avatar">👦</div>
+                <div>
+                    <div class="rh-name">Miguel Hernández</div>
+                    <div class="rh-meta">2° Primaria · Escuela Benito Juárez · Reporte Mensual — Enero 2026</div>
+                </div>
+            </div>
+            <div class="rh-actions">
+                <button class="btn-download" onclick="alert('📄 Función de PDF próximamente disponible.')">📄 Descargar PDF</button>
+                <button class="btn-share" onclick="navigator.clipboard && navigator.clipboard.writeText(window.location.href).then(()=>alert('🔗 Enlace copiado al portapapeles'))">📤 Compartir</button>
+            </div>
+        </div>
+
+        <div class="rh-metrics">
+            <div class="rh-metric">
+                <span class="rh-m-val report-avg-acc">—</span>
+                <div class="rh-m-lbl">Promedio General</div>
+            </div>
+            <div class="rh-metric">
+                <span class="rh-m-val report-total-ex">—</span>
+                <div class="rh-m-lbl">Ejercicios Completados</div>
+            </div>
+            <div class="rh-metric">
+                <span class="rh-m-val report-streak">—</span>
+                <div class="rh-m-lbl">Racha Actual</div>
+            </div>
+            <div class="rh-metric">
+                <span class="rh-m-val report-avg-time">—</span>
+                <div class="rh-m-lbl">Tiempo Promedio</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- RISK LEVEL -->
+    <div class="risk-banner">
+        <div class="risk-indicator">
+            <div class="risk-circle low" style="cursor:pointer" onclick="alert('✅ Nivel de Riesgo: Bajo\n\nEl sistema no detecta señales de riesgo académico. Miguel mantiene un desempeño consistente. Se recomienda continuar con el ritmo actual.')">
+                <div class="risk-val low">BAJO</div>
+                <div class="risk-lbl">Riesgo</div>
+            </div>
+            <div class="risk-title">Nivel de Alerta</div>
+        </div>
+        <div class="risk-body">
+            <h3>✅ Miguel va por buen camino</h3>
+            <p>El sistema adaptativo detectó un desempeño consistente esta semana. No hay señales de riesgo académico significativo. Se recomienda continuar con el ritmo actual y prestar atención a las restas con dos dígitos donde hubo algunos errores.</p>
+            <div class="risk-tags">
+                <span class="risk-tag strength">💪 Fuerte en Español</span>
+                <span class="risk-tag strength">🔢 Buen ritmo en Sumas</span>
+                <span class="risk-tag improve">⚠️ Mejorar Restas</span>
+                <span class="risk-tag improve">⏱️ Reducir tiempo de respuesta</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN GRID -->
+    <div class="main-grid">
+
+        <!-- ACCURACY BY SUBJECT -->
+        <div class="card">
+            <div class="card-head">
+                <h3>🎯 Precisión por Materia</h3>
+            </div>
+            <div class="radial-charts" style="display:flex;gap:2rem;justify-content:center;">
+                <div class="radial-item" style="text-align:center;">
+                    <div style="position:relative;width:110px;margin:0 auto 0.75rem;">
+                        <canvas id="chart-math-radial" width="110" height="110"></canvas>
+                        <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:'Fredoka',sans-serif;font-size:1.4rem;font-weight:700;color:#7C3AED;" class="radial-math-val">—</div>
+                    </div>
+                    <div class="radial-lbl" style="font-weight:700;font-size:1rem;">Matemáticas</div>
+                    <div class="radial-sub" style="font-size:0.78rem;color:#64748B;">Nivel <span id="math-level">—</span></div>
+                </div>
+                <div class="radial-item" style="text-align:center;">
+                    <div style="position:relative;width:110px;margin:0 auto 0.75rem;">
+                        <canvas id="chart-esp-radial" width="110" height="110"></canvas>
+                        <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:'Fredoka',sans-serif;font-size:1.4rem;font-weight:700;color:#EC4899;" class="radial-esp-val">—</div>
+                    </div>
+                    <div class="radial-lbl" style="font-weight:700;font-size:1rem;">Español</div>
+                    <div class="radial-sub" style="font-size:0.78rem;color:#64748B;">Nivel <span id="esp-level">—</span></div>
+                </div>
+            </div>
+
+            <div style="margin-top:2rem;">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
+                    <span style="font-size:0.85rem;font-weight:600;">Conteo</span>
+                    <span style="font-size:0.85rem;font-weight:700;color:var(--green)">97%</span>
+                </div>
+                <div style="height:8px;background:var(--n100);border-radius:999px;overflow:hidden;margin-bottom:1rem;">
+                    <div style="height:100%;width:97%;background:var(--green);border-radius:999px;"></div>
+                </div>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
+                    <span style="font-size:0.85rem;font-weight:600;">Sumas</span>
+                    <span style="font-size:0.85rem;font-weight:700;color:var(--purple)">88%</span>
+                </div>
+                <div style="height:8px;background:var(--n100);border-radius:999px;overflow:hidden;margin-bottom:1rem;">
+                    <div style="height:100%;width:88%;background:var(--purple);border-radius:999px;"></div>
+                </div>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
+                    <span style="font-size:0.85rem;font-weight:600;">Restas</span>
+                    <span style="font-size:0.85rem;font-weight:700;color:var(--yellow)">71%</span>
+                </div>
+                <div style="height:8px;background:var(--n100);border-radius:999px;overflow:hidden;">
+                    <div style="height:100%;width:71%;background:var(--yellow);border-radius:999px;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ACTIVITY TIMELINE -->
+        <div class="card">
+            <div class="card-head">
+                <h3>📅 Historial de Actividad</h3>
+            </div>
+            <div class="timeline">
+                <div class="timeline-item" style="cursor:pointer" onclick="alert('🏆 Subió al Nivel 2\n\nMiguel completó todos los ejercicios del Nivel 1 con 89% de precisión promedio. ¡Un gran logro!')">
+                    <div class="tl-dot good">🏆</div>
+                    <div class="tl-body">
+                        <div class="tl-title">Subió al Nivel 2 en Matemáticas</div>
+                        <div class="tl-desc">Completó todos los ejercicios de Nivel 1 con 89% de precisión promedio</div>
+                        <div class="tl-time">Hoy · 10:15 am</div>
+                    </div>
+                </div>
+                <div class="timeline-item" style="cursor:pointer" onclick="alert('⚠️ Errores Consecutivos\n\nSe detectaron 5 errores consecutivos en restas con reagrupación. El motor adaptativo activó un módulo de refuerzo automáticamente.')">
+                    <div class="tl-dot warn">⚠️</div>
+                    <div class="tl-body">
+                        <div class="tl-title">5 errores consecutivos en Restas</div>
+                        <div class="tl-desc">El motor adaptativo activó módulo de refuerzo para restas con reagrupación</div>
+                        <div class="tl-time">Ayer · 4:00 pm</div>
+                    </div>
+                </div>
+                <div class="timeline-item" style="cursor:pointer" onclick="alert('⚡ Racha de 7 Días\n\nMiguel accedió a la plataforma 7 días consecutivos. La constancia es clave para el aprendizaje.')">
+                    <div class="tl-dot good">⚡</div>
+                    <div class="tl-body">
+                        <div class="tl-title">Racha de 7 días consecutivos</div>
+                        <div class="tl-desc">Accedió a la plataforma todos los días esta semana</div>
+                        <div class="tl-time">Hace 2 días</div>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="tl-dot good">📚</div>
+                    <div class="tl-body">
+                        <div class="tl-title">Completó Módulo de Comprensión</div>
+                        <div class="tl-desc">Español: Lectura de párrafos cortos con 95% de precisión</div>
+                        <div class="tl-time">Hace 3 días</div>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="tl-dot bad">📝</div>
+                    <div class="tl-body">
+                        <div class="tl-title">Evaluación Diagnóstica Completada</div>
+                        <div class="tl-desc">Puntuación inicial: Matemáticas 72%, Español 80%</div>
+                        <div class="tl-time">Hace 1 semana</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ERROR PATTERNS -->
+        <div class="card">
+            <div class="card-head">
+                <h3>❌ Patrones de Error</h3>
+            </div>
+            <div class="error-grid">
+                <div class="error-row">
+                    <div class="error-icon">➖</div>
+                    <div class="error-info">
+                        <div class="error-name">Restas con reagrupación</div>
+                        <div class="error-desc">Errores frecuentes al pedir prestado</div>
+                    </div>
+                    <div class="error-bar-wrap">
+                        <div class="error-count" style="color:var(--red)">12 errores</div>
+                        <div class="e-bar"><div class="e-fill high" style="width:80%"></div></div>
+                    </div>
+                </div>
+                <div class="error-row">
+                    <div class="error-icon">🔤</div>
+                    <div class="error-info">
+                        <div class="error-name">Sílabas trabadas</div>
+                        <div class="error-desc">Dificultad con sílabas "bl", "br", "cl"</div>
+                    </div>
+                    <div class="error-bar-wrap">
+                        <div class="error-count" style="color:var(--yellow)">7 errores</div>
+                        <div class="e-bar"><div class="e-fill med" style="width:47%"></div></div>
+                    </div>
+                </div>
+                <div class="error-row">
+                    <div class="error-icon">🔢</div>
+                    <div class="error-info">
+                        <div class="error-name">Sumas mayores a 10</div>
+                        <div class="error-desc">Poca frecuencia de error</div>
+                    </div>
+                    <div class="error-bar-wrap">
+                        <div class="error-count" style="color:var(--green)">3 errores</div>
+                        <div class="e-bar"><div class="e-fill low" style="width:20%"></div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- WEEKLY CALENDAR -->
+        <div class="card">
+            <div class="card-head">
+                <h3>📆 Actividad del Mes</h3>
+            </div>
+            <canvas id="chart-weekly" height="120" style="width:100%;margin-bottom:1rem;"></canvas>
+            <div class="weekly-grid" style="display:none;">
+                <div class="day-col">
+                    <div class="day-name">L</div>
+                    <div class="day-cell high">92</div>
+                    <div class="day-pct">%</div>
+                </div>
+                <div class="day-col">
+                    <div class="day-name">M</div>
+                    <div class="day-cell high">88</div>
+                    <div class="day-pct">%</div>
+                </div>
+                <div class="day-col">
+                    <div class="day-name">X</div>
+                    <div class="day-cell med">75</div>
+                    <div class="day-pct">%</div>
+                </div>
+                <div class="day-col">
+                    <div class="day-name">J</div>
+                    <div class="day-cell high">95</div>
+                    <div class="day-pct">%</div>
+                </div>
+                <div class="day-col">
+                    <div class="day-name">V</div>
+                    <div class="day-cell high">90</div>
+                    <div class="day-pct">%</div>
+                </div>
+                <div class="day-col">
+                    <div class="day-name">S</div>
+                    <div class="day-cell low">60</div>
+                    <div class="day-pct">%</div>
+                </div>
+                <div class="day-col">
+                    <div class="day-name">D</div>
+                    <div class="day-cell none">—</div>
+                    <div class="day-pct"> </div>
+                </div>
+            </div>
+
+            <div style="margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid var(--n200);">
+                <div style="font-family:'Fredoka',sans-serif;font-size:1rem;margin-bottom:1rem;">Leyenda</div>
+                <div style="display:flex;gap:1rem;flex-wrap:wrap;">
+                    <div style="display:flex;align-items:center;gap:0.5rem;font-size:0.78rem;">
+                        <div style="width:16px;height:16px;border-radius:4px;background:var(--purple)"></div> Alto (+80%)
+                    </div>
+                    <div style="display:flex;align-items:center;gap:0.5rem;font-size:0.78rem;">
+                        <div style="width:16px;height:16px;border-radius:4px;background:rgba(124,58,237,0.4)"></div> Medio (60-80%)
+                    </div>
+                    <div style="display:flex;align-items:center;gap:0.5rem;font-size:0.78rem;">
+                        <div style="width:16px;height:16px;border-radius:4px;background:rgba(124,58,237,0.15)"></div> Bajo (&lt;60%)
+                    </div>
+                    <div style="display:flex;align-items:center;gap:0.5rem;font-size:0.78rem;">
+                        <div style="width:16px;height:16px;border-radius:4px;background:var(--n100)"></div> Sin actividad
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- RECOMMENDATIONS -->
+    <div class="rec-card">
+        <h3>💡 Recomendaciones del Sistema IA</h3>
+        <div class="rec-grid">
+            <div class="rec-item" style="cursor:pointer" onclick="window.location.href='math-blaster.html'">
+                <div class="rec-ico">🔄</div>
+                <div class="rec-title">Practicar Restas</div>
+                <div class="rec-text">Dedicar 10 min diarios a ejercicios de resta con reagrupación. El módulo de refuerzo ya fue activado automáticamente.</div>
+            </div>
+            <div class="rec-item" style="cursor:pointer" onclick="window.location.href='word-builder.html'">
+                <div class="rec-ico">📖</div>
+                <div class="rec-title">Lectura en Voz Alta</div>
+                <div class="rec-text">Leer textos cortos en voz alta 15 min al día para mejorar la fluidez en sílabas trabadas detectadas.</div>
+            </div>
+            <div class="rec-item" style="cursor:pointer" onclick="alert('⏰ Mejor Horario\n\nSegún los datos, Miguel rinde mejor entre 4-6 PM. Intenta programar las sesiones en ese horario para mejores resultados.')">
+                <div class="rec-ico">⏰</div>
+                <div class="rec-title">Horario Consistente</div>
+                <div class="rec-text">Miguel rinde mejor entre 4-6 pm según los datos de sesión. Mantener ese horario para mejores resultados.</div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+  <!-- NeuroLearn Systems -->
+  <script src="nl-notifications.js"></script>
+  <script src="nl-themes.js"></script>
+  <script src="nl-ux-enhancements.js"></script>
+
+  <script>
+  // Gráficas con datos estáticos (sin NLState)
+  window.addEventListener('DOMContentLoaded', () => {
+    // Valores por defecto del estudiante
+    const mathAcc = 87, espAcc = 92;
+    document.querySelectorAll('.radial-math-val').forEach(e => e.textContent = mathAcc + '%');
+    document.querySelectorAll('.radial-esp-val').forEach(e => e.textContent = espAcc + '%');
+    document.querySelectorAll('#math-level').forEach(e => e.textContent = 2);
+    document.querySelectorAll('#esp-level').forEach(e => e.textContent = 3);
+
+    if (!window.Chart) return;
+
+    // Radial Matemáticas
+    const ctxM = document.getElementById('chart-math-radial');
+    if (ctxM) new Chart(ctxM, { type:'doughnut', data:{
+      datasets:[{ data:[mathAcc, 100-mathAcc], backgroundColor:['#7C3AED','#F1F5F9'], borderWidth:0 }]},
+      options:{ cutout:'72%', plugins:{legend:{display:false},tooltip:{enabled:false}}, responsive:false }
+    });
+
+    // Radial Español
+    const ctxS = document.getElementById('chart-esp-radial');
+    if (ctxS) new Chart(ctxS, { type:'doughnut', data:{
+      datasets:[{ data:[espAcc, 100-espAcc], backgroundColor:['#EC4899','#F1F5F9'], borderWidth:0 }]},
+      options:{ cutout:'72%', plugins:{legend:{display:false},tooltip:{enabled:false}}, responsive:false }
+    });
+
+    // Gráfica semanal
+    const ctxW = document.getElementById('chart-weekly');
+    if (ctxW) new Chart(ctxW, { type:'bar', data:{
+      labels:['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'],
+      datasets:[
+        { label:'Matemáticas', data:[85,88,83,91,87,0,0], backgroundColor:'rgba(102,126,234,0.8)', borderRadius:6 },
+        { label:'Español',     data:[89,92,88,95,90,0,0], backgroundColor:'rgba(240,147,251,0.8)', borderRadius:6 },
+      ]}, options:{
+        responsive:true, maintainAspectRatio:false,
+        scales:{ y:{ min:0, max:100, ticks:{callback:v=>v+'%'}, grid:{color:'#F1F5F9'} }, x:{grid:{display:false}} },
+        plugins:{ legend:{position:'bottom'}, tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': '+ctx.parsed.y+'%'}} }
+      }
+    });
+  });
+  </script>
+</body>
+</html>

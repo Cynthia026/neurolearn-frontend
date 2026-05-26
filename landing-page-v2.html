@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeuroLearn Kids - Aprendizaje Adaptativo Inteligente</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;600;700&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --primary: #7C3AED;
+            --secondary: #EC4899;
+            --accent: #06B6D4;
+            --success: #10B981;
+            --dark: #0F172A;
+            --light: #F8FAFC;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            color: var(--dark);
+            overflow-x: hidden;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 1rem 0;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.05);
+        }
+
+        nav .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 2.5rem;  /* Aumentado de 1.75rem */
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .nav-cta {
+            padding: 0.75rem 2rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            border-radius: 999px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+
+        .nav-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(124,58,237,0.3);
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            padding-top: 80px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1), transparent);
+            border-radius: 50%;
+            top: -250px;
+            right: -250px;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(30px); }
+        }
+
+        .hero .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .hero-content h1 {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 5rem;  /* Reducido de 5rem - Más profesional */
+            color: white;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        .hero-content p {
+            font-size: 1.75rem;  /* Reducido de 1.5rem */
+            color: rgba(255,255,255,0.9);
+            margin-bottom: 2rem;
+            line-height: 1.6;
+            animation: fadeInUp 0.8s ease 0.2s both;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            animation: fadeInUp 0.8s ease 0.4s both;
+        }
+
+        .btn-primary {
+            padding: 1.25rem 3rem;
+            background: white;
+            color: var(--primary);
+            border: none;
+            border-radius: 999px;
+            font-weight: 700;
+            font-size: 1.25rem;  /* Reducido de 1.25rem */
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(255,255,255,0.3);
+        }
+
+        .btn-secondary {
+            padding: 1.25rem 3rem;
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+            border-radius: 999px;
+            font-weight: 700;
+            font-size: 1.25rem;  /* Reducido de 1.25rem */
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-secondary:hover {
+            background: white;
+            color: var(--primary);
+        }
+
+        .hero-image {
+            animation: fadeInRight 0.8s ease 0.6s both;
+            position: relative;
+        }
+
+        .hero-image img {
+            width: 100%;
+            filter: drop-shadow(0 20px 60px rgba(0,0,0,0.3));
+        }
+
+        /* Features Section */
+        .features {
+            padding: 8rem 2rem;
+            background: white;
+        }
+
+        .features .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 5rem;
+        }
+
+        .section-header h2 {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 3.5rem;  /* Reducido de 3.5rem */
+            color: var(--dark);
+            margin-bottom: 1rem;
+        }
+
+        .section-header p {
+            font-size: 1.5rem;  /* Reducido de 1.4rem */
+            color: #64748B;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 3rem;
+        }
+
+        .feature-card {
+            text-align: center;
+            padding: 3rem 2rem;
+            border-radius: 2rem;
+            background: var(--light);
+            transition: all 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 60px rgba(124,58,237,0.15);
+        }
+
+        .feature-icon {
+            font-size: 4rem;  /* Reducido de 4.5rem */
+            margin-bottom: 1.5rem;
+            display: inline-block;
+            animation: bounce 2s infinite;
+        }
+
+        .feature-card h3 {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.75rem;  /* Reducido de 1.75rem */
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+
+        .feature-card p {
+            color: #64748B;
+            line-height: 1.6;
+            font-size: 1.25rem;  /* Reducido de 1.1rem */
+        }
+
+        /* How It Works */
+        .how-it-works {
+            padding: 8rem 2rem;
+            background: linear-gradient(135deg, rgba(102,126,234,0.05), rgba(118,75,162,0.05));
+        }
+
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .step {
+            text-align: center;
+            position: relative;
+        }
+
+        .step::after {
+            content: '→';
+            position: absolute;
+            top: 50px;
+            right: -2rem;
+            font-size: 2rem;  /* Reducido de 2rem */
+            color: var(--primary);
+        }
+
+        .step:last-child::after {
+            display: none;
+        }
+
+        .step-number {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Fredoka', sans-serif;
+            font-size: 2rem;  /* Reducido de 2rem */
+            font-weight: 700;
+            margin: 0 auto 1.5rem;
+            box-shadow: 0 10px 30px rgba(124,58,237,0.3);
+        }
+
+        .step h3 {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.5rem;  /* Reducido de 1.3rem */
+            margin-bottom: 0.75rem;
+        }
+
+        /* Testimonials */
+        .testimonials {
+            padding: 8rem 2rem;
+            background: white;
+        }
+
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .testimonial {
+            background: var(--light);
+            padding: 2.5rem;
+            border-radius: 2rem;
+            position: relative;
+        }
+
+        .testimonial::before {
+            content: '"';
+            position: absolute;
+            top: 1rem;
+            left: 2rem;
+            font-size: 5rem;  /* Reducido de 5rem */
+            color: var(--primary);
+            opacity: 0.2;
+            font-family: Georgia, serif;
+        }
+
+        .testimonial-text {
+            font-size: 1.5rem;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+            color: #475569;
+        }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .author-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.75rem;  /* Reducido de 1.5rem */
+        }
+
+        .author-info h4 {
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .author-info p {
+            font-size: 1.125rem;
+            color: #64748B;
+        }
+
+        .stars {
+            color: #FBBF24;
+            margin-bottom: 1rem;
+        }
+
+        /* Pricing Teaser */
+        .pricing-teaser {
+            padding: 8rem 2rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            text-align: center;
+        }
+
+        .pricing-teaser h2 {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 3.5rem;  /* Reducido de 3rem */
+            margin-bottom: 1rem;
+        }
+
+        .pricing-teaser p {
+            font-size: 1.5rem;  /* Reducido de 1.3rem */
+            margin-bottom: 3rem;
+            opacity: 0.9;
+        }
+
+        .price-highlight {
+            font-size: 4rem;  /* Reducido de 4rem */
+            font-family: 'Fredoka', sans-serif;
+            font-weight: 700;
+            margin-bottom: 2rem;
+        }
+
+        /* FAQ */
+        .faq {
+            padding: 8rem 2rem;
+            background: white;
+        }
+
+        .faq-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .faq-item {
+            margin-bottom: 1.5rem;
+            border: 2px solid #E2E8F0;
+            border-radius: 1rem;
+            overflow: hidden;
+        }
+
+        .faq-question {
+            padding: 1.5rem;
+            background: var(--light);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 700;
+            transition: all 0.3s;
+        }
+
+        .faq-question:hover {
+            background: rgba(124,58,237,0.05);
+        }
+
+        .faq-answer {
+            padding: 1.5rem;
+            display: none;
+            line-height: 1.8;
+            color: #475569;
+        }
+
+        .faq-item.active .faq-answer {
+            display: block;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: 8rem 2rem;
+            background: linear-gradient(135deg, rgba(102,126,234,0.1), rgba(118,75,162,0.1));
+            text-align: center;
+        }
+
+        .cta-section h2 {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 3.5rem;  /* Reducido de 3.5rem */
+            margin-bottom: 2rem;
+        }
+
+        .cta-form {
+            max-width: 600px;
+            margin: 0 auto;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .cta-form input {
+            flex: 1;
+            padding: 1.25rem 1.5rem;
+            border: 2px solid #E2E8F0;
+            border-radius: 999px;
+            font-size: 1.25rem;  /* Reducido de 1.1rem */
+        }
+
+        .cta-form button {
+            padding: 1.25rem 3rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            border-radius: 999px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--dark);
+            color: white;
+            padding: 4rem 2rem 2rem;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+
+        .footer-logo {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 2rem;  /* Reducido de 2rem */
+            margin-bottom: 1rem;
+        }
+
+        .footer-section h3 {
+            font-family: 'Fredoka', sans-serif;
+            margin-bottom: 1rem;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.75rem;
+        }
+
+        .footer-links a {
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.6);
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInRight {
+            from { opacity: 0; transform: translateX(50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero .container { grid-template-columns: 1fr; }
+            .hero-content h1 { font-size: 3.5rem; }
+            .features-grid, .testimonials-grid { grid-template-columns: 1fr; }
+            .steps-grid { grid-template-columns: 1fr; }
+            .step::after { display: none; }
+            .footer-content { grid-template-columns: 1fr; }
+            .nav-links { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="container">
+            <div class="logo">🚀 NeuroLearn</div>
+            <ul class="nav-links">
+                <li><a href="#features">Características</a></li>
+                <li><a href="#how-it-works">Cómo Funciona</a></li>
+                <li><a href="#pricing">Precios</a></li>
+                <li><a href="#faq">FAQ</a></li>
+            </ul>
+            <a href="login-register.html" class="nav-cta">Comenzar Gratis</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Aprendizaje Adaptativo que Crece con tu Hijo</h1>
+                <p>Plataforma inteligente de educación personalizada para niños de primaria. Usa inteligencia artificial para adaptar cada ejercicio al nivel de tu hijo.</p>
+                <div class="hero-buttons">
+                    <a href="login-register.html" class="btn-primary">Prueba Gratis 14 Días</a>
+                    <a href="#how-it-works" class="btn-secondary">Ver Demo</a>
+                </div>
+            </div>
+            <div class="hero-image">
+                <svg width="500" height="400" viewBox="0 0 500 400" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="250" cy="200" r="150" fill="rgba(255,255,255,0.2)"/>
+                    <circle cx="250" cy="200" r="100" fill="rgba(255,255,255,0.3)"/>
+                    <text x="250" y="220" font-size="80" text-anchor="middle" fill="white">🎓</text>
+                </svg>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="container">
+            <div class="section-header">
+                <h2>¿Por qué NeuroLearn?</h2>
+                <p>Tecnología de punta para el aprendizaje del futuro</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🎯</div>
+                    <h3>Adaptación Inteligente</h3>
+                    <p>Nuestro motor de IA ajusta la dificultad en tiempo real según el desempeño de cada niño.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎮</div>
+                    <h3>Gamificación Motivadora</h3>
+                    <p>Logros, puntos y rachas mantienen a los niños motivados y comprometidos con su aprendizaje.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>Reportes en Tiempo Real</h3>
+                    <p>Padres y maestros reciben reportes detallados del progreso y áreas de oportunidad.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="how-it-works" id="how-it-works">
+        <div class="container">
+            <div class="section-header">
+                <h2>Cómo Funciona</h2>
+                <p>En 4 simples pasos tu hijo estará aprendiendo</p>
+            </div>
+            <div class="steps-grid">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3>Evaluación Diagnóstica</h3>
+                    <p>12 preguntas adaptativas para conocer el nivel inicial</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3>Plan Personalizado</h3>
+                    <p>Creamos un plan de estudio adaptado a sus necesidades</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3>Práctica Diaria</h3>
+                    <p>Ejercicios interactivos que se ajustan a su progreso</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <h3>Progreso Visible</h3>
+                    <p>Reportes y logros que celebran cada avance</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="testimonials">
+        <div class="container">
+            <div class="section-header">
+                <h2>Lo que dicen nuestros usuarios</h2>
+            </div>
+            <div class="testimonials-grid">
+                <div class="testimonial">
+                    <div class="stars">⭐⭐⭐⭐⭐</div>
+                    <p class="testimonial-text">"Mi hijo pasó de 60% a 85% en matemáticas en solo 2 meses. La plataforma es increíble y él está super motivado."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">👩</div>
+                        <div class="author-info">
+                            <h4>Laura Hernández</h4>
+                            <p>Madre de Miguel (2° grado)</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial">
+                    <div class="stars">⭐⭐⭐⭐⭐</div>
+                    <p class="testimonial-text">"Como docente, los reportes detallados me ayudan a identificar exactamente dónde necesita apoyo cada alumno."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">👩‍🏫</div>
+                        <div class="author-info">
+                            <h4>Profa. María González</h4>
+                            <p>Maestra de 2° A</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial">
+                    <div class="stars">⭐⭐⭐⭐⭐</div>
+                    <p class="testimonial-text">"Los logros y la gamificación mantienen a mis hijos practicando todos los días sin que yo tenga que insistirles."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">👨</div>
+                        <div class="author-info">
+                            <h4>Carlos Ramírez</h4>
+                            <p>Padre de 3 niños</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Teaser -->
+    <section class="pricing-teaser" id="pricing">
+        <div class="container">
+            <h2>Planes para Todos</h2>
+            <p>Elige el plan perfecto para tu familia o escuela</p>
+            <div class="price-highlight">Desde $299/mes</div>
+            <a href="pricing.html" class="btn-primary">Ver Todos los Planes</a>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="faq" id="faq">
+        <div class="container">
+            <div class="section-header">
+                <h2>Preguntas Frecuentes</h2>
+            </div>
+            <div class="faq-container">
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFAQ(this)">
+                        <span>¿Cómo funciona la prueba gratuita?</span>
+                        <span>+</span>
+                    </div>
+                    <div class="faq-answer">
+                        Tienes 14 días para probar todas las funcionalidades sin compromiso. No se requiere tarjeta de crédito.
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFAQ(this)">
+                        <span>¿Para qué edades es la plataforma?</span>
+                        <span>+</span>
+                    </div>
+                    <div class="faq-answer">
+                        Diseñada para niños de 1° a 6° de primaria (6-12 años).
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFAQ(this)">
+                        <span>¿Puedo cancelar en cualquier momento?</span>
+                        <span>+</span>
+                    </div>
+                    <div class="faq-answer">
+                        Sí, puedes cancelar tu suscripción en cualquier momento sin penalizaciones.
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFAQ(this)">
+                        <span>¿Qué materias cubre?</span>
+                        <span>+</span>
+                    </div>
+                    <div class="faq-answer">
+                        Actualmente Matemáticas y Español. Próximamente Ciencias y Inglés.
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFAQ(this)">
+                        <span>¿Necesito ser maestro para usar la plataforma?</span>
+                        <span>+</span>
+                    </div>
+                    <div class="faq-answer">
+                        No, está diseñada para que cualquier padre o tutor pueda usarla fácilmente.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <h2>Comienza Hoy Mismo</h2>
+            <p style="font-size: 1.2rem; margin-bottom: 3rem;">Únete a más de 10,000 familias que ya están aprendiendo con NeuroLearn</p>
+            <form class="cta-form" onsubmit="return handleSignup(event)">
+                <input type="email" placeholder="tu@email.com" required>
+                <button type="submit">Comenzar Gratis</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div>
+                <div class="footer-logo">🚀 NeuroLearn</div>
+                <p style="color: rgba(255,255,255,0.7); margin-top: 1rem;">Aprendizaje adaptativo para el futuro de tu hijo.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Producto</h3>
+                <ul class="footer-links">
+                    <li><a href="#features">Características</a></li>
+                    <li><a href="pricing.html">Precios</a></li>
+                    <li><a href="help-center.html">Centro de Ayuda</a></li>
+                    <li><a href="#faq">FAQ</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Empresa</h3>
+                <ul class="footer-links">
+                    <li><a href="#">Sobre Nosotros</a></li>
+                    <li><a href="#">Blog</a></li>
+                    <li><a href="help-center.html">Soporte</a></li>
+                    <li><a href="#">Contacto</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Legal</h3>
+                <ul class="footer-links">
+                    <li><a href="#">Privacidad</a></li>
+                    <li><a href="#">Términos</a></li>
+                    <li><a href="#">Cookies</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2025 NeuroLearn Kids. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <script>
+        function toggleFAQ(element) {
+            const item = element.parentElement;
+            const isActive = item.classList.contains('active');
+            
+            // Cerrar todos
+            document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('active'));
+            
+            // Abrir este si no estaba activo
+            if (!isActive) {
+                item.classList.add('active');
+                element.querySelector('span:last-child').textContent = '−';
+            } else {
+                element.querySelector('span:last-child').textContent = '+';
+            }
+        }
+
+        function handleSignup(event) {
+            event.preventDefault();
+            const email = event.target.querySelector('input').value;
+            alert('¡Gracias! Te hemos enviado un email a ' + email + ' con las instrucciones para comenzar.');
+            window.location.href = 'login-register.html';
+            return false;
+        }
+
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+    </script>
+    <!-- NeuroLearn Systems -->
+    <script src="nl-notifications.js"></script>
+</body>
+</html>

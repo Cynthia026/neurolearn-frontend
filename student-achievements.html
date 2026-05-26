@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Logros - NeuroLearn Kids</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;600;700&family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Animated background particles */
+        .particles {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 50%;
+            animation: float 6s infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) translateX(0); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100vh) translateX(20px); opacity: 0; }
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: fadeInDown 0.8s ease;
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+            padding: 1rem 1.5rem;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            border-radius: 999px;
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s;
+        }
+
+        .back-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateX(-5px);
+        }
+
+        .header h1 {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 3.5rem;
+            color: white;
+            text-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            margin-bottom: 1rem;
+        }
+
+        .header p {
+            color: rgba(255,255,255,0.9);
+            font-size: 1.2rem;
+        }
+
+        /* Stats Bar */
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+            animation: fadeInUp 0.8s ease 0.2s both;
+        }
+
+        .stat-card {
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(20px);
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            text-align: center;
+            border: 2px solid rgba(255,255,255,0.2);
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255,255,255,0.25);
+        }
+
+        .stat-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 2.5rem;
+            color: white;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            color: rgba(255,255,255,0.8);
+            font-size: 0.9rem;
+        }
+
+        /* Achievements Grid */
+        .achievements-section {
+            margin-bottom: 3rem;
+        }
+
+        .section-title {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 2rem;
+            color: white;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .achievements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .achievement-card {
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(20px);
+            border-radius: 2rem;
+            padding: 2rem;
+            text-align: center;
+            border: 3px solid rgba(255,255,255,0.2);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            cursor: pointer;
+        }
+
+        .achievement-card:hover {
+            transform: scale(1.05) rotate(2deg);
+            border-color: rgba(255,255,255,0.5);
+        }
+
+        .achievement-card.locked {
+            opacity: 0.5;
+            filter: grayscale(100%);
+        }
+
+        .achievement-card.locked:hover {
+            transform: none;
+        }
+
+        .achievement-icon {
+            font-size: 5rem;
+            margin-bottom: 1rem;
+            animation: bounce 2s infinite;
+            filter: drop-shadow(0 4px 10px rgba(0,0,0,0.3));
+        }
+
+        .achievement-card.locked .achievement-icon {
+            animation: none;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .achievement-title {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.4rem;
+            color: white;
+            margin-bottom: 0.5rem;
+        }
+
+        .achievement-desc {
+            color: rgba(255,255,255,0.9);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .achievement-progress {
+            background: rgba(255,255,255,0.2);
+            height: 8px;
+            border-radius: 999px;
+            overflow: hidden;
+            margin-top: 1rem;
+        }
+
+        .achievement-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #FFD700, #FFA500);
+            border-radius: 999px;
+            transition: width 0.5s ease;
+        }
+
+        .achievement-date {
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.7);
+            margin-top: 1rem;
+        }
+
+        .unlock-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: #333;
+            padding: 0.5rem 1rem;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            box-shadow: 0 4px 15px rgba(255,215,0,0.4);
+        }
+
+        .lock-icon {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 2rem;
+            opacity: 0.5;
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 { font-size: 2.5rem; }
+            .stats-bar { grid-template-columns: 1fr; }
+            .achievements-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Animated particles background -->
+    <div class="particles" id="particles"></div>
+
+    <div style="display: flex; gap: 1rem; margin-bottom: 2rem;">
+        <button class="back-btn" onclick="window.location.href='student-dashboard.html'">← Volver</button>
+        <button class="back-btn" onclick="if(confirm('¿Seguro que quieres cerrar sesión?')) window.location.href='landing-page-v2.html'" style="background: linear-gradient(135deg, #EF4444, #DC2626); margin-left: auto;">🚪 Cerrar Sesión</button>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1>🏆 Mis Logros</h1>
+            <p>¡Sigue practicando para desbloquear todos los logros!</p>
+        </div>
+
+        <!-- Stats Bar -->
+        <div class="stats-bar">
+            <div class="stat-card">
+                <div class="stat-icon">🏅</div>
+                <div class="stat-value">12</div>
+                <div class="stat-label">Logros Desbloqueados</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">⭐</div>
+                <div class="stat-value">2,840</div>
+                <div class="stat-label">Puntos Totales</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🔥</div>
+                <div class="stat-value">7</div>
+                <div class="stat-label">Días de Racha</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📊</div>
+                <div class="stat-value">Nivel 3</div>
+                <div class="stat-label">Explorador</div>
+            </div>
+        </div>
+
+        <!-- Unlocked Achievements -->
+        <div class="achievements-section">
+            <h2 class="section-title">✨ Desbloqueados</h2>
+            <div class="achievements-grid">
+                <div class="achievement-card">
+                    <div class="unlock-badge">¡NUEVO!</div>
+                    <div class="achievement-icon">🎯</div>
+                    <h3 class="achievement-title">Primera Victoria</h3>
+                    <p class="achievement-desc">Completaste tu primer ejercicio correctamente</p>
+                    <div class="achievement-date">Desbloqueado: Hace 7 días</div>
+                </div>
+
+                <div class="achievement-card">
+                    <div class="unlock-badge">✓</div>
+                    <div class="achievement-icon">🔥</div>
+                    <h3 class="achievement-title">Racha de Fuego</h3>
+                    <p class="achievement-desc">Mantuviste una racha de 7 días consecutivos</p>
+                    <div class="achievement-date">Desbloqueado: Hoy</div>
+                </div>
+
+                <div class="achievement-card">
+                    <div class="unlock-badge">✓</div>
+                    <div class="achievement-icon">💯</div>
+                    <h3 class="achievement-title">Perfeccionista</h3>
+                    <p class="achievement-desc">Obtuviste 100% en una evaluación</p>
+                    <div class="achievement-date">Desbloqueado: Hace 3 días</div>
+                </div>
+
+                <div class="achievement-card">
+                    <div class="unlock-badge">✓</div>
+                    <div class="achievement-icon">📚</div>
+                    <h3 class="achievement-title">Lector Veloz</h3>
+                    <p class="achievement-desc">Completaste 50 ejercicios de lectura</p>
+                    <div class="achievement-date">Desbloqueado: Hace 5 días</div>
+                </div>
+
+                <div class="achievement-card">
+                    <div class="unlock-badge">✓</div>
+                    <div class="achievement-icon">🧮</div>
+                    <h3 class="achievement-title">Maestro de Números</h3>
+                    <p class="achievement-desc">Dominaste las tablas de multiplicar</p>
+                    <div class="achievement-date">Desbloqueado: Hace 2 días</div>
+                </div>
+
+                <div class="achievement-card">
+                    <div class="unlock-badge">✓</div>
+                    <div class="achievement-icon">⚡</div>
+                    <h3 class="achievement-title">Velocista</h3>
+                    <p class="achievement-desc">Completaste un ejercicio en menos de 30 segundos</p>
+                    <div class="achievement-date">Desbloqueado: Ayer</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Locked Achievements -->
+        <div class="achievements-section">
+            <h2 class="section-title">🔒 Por Desbloquear</h2>
+            <div class="achievements-grid">
+                <div class="achievement-card locked">
+                    <div class="lock-icon">🔒</div>
+                    <div class="achievement-icon">🌟</div>
+                    <h3 class="achievement-title">Estrella Fugaz</h3>
+                    <p class="achievement-desc">Mantén una racha de 30 días</p>
+                    <div class="achievement-progress">
+                        <div class="achievement-progress-fill" style="width: 23%;"></div>
+                    </div>
+                    <div class="achievement-date">7/30 días completados</div>
+                </div>
+
+                <div class="achievement-card locked">
+                    <div class="lock-icon">🔒</div>
+                    <div class="achievement-icon">👑</div>
+                    <h3 class="achievement-title">Rey de Matemáticas</h3>
+                    <p class="achievement-desc">Completa 500 ejercicios de matemáticas</p>
+                    <div class="achievement-progress">
+                        <div class="achievement-progress-fill" style="width: 30%;"></div>
+                    </div>
+                    <div class="achievement-date">148/500 ejercicios</div>
+                </div>
+
+                <div class="achievement-card locked">
+                    <div class="lock-icon">🔒</div>
+                    <div class="achievement-icon">🎨</div>
+                    <h3 class="achievement-title">Artista de Palabras</h3>
+                    <p class="achievement-desc">Escribe 100 composiciones</p>
+                    <div class="achievement-progress">
+                        <div class="achievement-progress-fill" style="width: 12%;"></div>
+                    </div>
+                    <div class="achievement-date">12/100 composiciones</div>
+                </div>
+
+                <div class="achievement-card locked">
+                    <div class="lock-icon">🔒</div>
+                    <div class="achievement-icon">🚀</div>
+                    <h3 class="achievement-title">Astronauta</h3>
+                    <p class="achievement-desc">Alcanza el Nivel 10</p>
+                    <div class="achievement-progress">
+                        <div class="achievement-progress-fill" style="width: 30%;"></div>
+                    </div>
+                    <div class="achievement-date">Nivel 3/10</div>
+                </div>
+
+                <div class="achievement-card locked">
+                    <div class="lock-icon">🔒</div>
+                    <div class="achievement-icon">💎</div>
+                    <h3 class="achievement-title">Gema Preciosa</h3>
+                    <p class="achievement-desc">Acumula 10,000 puntos</p>
+                    <div class="achievement-progress">
+                        <div class="achievement-progress-fill" style="width: 28%;"></div>
+                    </div>
+                    <div class="achievement-date">2,840/10,000 puntos</div>
+                </div>
+
+                <div class="achievement-card locked">
+                    <div class="lock-icon">🔒</div>
+                    <div class="achievement-icon">🎓</div>
+                    <h3 class="achievement-title">Genio</h3>
+                    <p class="achievement-desc">Obtén 10 evaluaciones perfectas</p>
+                    <div class="achievement-progress">
+                        <div class="achievement-progress-fill" style="width: 10%;"></div>
+                    </div>
+                    <div class="achievement-date">1/10 perfectas</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Create animated particles
+        function createParticles() {
+            const particles = document.getElementById('particles');
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 6 + 's';
+                particle.style.animationDuration = (Math.random() * 3 + 3) + 's';
+                particles.appendChild(particle);
+            }
+        }
+        
+        createParticles();
+
+        // Add staggered animation to achievement cards
+        document.querySelectorAll('.achievement-card').forEach((card, index) => {
+            card.style.animation = `fadeInUp 0.6s ease ${index * 0.1}s both`;
+        });
+    </script>
+
+    <!-- NeuroLearn Systems -->
+    <script src="nl-notifications.js"></script>
+    <script src="nl-ux-enhancements.js"></script>
+    
+    <!-- Celebraciones al Desbloquear Logros -->
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            // Verificar si hay logro recién desbloqueado
+            const newAchievement = localStorage.getItem('new_achievement');
+            if (newAchievement) {
+                setTimeout(() => {
+                    // Celebración MEGA con confetti
+                    NLConfetti.celebrate('mega');
+                    NLSounds.play('achievement');
+                    
+                    // Notificación
+                    const achievement = JSON.parse(newAchievement);
+                    NLNotifications.success(
+                        `¡Logro desbloqueado: ${achievement.name}!`,
+                        achievement.emoji + ' ¡Felicidades!'
+                    );
+                    
+                    // Limpiar flag
+                    localStorage.removeItem('new_achievement');
+                }, 500);
+            }
+            
+            // Agregar eventos de click a logros desbloqueados
+            document.querySelectorAll('.achievement.unlocked').forEach(achievement => {
+                achievement.addEventListener('click', () => {
+                    NLSounds.play('success');
+                    NLConfetti.celebrate();
+                });
+            });
+            
+            // Agregar eventos a logros bloqueados
+            document.querySelectorAll('.achievement.locked').forEach(achievement => {
+                achievement.addEventListener('click', () => {
+                    NLSounds.play('click');
+                });
+            });
+        });
+        
+        // Función global para desbloquear logros (usar desde otros archivos)
+        function unlockAchievement(emoji, name, description) {
+            // Guardar logro
+            const achievements = JSON.parse(localStorage.getItem('achievements') || '[]');
+            const newAchievement = {
+                emoji: emoji,
+                name: name,
+                description: description,
+                unlockedAt: new Date().toISOString()
+            };
+            achievements.push(newAchievement);
+            localStorage.setItem('achievements', JSON.stringify(achievements));
+            
+            // Marcar para celebrar en página de logros
+            localStorage.setItem('new_achievement', JSON.stringify(newAchievement));
+            
+            // Celebración inmediata
+            NLConfetti.achievementUnlock(emoji, name);
+            
+            // Redirigir a página de logros
+            setTimeout(() => {
+                window.location.href = 'student-achievements.html';
+            }, 2000);
+        }
+    </script>
+</body>
+</html>

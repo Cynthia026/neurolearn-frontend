@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluación Diagnóstica - NeuroLearn Kids</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+
+        :root {
+            --purple: #7C3AED; --blue: #3B82F6; --pink: #EC4899;
+            --cyan: #06B6D4; --green: #10B981; --red: #EF4444;
+            --yellow: #FBBF24; --n50: #F8FAFC; --n100: #F1F5F9;
+            --n200: #E2E8F0; --n500: #64748B; --n900: #0F172A;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--n50);
+            min-height: 100vh;
+        }
+
+        /* TOP PROGRESS BAR */
+        .top-bar {
+            background: white;
+            padding: 1.25rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .back-btn {
+            background: var(--n100);
+            border: none;
+            border-radius: 0.75rem;
+            padding: 0.625rem 1rem;
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            color: var(--n900);
+            transition: background 0.2s;
+            white-space: nowrap;
+        }
+
+        .back-btn:hover { background: var(--n200); }
+
+        .progress-info {
+            flex: 1;
+        }
+
+        .progress-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.4rem;
+            font-size: 0.875rem;
+        }
+
+        .progress-labels span:first-child { font-weight: 700; color: var(--n900); }
+        .progress-labels span:last-child { color: var(--n500); }
+
+        .progress-track {
+            width: 100%;
+            height: 10px;
+            background: var(--n100);
+            border-radius: 999px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 999px;
+            transition: width 0.5s ease;
+        }
+
+        .timer-chip {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            color: white;
+            padding: 0.625rem 1.25rem;
+            border-radius: 999px;
+            font-family: 'Fredoka', sans-serif;
+            font-weight: 600;
+            font-size: 1.125rem;
+            white-space: nowrap;
+        }
+
+        /* STEPPER */
+        .stepper {
+            max-width: 900px;
+            margin: 2.5rem auto 0;
+            padding: 0 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0;
+        }
+
+        .step-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.4rem;
+            flex: 1;
+            position: relative;
+        }
+
+        .step-item:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 60%;
+            width: 80%;
+            height: 3px;
+            background: var(--n200);
+            z-index: 0;
+            transition: background 0.3s;
+        }
+
+        .step-item.done:not(:last-child)::after { background: var(--green); }
+
+        .step-circle {
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Fredoka', sans-serif;
+            font-weight: 700;
+            font-size: 1rem;
+            position: relative;
+            z-index: 1;
+            transition: all 0.3s;
+        }
+
+        .step-circle.done { background: var(--green); color: white; }
+        .step-circle.active { background: linear-gradient(135deg,#667eea,#764ba2); color: white; box-shadow: 0 0 0 4px rgba(124,58,237,0.2); }
+        .step-circle.pending { background: var(--n200); color: var(--n500); }
+
+        .step-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-align: center;
+            color: var(--n500);
+        }
+
+        .step-item.active .step-label { color: var(--purple); }
+        .step-item.done .step-label { color: var(--green); }
+
+        /* SECTION INTRO */
+        .section-intro {
+            max-width: 900px;
+            margin: 2.5rem auto 0;
+            padding: 0 2rem;
+        }
+
+        .section-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1.25rem;
+            border-radius: 999px;
+            font-family: 'Fredoka', sans-serif;
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg,#667eea,#764ba2);
+            color: white;
+        }
+
+        .section-title {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 2rem;
+            color: var(--n900);
+            margin-bottom: 0.5rem;
+        }
+
+        .section-desc {
+            color: var(--n500);
+            margin-bottom: 0;
+            font-size: 0.95rem;
+        }
+
+        /* QUESTION CARD */
+        .question-area {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 0 2rem 4rem;
+        }
+
+        .question-card {
+            background: white;
+            border-radius: 2rem;
+            padding: 3rem;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+            margin-bottom: 2rem;
+        }
+
+        .q-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+        }
+
+        .q-chip {
+            padding: 0.4rem 1rem;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            background: rgba(124,58,237,0.1);
+            color: var(--purple);
+        }
+
+        .q-difficulty {
+            font-size: 0.8rem;
+            color: var(--n500);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .diff-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+        }
+
+        .diff-dot.easy { background: var(--green); }
+        .diff-dot.medium { background: var(--yellow); }
+        .diff-dot.hard { background: var(--red); }
+
+        .q-text {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 2.25rem;
+            color: var(--n900);
+            text-align: center;
+            margin-bottom: 2.5rem;
+            line-height: 1.3;
+        }
+
+        .q-highlight {
+            color: var(--purple);
+            background: rgba(124,58,237,0.1);
+            padding: 0.1em 0.3em;
+            border-radius: 0.5rem;
+        }
+
+        /* VISUAL AID (for imagen-palabra questions) */
+        .image-choices {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.25rem;
+            margin-bottom: 2rem;
+        }
+
+        .image-choice {
+            border: 3px solid var(--n200);
+            border-radius: 1.25rem;
+            padding: 1.5rem 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: var(--n50);
+        }
+
+        .image-choice:hover {
+            border-color: var(--purple);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(124,58,237,0.15);
+        }
+
+        .image-choice.selected {
+            border-color: var(--purple);
+            background: rgba(124,58,237,0.07);
+        }
+
+        .image-choice.correct {
+            border-color: var(--green);
+            background: rgba(16,185,129,0.08);
+            animation: pop 0.4s ease;
+        }
+
+        .image-choice.wrong {
+            border-color: var(--red);
+            background: rgba(239,68,68,0.08);
+        }
+
+        @keyframes pop {
+            0%,100% { transform: scale(1); }
+            50% { transform: scale(1.08); }
+        }
+
+        .image-emoji { font-size: 3.5rem; display: block; margin-bottom: 0.75rem; }
+        .image-label {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1rem;
+            color: var(--n900);
+        }
+
+        /* MCQ OPTIONS */
+        .mcq-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .mcq-option {
+            border: 3px solid var(--n200);
+            border-radius: 1.25rem;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.75rem;
+            font-weight: 700;
+            transition: all 0.25s ease;
+            background: var(--n50);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .mcq-letter {
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            background: var(--n200);
+            color: var(--n500);
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.25s;
+        }
+
+        .mcq-option:hover { border-color: var(--purple); transform: translateY(-4px); }
+        .mcq-option:hover .mcq-letter { background: var(--purple); color: white; }
+
+        .mcq-option.selected { border-color: var(--purple); background: rgba(124,58,237,0.07); }
+        .mcq-option.selected .mcq-letter { background: var(--purple); color: white; }
+
+        .mcq-option.correct { border-color: var(--green); background: rgba(16,185,129,0.08); animation: pop 0.4s ease; }
+        .mcq-option.correct .mcq-letter { background: var(--green); color: white; }
+        .mcq-option.wrong { border-color: var(--red); background: rgba(239,68,68,0.08); animation: shake 0.4s ease; }
+
+        @keyframes shake {
+            0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}
+        }
+
+        /* SYLLABLE DRAG */
+        .syllable-area {
+            margin-bottom: 2rem;
+        }
+
+        .syllable-word-display {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 3rem;
+            text-align: center;
+            color: var(--n900);
+            letter-spacing: 0.1em;
+            margin-bottom: 2rem;
+        }
+
+        .syllable-blanks {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .syllable-blank {
+            min-width: 80px;
+            height: 60px;
+            border: 3px dashed var(--purple);
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.5rem;
+            color: var(--purple);
+            transition: background 0.2s;
+        }
+
+        .syllable-blank.filled {
+            border-style: solid;
+            background: rgba(124,58,237,0.07);
+        }
+
+        .syllable-choices {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .syllable-chip {
+            padding: 0.75rem 1.5rem;
+            border: 2px solid var(--purple);
+            border-radius: 1rem;
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.25rem;
+            cursor: pointer;
+            transition: all 0.25s;
+            background: white;
+            color: var(--purple);
+        }
+
+        .syllable-chip:hover { background: var(--purple); color: white; }
+
+        /* ACTIONS */
+        .q-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .skip-btn {
+            padding: 1rem 2rem;
+            background: var(--n100);
+            border: none;
+            border-radius: 999px;
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1rem;
+            cursor: pointer;
+            color: var(--n500);
+            transition: all 0.25s;
+        }
+
+        .skip-btn:hover { background: var(--n200); }
+
+        .confirm-btn {
+            padding: 1rem 3rem;
+            background: linear-gradient(135deg,#667eea,#764ba2);
+            color: white;
+            border: none;
+            border-radius: 999px;
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.125rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(102,126,234,0.3);
+            transition: all 0.3s;
+        }
+
+        .confirm-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(102,126,234,0.4); }
+        .confirm-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+        /* FEEDBACK TOAST */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: white;
+            border-radius: 1.5rem;
+            padding: 1.5rem 2.5rem;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+            min-width: 380px;
+            transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+            z-index: 200;
+            border-left: 6px solid var(--green);
+        }
+
+        .toast.show { transform: translateX(-50%) translateY(0); }
+        .toast.wrong-toast { border-left-color: var(--red); }
+
+        .toast-icon { font-size: 2.5rem; }
+        .toast-title { font-family: 'Fredoka', sans-serif; font-size: 1.25rem; margin-bottom: 0.2rem; }
+        .toast-msg { font-size: 0.875rem; color: var(--n500); }
+
+        /* RESPONSIVE */
+        @media (max-width: 700px) {
+            .image-choices { grid-template-columns: 1fr 1fr; }
+            .mcq-options { grid-template-columns: 1fr; }
+            .stepper { display: none; }
+            .q-text { font-size: 1.75rem; }
+        }
+    
+        /* INTRO OVERLAY */
+        .diagnostic-intro {
+            position: fixed;
+            inset: 0;
+            z-index: 20000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            animation: fadeIn 0.4s ease;
+        }
+        .intro-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(102,126,234,0.95), rgba(118,75,162,0.95));
+        }
+        .intro-card {
+            position: relative;
+            background: white;
+            border-radius: 2rem;
+            padding: 3rem 2.5rem;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.3);
+            animation: slideUpBounce 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .intro-icon {
+            font-size: 4rem;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+        .intro-title {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 2rem;
+            text-align: center;
+            color: #0F172A;
+            margin-bottom: 1rem;
+        }
+        .intro-text {
+            text-align: center;
+            color: #64748B;
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+        .intro-features {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .intro-feature {
+            background: #F8FAFC;
+            padding: 1.25rem;
+            border-radius: 1rem;
+            text-align: center;
+            border: 2px solid #E2E8F0;
+        }
+        .feature-emoji {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        .feature-text strong {
+            display: block;
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1rem;
+            color: #0F172A;
+            margin-bottom: 0.25rem;
+        }
+        .feature-text span {
+            font-size: 0.75rem;
+            color: #64748B;
+        }
+        .intro-tips {
+            background: #F0FDF4;
+            border: 2px solid #86EFAC;
+            border-radius: 1rem;
+            padding: 1.25rem;
+            margin-bottom: 2rem;
+        }
+        .intro-tip {
+            color: #166534;
+            font-size: 0.9rem;
+            padding: 0.5rem 0;
+            display: flex;
+            align-items: center;
+        }
+        .intro-start-btn {
+            width: 100%;
+            padding: 1.25rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 999px;
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 10px 25px rgba(102,126,234,0.3);
+            transition: all 0.3s;
+        }
+        .intro-start-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(102,126,234,0.4);
+        }
+        @keyframes slideUpBounce {
+            0% { opacity: 0; transform: translateY(100px); }
+            50% { transform: translateY(-10px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        @media (max-width: 768px) {
+            .intro-features {
+                grid-template-columns: 1fr;
+            }
+            .intro-title {
+                font-size: 1.5rem;
+            }
+        }
+
+    </style>
+  <!-- NeuroLearn Core Scripts — defer garantiza que el DOM esté listo -->
+  <script src="state.js"   defer></script>
+  <script src="ui.js"      defer></script>
+  <script src="router.js"  defer></script>
+  <script src="auth.js"    defer></script>
+  <script src="adaptive.js" defer></script>
+  <script src="reset-first-time.js" defer></script>
+  <script src="nl-init.js" defer></script>
+</head>
+<body>
+    <!-- INTRO OVERLAY - Solo primera vez -->
+    <div class="diagnostic-intro" id="diagnostic-intro" style="display:none;">
+        <div class="intro-overlay"></div>
+        <div class="intro-card">
+            <div class="intro-icon">🎯</div>
+            <h1 class="intro-title">¡Bienvenido a tu Evaluación Diagnóstica!</h1>
+            <p class="intro-text">
+                Esta evaluación nos ayudará a conocer tu nivel actual en <strong>Matemáticas</strong> y <strong>Español</strong>.
+            </p>
+            <div class="intro-features">
+                <div class="intro-feature">
+                    <div class="feature-emoji">⏱️</div>
+                    <div class="feature-text">
+                        <strong>10 minutos</strong>
+                        <span>Tiempo estimado</span>
+                    </div>
+                </div>
+                <div class="intro-feature">
+                    <div class="feature-emoji">📝</div>
+                    <div class="feature-text">
+                        <strong>12 preguntas</strong>
+                        <span>Matemáticas y Español</span>
+                    </div>
+                </div>
+                <div class="intro-feature">
+                    <div class="feature-emoji">🎮</div>
+                    <div class="feature-text">
+                        <strong>Nivel adaptativo</strong>
+                        <span>Se ajusta a ti</span>
+                    </div>
+                </div>
+            </div>
+            <div class="intro-tips">
+                <div class="intro-tip">💡 Lee cada pregunta con calma</div>
+                <div class="intro-tip">💡 No hay respuestas incorrectas, solo queremos conocerte</div>
+                <div class="intro-tip">💡 Puedes saltar preguntas si no sabes la respuesta</div>
+            </div>
+            <button class="intro-start-btn" id="start-diagnostic-btn">
+                🚀 ¡Comenzar Evaluación!
+            </button>
+        </div>
+    </div>
+
+    <!-- TOP BAR -->
+    <div class="top-bar">
+        <button class="back-btn" onclick="NLRouter.go('student')">← Salir</button>
+        <div class="progress-info">
+            <div class="progress-labels">
+                <span id="q-label">Pregunta 1 de 12</span>
+                <span id="q-pct">0% completado</span>
+            </div>
+            <div class="progress-track">
+                <div class="progress-fill" id="prog-fill" style="width:0%"></div>
+            </div>
+        </div>
+        <div class="timer-chip">⏱ <span id="clock">10:00</span></div>
+    </div>
+
+    <!-- STEPPER — se actualiza dinámicamente -->
+    <div class="stepper" id="stepper">
+        <div class="step-item active" data-step="0">
+            <div class="step-circle active">1</div>
+            <div class="step-label">Conteo</div>
+        </div>
+        <div class="step-item pending" data-step="1">
+            <div class="step-circle pending">2</div>
+            <div class="step-label">Sumas</div>
+        </div>
+        <div class="step-item pending" data-step="2">
+            <div class="step-circle pending">3</div>
+            <div class="step-label">Restas</div>
+        </div>
+        <div class="step-item pending" data-step="3">
+            <div class="step-circle pending">4</div>
+            <div class="step-label">Sílabas</div>
+        </div>
+        <div class="step-item pending" data-step="4">
+            <div class="step-circle pending">5</div>
+            <div class="step-label">Palabras</div>
+        </div>
+        <div class="step-item pending" data-step="5">
+            <div class="step-circle pending">6</div>
+            <div class="step-label">Comprensión</div>
+        </div>
+    </div>
+
+    <!-- SECTION INTRO — updated dynamically -->
+    <div class="section-intro" id="section-intro">
+        <div class="section-badge" id="section-badge">🔢 Matemáticas — Sección 1 de 6</div>
+        <h2 class="section-title" id="section-title">Empecemos</h2>
+        <p class="section-desc">Lee con calma y elige la respuesta correcta. ¡No hay prisa!</p>
+    </div>
+
+    <!-- QUESTION AREA -->
+    <div class="question-area">
+
+        <!-- TARJETA DINÁMICA ÚNICA — NLPageEval la renderiza completa -->
+        <div class="question-card" id="question-card">
+
+            <!-- Meta: materia + dificultad -->
+            <div class="q-meta">
+                <span class="q-chip" id="q-chip">Cargando...</span>
+                <div class="q-difficulty">
+                    <div class="diff-dot easy" id="diff-dot"></div>
+                    <span id="diff-label">Nivel fácil</span>
+                </div>
+            </div>
+
+            <!-- Texto de la pregunta -->
+            <div class="q-text" id="q-text">
+                Cargando pregunta...
+            </div>
+
+            <!-- Opciones MCQ (4 botones) -->
+            <div class="mcq-options" id="mcq-options">
+                <div class="mcq-option" id="opt-0">
+                    <div class="mcq-letter">A</div>
+                    <span>—</span>
+                </div>
+                <div class="mcq-option" id="opt-1">
+                    <div class="mcq-letter">B</div>
+                    <span>—</span>
+                </div>
+                <div class="mcq-option" id="opt-2">
+                    <div class="mcq-letter">C</div>
+                    <span>—</span>
+                </div>
+                <div class="mcq-option" id="opt-3">
+                    <div class="mcq-letter">D</div>
+                    <span>—</span>
+                </div>
+            </div>
+
+            <!-- Opciones de imagen (ocultas por defecto) -->
+            <div class="image-choices" id="image-options" style="display:none;">
+                <div class="image-choice" id="img-0"><span class="image-emoji">—</span><div class="image-label">—</div></div>
+                <div class="image-choice" id="img-1"><span class="image-emoji">—</span><div class="image-label">—</div></div>
+                <div class="image-choice" id="img-2"><span class="image-emoji">—</span><div class="image-label">—</div></div>
+                <div class="image-choice" id="img-3"><span class="image-emoji">—</span><div class="image-label">—</div></div>
+            </div>
+
+            <!-- Acciones -->
+            <div class="q-actions">
+                <button class="skip-btn" id="skip-btn">Saltar →</button>
+                <button class="confirm-btn" id="confirm-btn" disabled>
+                    Comprobar ✓
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- FEEDBACK TOAST -->
+    <div class="toast" id="toast">
+        <div class="toast-icon" id="toast-icon">🎉</div>
+        <div>
+            <div class="toast-title" id="toast-title">¡Correcto!</div>
+            <div class="toast-msg" id="toast-msg">Muy bien hecho. Pasando a la siguiente pregunta…</div>
+        </div>
+    </div>
+
+    <script>
+        // TIMER
+        let secs = 522;
+        setInterval(() => {
+            secs--;
+            const m = Math.floor(secs/60).toString().padStart(2,'0');
+            const s = (secs%60).toString().padStart(2,'0');
+            document.getElementById('clock').textContent = `${m}:${s}`;
+        }, 1000);
+
+        // MCQ
+        // Los handlers del demo estático son reemplazados por NLPageEval en nl-init.js
+        // Estas funciones existen como fallback por si los scripts tardan en cargar
+        function selectMCQ(el) {
+            if(window.NLPageEval) return; // NLPageEval toma control
+            document.querySelectorAll('.mcq-option').forEach(o=>o.classList.remove('selected'));
+            el.classList.add('selected');
+            document.getElementById('confirm-btn').disabled = false;
+        }
+        function checkAnswer() {}
+        function selectImage(el) {
+            if(window.NLPageEval) return;
+            document.querySelectorAll('.image-choice').forEach(o=>o.classList.remove('selected'));
+            el.classList.add('selected');
+            document.getElementById('confirm-btn2').disabled = false;
+        }
+        function checkImage() {}
+        let placed = [];
+        function placeSyllable(el, syl) {
+            const blanks = document.querySelectorAll('.syllable-blank');
+            const idx = placed.length;
+            if(idx < blanks.length) {
+                blanks[idx].textContent = syl;
+                blanks[idx].classList.add('filled');
+                placed.push(syl);
+                el.style.opacity='0.3'; el.style.pointerEvents='none';
+            }
+        }
+        function showToast(correct) {
+            const t=document.getElementById('toast');
+            if(!t) return;
+            t.className = correct ? 'toast show' : 'toast wrong-toast show';
+            document.getElementById('toast-icon').textContent = correct?'🎉':'💪';
+            document.getElementById('toast-title').textContent = correct?'¡Excelente!':'¡Casi!';
+            document.getElementById('toast-msg').textContent = correct?'Respuesta correcta.':'Sigue practicando.';
+            setTimeout(()=>t.classList.remove('show'),3000);
+        }
+    </script>
+
+
+
+    <!-- DEBUG BUTTON (remover en producción) -->
+    <div style="position: fixed; bottom: 20px; right: 20px; z-index: 99999;">
+        <button onclick="showDebugInfo()" style="
+            background: #EF4444;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 999px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(239,68,68,0.4);
+            font-size: 0.85rem;
+        ">
+            🐛 Debug Info
+        </button>
+    </div>
+    
+    <script>
+    function showDebugInfo() {
+        const info = [];
+        info.push('=== DEBUG INFO ===');
+        info.push('');
+        info.push('NLState exists: ' + (typeof NLState !== 'undefined'));
+        info.push('NLAdaptive exists: ' + (typeof NLAdaptive !== 'undefined'));
+        info.push('NLPageEval exists: ' + (typeof NLPageEval !== 'undefined'));
+        info.push('');
+        
+        if (typeof NLPageEval !== 'undefined') {
+            info.push('NLPageEval.questions.length: ' + (NLPageEval.questions?.length || 0));
+            info.push('NLPageEval.current: ' + NLPageEval.current);
+            info.push('NLPageEval.selectedIdx: ' + NLPageEval.selectedIdx);
+            info.push('');
+            if (NLPageEval.questions && NLPageEval.questions.length > 0) {
+                const q = NLPageEval.questions[NLPageEval.current];
+                info.push('Current question:');
+                info.push('  q: ' + (q?.q || 'undefined'));
+                info.push('  opts: ' + JSON.stringify(q?.opts || []));
+                info.push('  ans: ' + q?.ans);
+            }
+        }
+        
+        if (typeof NLAdaptive !== 'undefined') {
+            const diag = NLAdaptive.getDiagnosticQuestions();
+            info.push('');
+            info.push('NLAdaptive.getDiagnosticQuestions():');
+            info.push('  length: ' + diag.length);
+            if (diag.length > 0) {
+                info.push('  First question: ' + diag[0].q);
+            }
+        }
+        
+        if (typeof NLState !== 'undefined') {
+            info.push('');
+            info.push('NLState.evaluation:');
+            info.push('  completed: ' + NLState.evaluation.completed);
+            info.push('  active: ' + NLState.evaluation.active);
+        }
+        
+        info.push('');
+        info.push('DOM elements:');
+        info.push('  #q-text: ' + (document.getElementById('q-text') ? 'exists' : 'missing'));
+        info.push('  #mcq-options: ' + (document.getElementById('mcq-options') ? 'exists' : 'missing'));
+        info.push('  #diagnostic-intro: ' + (document.getElementById('diagnostic-intro') ? 'exists (display: ' + document.getElementById('diagnostic-intro').style.display + ')' : 'missing'));
+        
+        console.log(info.join('\n'));
+        alert(info.join('\n'));
+    }
+    </script>
+    <script src="nl-ux-enhancements.js"></script>
+
+</body>
+</html>

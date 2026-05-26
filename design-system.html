@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeuroLearn Kids - Sistema de Diseño</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* Colores Primarios - Cosmos Educativo */
+            --primary-purple: #7C3AED;
+            --primary-blue: #3B82F6;
+            --primary-pink: #EC4899;
+            --primary-cyan: #06B6D4;
+            --primary-orange: #F59E0B;
+            
+            /* Colores Secundarios */
+            --success-green: #10B981;
+            --warning-yellow: #FBBF24;
+            --danger-red: #EF4444;
+            --info-blue: #60A5FA;
+            
+            /* Neutrales */
+            --neutral-50: #F8FAFC;
+            --neutral-100: #F1F5F9;
+            --neutral-200: #E2E8F0;
+            --neutral-300: #CBD5E1;
+            --neutral-700: #334155;
+            --neutral-800: #1E293B;
+            --neutral-900: #0F172A;
+            
+            /* Gradientes */
+            --gradient-cosmic: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-sunset: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-ocean: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --gradient-forest: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            
+            /* Tipografía */
+            --font-display: 'Fredoka', sans-serif;
+            --font-body: 'DM Sans', sans-serif;
+            
+            /* Espaciado */
+            --space-xs: 0.25rem;
+            --space-sm: 0.5rem;
+            --space-md: 1rem;
+            --space-lg: 1.5rem;
+            --space-xl: 2rem;
+            --space-2xl: 3rem;
+            
+            /* Sombras */
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            --shadow-glow: 0 0 20px rgba(124, 58, 237, 0.3);
+            
+            /* Bordes */
+            --radius-sm: 0.5rem;
+            --radius-md: 0.75rem;
+            --radius-lg: 1rem;
+            --radius-xl: 1.5rem;
+            --radius-full: 9999px;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: var(--neutral-50);
+            color: var(--neutral-900);
+            line-height: 1.6;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1, h2, h3 {
+            font-family: var(--font-display);
+            font-weight: 700;
+        }
+
+        h1 {
+            font-size: 3rem;
+            background: var(--gradient-cosmic);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        h2 {
+            font-size: 2rem;
+            color: var(--neutral-800);
+            margin: 3rem 0 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        h3 {
+            font-size: 1.5rem;
+            color: var(--neutral-700);
+            margin: 2rem 0 1rem;
+        }
+
+        .section {
+            background: white;
+            padding: 2rem;
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-lg);
+            margin-bottom: 2rem;
+        }
+
+        .color-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .color-card {
+            border-radius: var(--radius-md);
+            padding: 3rem 1rem 1rem;
+            color: white;
+            text-align: center;
+            font-weight: 600;
+            box-shadow: var(--shadow-md);
+            transition: transform 0.3s ease;
+        }
+
+        .color-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .typography-sample {
+            padding: 2rem;
+            background: var(--neutral-100);
+            border-radius: var(--radius-lg);
+            margin: 1rem 0;
+        }
+
+        .component-showcase {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border-radius: var(--radius-full);
+            border: none;
+            font-family: var(--font-display);
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--gradient-cosmic);
+            color: white;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-xl), var(--shadow-glow);
+        }
+
+        .btn-secondary {
+            background: var(--gradient-ocean);
+            color: white;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-success {
+            background: var(--success-green);
+            color: white;
+        }
+
+        .card {
+            background: white;
+            border-radius: var(--radius-xl);
+            padding: 2rem;
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-xl);
+            transform: translateY(-5px);
+        }
+
+        .icon-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .icon-item {
+            text-align: center;
+            padding: 1rem;
+            border-radius: var(--radius-md);
+            background: var(--neutral-100);
+            transition: all 0.3s ease;
+        }
+
+        .icon-item:hover {
+            background: var(--primary-purple);
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .gradient-card {
+            padding: 3rem;
+            border-radius: var(--radius-xl);
+            color: white;
+            margin: 1rem 0;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-full);
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin: 0.25rem;
+        }
+
+        .badge-nivel-1 { background: #DBEAFE; color: #1E40AF; }
+        .badge-nivel-2 { background: #E0E7FF; color: #4338CA; }
+        .badge-nivel-3 { background: #FEE2E2; color: #991B1B; }
+
+        .spacing-demo {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .spacing-box {
+            background: var(--primary-purple);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            border-radius: var(--radius-md);
+        }
+
+        .layout-example {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 2rem;
+            min-height: 400px;
+            margin: 2rem 0;
+        }
+
+        .sidebar-demo {
+            background: var(--neutral-900);
+            color: white;
+            padding: 2rem;
+            border-radius: var(--radius-xl);
+        }
+
+        .content-demo {
+            background: white;
+            padding: 2rem;
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-lg);
+        }
+
+        code {
+            background: var(--neutral-200);
+            padding: 0.25rem 0.5rem;
+            border-radius: var(--radius-sm);
+            font-family: 'Courier New', monospace;
+            font-size: 0.875rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 NeuroLearn Kids</h1>
+        <p style="font-size: 1.25rem; color: var(--neutral-700); margin-bottom: 3rem;">
+            Sistema de Diseño - Plataforma Educativa Adaptativa
+        </p>
+
+        <!-- Paleta de Colores -->
+        <div class="section">
+            <h2>🎨 Paleta de Colores</h2>
+            <p>Colores vibrantes y amigables que representan diferentes áreas del conocimiento</p>
+            
+            <h3>Colores Primarios</h3>
+            <div class="color-grid">
+                <div class="color-card" style="background: var(--primary-purple);">
+                    Purple<br>#7C3AED
+                </div>
+                <div class="color-card" style="background: var(--primary-blue);">
+                    Blue<br>#3B82F6
+                </div>
+                <div class="color-card" style="background: var(--primary-pink);">
+                    Pink<br>#EC4899
+                </div>
+                <div class="color-card" style="background: var(--primary-cyan);">
+                    Cyan<br>#06B6D4
+                </div>
+                <div class="color-card" style="background: var(--primary-orange);">
+                    Orange<br>#F59E0B
+                </div>
+            </div>
+
+            <h3>Colores de Estado</h3>
+            <div class="color-grid">
+                <div class="color-card" style="background: var(--success-green);">
+                    Success<br>#10B981
+                </div>
+                <div class="color-card" style="background: var(--warning-yellow);">
+                    Warning<br>#FBBF24
+                </div>
+                <div class="color-card" style="background: var(--danger-red);">
+                    Danger<br>#EF4444
+                </div>
+                <div class="color-card" style="background: var(--info-blue);">
+                    Info<br>#60A5FA
+                </div>
+            </div>
+
+            <h3>Gradientes Temáticos</h3>
+            <div class="gradient-card" style="background: var(--gradient-cosmic);">
+                Cosmic - Matemáticas y Lógica
+            </div>
+            <div class="gradient-card" style="background: var(--gradient-sunset);">
+                Sunset - Español y Lectura
+            </div>
+            <div class="gradient-card" style="background: var(--gradient-ocean);">
+                Ocean - Ciencias Naturales
+            </div>
+            <div class="gradient-card" style="background: var(--gradient-forest);">
+                Forest - Logros y Recompensas
+            </div>
+        </div>
+
+        <!-- Tipografía -->
+        <div class="section">
+            <h2>📝 Tipografía</h2>
+            
+            <div class="typography-sample">
+                <h1 style="margin: 0;">Fredoka - Títulos y Headings</h1>
+                <p style="font-family: var(--font-display); font-size: 1.25rem; margin: 1rem 0;">
+                    Tipografía redondeada y amigable perfecta para niños. Usada en títulos, botones y elementos destacados.
+                </p>
+                <p style="font-family: var(--font-display); font-weight: 300;">Weight 300 - Light</p>
+                <p style="font-family: var(--font-display); font-weight: 400;">Weight 400 - Regular</p>
+                <p style="font-family: var(--font-display); font-weight: 600;">Weight 600 - SemiBold</p>
+                <p style="font-family: var(--font-display); font-weight: 700;">Weight 700 - Bold</p>
+            </div>
+
+            <div class="typography-sample">
+                <h2 style="margin: 0; font-family: var(--font-body);">DM Sans - Cuerpo de Texto</h2>
+                <p style="margin: 1rem 0;">
+                    Tipografía clara y legible para el contenido educativo. Excelente para párrafos largos y descripciones.
+                </p>
+                <p style="font-weight: 400;">Weight 400 - Regular para lectura general</p>
+                <p style="font-weight: 500;">Weight 500 - Medium para énfasis moderado</p>
+                <p style="font-weight: 700;">Weight 700 - Bold para destacar información importante</p>
+            </div>
+
+            <h3>Jerarquía Tipográfica</h3>
+            <div style="padding: 2rem; background: white; border-radius: var(--radius-lg);">
+                <h1 style="font-size: 3rem; margin: 0.5rem 0;">H1 - 3rem - Títulos Principales</h1>
+                <h2 style="font-size: 2rem; margin: 0.5rem 0;">H2 - 2rem - Secciones</h2>
+                <h3 style="font-size: 1.5rem; margin: 0.5rem 0;">H3 - 1.5rem - Subsecciones</h3>
+                <p style="font-size: 1.125rem; margin: 0.5rem 0;">Párrafo Grande - 1.125rem - Introducciones</p>
+                <p style="font-size: 1rem; margin: 0.5rem 0;">Párrafo Normal - 1rem - Texto general</p>
+                <p style="font-size: 0.875rem; margin: 0.5rem 0;">Párrafo Pequeño - 0.875rem - Metadatos</p>
+            </div>
+        </div>
+
+        <!-- Componentes -->
+        <div class="section">
+            <h2>🧩 Componentes</h2>
+            
+            <h3>Botones</h3>
+            <div style="display: flex; flex-wrap: wrap; gap: 1rem; margin: 1rem 0;">
+                <button class="btn btn-primary">✨ Comenzar Aventura</button>
+                <button class="btn btn-secondary">🎯 Ver Progreso</button>
+                <button class="btn btn-success">✅ Continuar</button>
+            </div>
+
+            <h3>Cards de Materias</h3>
+            <div class="component-showcase">
+                <div class="card" style="border-left: 4px solid var(--primary-purple);">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">🔢</div>
+                    <h3 style="margin: 0 0 0.5rem;">Matemáticas</h3>
+                    <p style="color: var(--neutral-700); margin: 0 0 1rem;">15 ejercicios completados</p>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span class="badge badge-nivel-2">Nivel 2</span>
+                        <span style="font-weight: 600; color: var(--success-green);">85%</span>
+                    </div>
+                </div>
+
+                <div class="card" style="border-left: 4px solid var(--primary-pink);">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">📚</div>
+                    <h3 style="margin: 0 0 0.5rem;">Español</h3>
+                    <p style="color: var(--neutral-700); margin: 0 0 1rem;">23 ejercicios completados</p>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span class="badge badge-nivel-3">Nivel 3</span>
+                        <span style="font-weight: 600; color: var(--success-green);">92%</span>
+                    </div>
+                </div>
+
+                <div class="card" style="border-left: 4px solid var(--primary-cyan);">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">🔬</div>
+                    <h3 style="margin: 0 0 0.5rem;">Ciencias</h3>
+                    <p style="color: var(--neutral-700); margin: 0 0 1rem;">8 ejercicios completados</p>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span class="badge badge-nivel-1">Nivel 1</span>
+                        <span style="font-weight: 600; color: var(--warning-yellow);">78%</span>
+                    </div>
+                </div>
+            </div>
+
+            <h3>Badges de Nivel</h3>
+            <div>
+                <span class="badge badge-nivel-1">⭐ Explorador</span>
+                <span class="badge badge-nivel-2">🚀 Astronauta</span>
+                <span class="badge badge-nivel-3">🌟 Maestro Cósmico</span>
+            </div>
+        </div>
+
+        <!-- Espaciado -->
+        <div class="section">
+            <h2>📏 Sistema de Espaciado</h2>
+            <p>Sistema consistente basado en múltiplos de 4px</p>
+            <div class="spacing-demo">
+                <div class="spacing-box" style="width: 4px; height: 40px;">XS</div>
+                <div class="spacing-box" style="width: 8px; height: 40px;">SM</div>
+                <div class="spacing-box" style="width: 16px; height: 40px;">MD</div>
+                <div class="spacing-box" style="width: 24px; height: 40px;">LG</div>
+                <div class="spacing-box" style="width: 32px; height: 40px;">XL</div>
+                <div class="spacing-box" style="width: 48px; height: 40px;">2XL</div>
+            </div>
+            <ul style="margin-top: 1rem;">
+                <li><code>--space-xs: 0.25rem (4px)</code></li>
+                <li><code>--space-sm: 0.5rem (8px)</code></li>
+                <li><code>--space-md: 1rem (16px)</code></li>
+                <li><code>--space-lg: 1.5rem (24px)</code></li>
+                <li><code>--space-xl: 2rem (32px)</code></li>
+                <li><code>--space-2xl: 3rem (48px)</code></li>
+            </ul>
+        </div>
+
+        <!-- Layout -->
+        <div class="section">
+            <h2>📐 Layout y Estructura</h2>
+            <h3>Dashboard Layout</h3>
+            <div class="layout-example">
+                <div class="sidebar-demo">
+                    <h3 style="color: white; margin: 0 0 1rem;">Sidebar</h3>
+                    <p style="opacity: 0.8;">Navegación principal</p>
+                    <p style="opacity: 0.8;">250px de ancho</p>
+                </div>
+                <div class="content-demo">
+                    <h3 style="margin: 0 0 1rem;">Área de Contenido</h3>
+                    <p>Flexible y responsive</p>
+                    <p>Padding: 2rem</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Iconografía -->
+        <div class="section">
+            <h2>🎯 Iconografía Sugerida</h2>
+            <p>Usar iconos de <strong>Lucide Icons</strong> o <strong>Heroicons</strong></p>
+            <div class="icon-grid">
+                <div class="icon-item">🏠<br>Home</div>
+                <div class="icon-item">📊<br>Progreso</div>
+                <div class="icon-item">🎯<br>Objetivos</div>
+                <div class="icon-item">⚙️<br>Ajustes</div>
+                <div class="icon-item">👤<br>Perfil</div>
+                <div class="icon-item">🏆<br>Logros</div>
+                <div class="icon-item">📚<br>Lecciones</div>
+                <div class="icon-item">✨<br>Nuevo</div>
+            </div>
+        </div>
+
+        <!-- Guías de Uso -->
+        <div class="section">
+            <h2>📋 Principios de Diseño</h2>
+            <div class="card" style="margin: 1rem 0;">
+                <h3>🎨 Accesibilidad Visual</h3>
+                <ul>
+                    <li>Contraste mínimo de 4.5:1 para texto</li>
+                    <li>Tamaño de fuente mínimo de 14px</li>
+                    <li>Elementos interactivos de al menos 44x44px</li>
+                </ul>
+            </div>
+            <div class="card" style="margin: 1rem 0;">
+                <h3>🚀 Animaciones</h3>
+                <ul>
+                    <li>Duración: 200-300ms para micro-interacciones</li>
+                    <li>Easing: ease-in-out para suavidad</li>
+                    <li>Usar <code>transform</code> y <code>opacity</code> para performance</li>
+                </ul>
+            </div>
+            <div class="card" style="margin: 1rem 0;">
+                <h3>📱 Responsividad</h3>
+                <ul>
+                    <li>Mobile First: Diseñar primero para móvil</li>
+                    <li>Breakpoints: 640px (sm), 768px (md), 1024px (lg), 1280px (xl)</li>
+                    <li>Grid flexible con CSS Grid y Flexbox</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div style="text-align: center; padding: 3rem 0; color: var(--neutral-700);">
+            <p>✨ NeuroLearn Kids - Sistema de Diseño v1.0</p>
+            <p style="font-size: 0.875rem; margin-top: 0.5rem;">Diseñado para crear experiencias educativas memorables</p>
+        </div>
+    </div>
+</body>
+</html>

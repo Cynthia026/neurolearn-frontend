@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuración - NeuroLearn Kids</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --primary: #7C3AED;
+            --dark: #1E293B;
+            --light: #F8FAFC;
+        }
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--light);
+            display: grid;
+            grid-template-columns: 240px 1fr;
+            min-height: 100vh;
+        }
+        .sidebar {
+            background: var(--dark);
+            color: white;
+            padding: 2rem 0;
+        }
+        .sidebar-logo {
+            padding: 0 1.5rem 2rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 2rem;
+        }
+        .sidebar-logo h1 {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.5rem;
+        }
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 1.5rem;
+            color: white;
+            text-decoration: none;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+        }
+        .sidebar-nav a:hover {
+            background: rgba(255,255,255,0.1);
+            border-left-color: var(--primary);
+        }
+        .sidebar-nav a.active {
+            background: rgba(124,58,237,0.2);
+            border-left-color: var(--primary);
+        }
+        .main-content {
+            padding: 2rem;
+            max-width: 900px;
+        }
+        .header h1 {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        .settings-section {
+            background: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .settings-section h2 {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.25rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .setting-item {
+            padding: 1.25rem 0;
+            border-bottom: 1px solid #E2E8F0;
+        }
+        .setting-item:last-child {
+            border-bottom: none;
+        }
+        .setting-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        .setting-title {
+            font-weight: 600;
+            color: var(--dark);
+        }
+        .setting-desc {
+            font-size: 0.85rem;
+            color: #64748B;
+        }
+        .toggle {
+            position: relative;
+            width: 50px;
+            height: 28px;
+            background: #E2E8F0;
+            border-radius: 999px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .toggle.active {
+            background: var(--primary);
+        }
+        .toggle::after {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 22px;
+            height: 22px;
+            background: white;
+            border-radius: 50%;
+            transition: all 0.2s;
+        }
+        .toggle.active::after {
+            left: 25px;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #E2E8F0;
+            border-radius: 0.5rem;
+            font-size: 0.95rem;
+        }
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        .btn-danger {
+            background: #EF4444;
+            color: white;
+        }
+    </style>
+    <script src="state.js" defer></script>
+    <script src="ui.js" defer></script>
+    <script src="nl-init.js" defer></script>
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <h1>🚀 NeuroLearn</h1>
+            <p style="font-size: 0.85rem; opacity: 0.7;">Panel Docente</p>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="teacher-dashboard.html"><span>📊</span> Dashboard</a>
+            <a href="teacher-students.html"><span>👥</span> Mis Estudiantes</a>
+            <a href="teacher-content.html"><span>📚</span> Contenido</a>
+            <a href="teacher-evaluations.html"><span>📝</span> Evaluaciones</a>
+            <a href="progress-report.html"><span>📈</span> Reportes</a>
+            <a href="teacher-settings.html" class="active"><span>⚙️</span> Configuración</a>
+            <a href="landing-page-v2.html" onclick="return confirm('¿Seguro que quieres cerrar sesión?');" style="background: linear-gradient(135deg, #EF4444, #DC2626);"><span>🚪</span> Cerrar Sesión</a>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <div class="header">
+            <h1>⚙️ Configuración</h1>
+            <p style="color: #64748B; margin-top: 0.5rem; margin-bottom: 2rem;">Personaliza tu experiencia docente</p>
+        </div>
+
+        <div class="settings-section">
+            <h2>👤 Perfil</h2>
+            <div class="form-group">
+                <label>Nombre Completo</label>
+                <input type="text" value="Profa. María González" id="name">
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" value="maria.gonzalez@escuela.edu.mx" id="email">
+            </div>
+            <div class="form-group">
+                <label>Escuela</label>
+                <input type="text" value="Escuela Benito Juárez" id="school">
+            </div>
+            <div class="form-group">
+                <label>Grupo</label>
+                <input type="text" value="2° A" id="group">
+            </div>
+            <button class="btn btn-primary" onclick="saveProfile()">💾 Guardar Cambios</button>
+        </div>
+
+        <div class="settings-section">
+            <h2>🔔 Notificaciones</h2>
+            <div class="setting-item">
+                <div class="setting-header">
+                    <div>
+                        <div class="setting-title">Alertas de Riesgo</div>
+                        <div class="setting-desc">Recibir notificaciones cuando un estudiante muestre signos de riesgo académico</div>
+                    </div>
+                    <div class="toggle active" onclick="toggleSetting(this)"></div>
+                </div>
+            </div>
+            <div class="setting-item">
+                <div class="setting-header">
+                    <div>
+                        <div class="setting-title">Reportes Semanales</div>
+                        <div class="setting-desc">Resumen semanal del progreso de tu grupo por email</div>
+                    </div>
+                    <div class="toggle active" onclick="toggleSetting(this)"></div>
+                </div>
+            </div>
+            <div class="setting-item">
+                <div class="setting-header">
+                    <div>
+                        <div class="setting-title">Evaluaciones Completadas</div>
+                        <div class="setting-desc">Notificar cuando un estudiante complete una evaluación</div>
+                    </div>
+                    <div class="toggle" onclick="toggleSetting(this)"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="settings-section">
+            <h2>🎯 Preferencias de Enseñanza</h2>
+            <div class="setting-item">
+                <div class="setting-header">
+                    <div>
+                        <div class="setting-title">Motor Adaptativo Automático</div>
+                        <div class="setting-desc">Ajustar dificultad automáticamente según el desempeño del estudiante</div>
+                    </div>
+                    <div class="toggle active" onclick="toggleSetting(this)"></div>
+                </div>
+            </div>
+            <div class="setting-item">
+                <div class="setting-header">
+                    <div>
+                        <div class="setting-title">Gamificación Activada</div>
+                        <div class="setting-desc">Mostrar puntos, rachas y logros a los estudiantes</div>
+                    </div>
+                    <div class="toggle active" onclick="toggleSetting(this)"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="settings-section">
+            <h2>🔒 Seguridad y Privacidad</h2>
+            <div class="form-group">
+                <label>Cambiar Contraseña</label>
+                <input type="password" placeholder="Nueva contraseña" id="new-pass">
+            </div>
+            <button class="btn btn-primary" onclick="changePassword()">🔑 Actualizar Contraseña</button>
+        </div>
+
+        <!-- NUEVA SECCIÓN: Gestión de Datos -->
+        <div class="settings-section">
+            <h2>💾 Gestión de Datos</h2>
+            <p style="color: #64748B; margin-bottom: 1.5rem;">
+                Exporta tus datos para hacer respaldo o importa datos previamente guardados.
+            </p>
+            
+            <div id="backup-buttons-container"></div>
+            
+            <div style="margin-top: 1rem; padding: 1rem; background: #FEF3C7; border-radius: 0.5rem; border-left: 4px solid #F59E0B;">
+                <strong style="color: #92400E;">💡 Consejo:</strong>
+                <p style="color: #92400E; margin-top: 0.5rem; font-size: 0.9rem;">
+                    Recomendamos exportar tus datos al menos una vez al mes como medida de seguridad.
+                </p>
+            </div>
+        </div>
+
+        <div class="settings-section" style="border: 2px solid #FEE2E2;">
+            <h2 style="color: #EF4444;">⚠️ Zona de Peligro</h2>
+            <div class="setting-item">
+                <div class="setting-header">
+                    <div>
+                        <div class="setting-title">Eliminar Cuenta</div>
+                        <div class="setting-desc">Esta acción es permanente e irreversible</div>
+                    </div>
+                    <button class="btn btn-danger" onclick="deleteAccount()">🗑️ Eliminar Cuenta</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Inicializar botones de backup
+        window.addEventListener('DOMContentLoaded', () => {
+            const container = document.getElementById('backup-buttons-container');
+            container.innerHTML = NLBackup.addBackupButtons();
+        });
+        
+        function toggleSetting(el) {
+            el.classList.toggle('active');
+            NLUI.showModal('✅ Guardado', 'Configuración actualizada correctamente.');
+        }
+
+        function saveProfile() {
+            NLUI.showModal('✅ Perfil Actualizado', 'Tus datos se han guardado correctamente.');
+        }
+
+        function changePassword() {
+            const newPass = document.getElementById('new-pass').value;
+            if (!newPass) {
+                NLUI.showModal('⚠️ Error', 'Por favor ingresa una nueva contraseña.');
+                return;
+            }
+            NLUI.showModal('✅ Contraseña Actualizada', 'Tu contraseña ha sido cambiada exitosamente.');
+            document.getElementById('new-pass').value = '';
+        }
+
+        function deleteAccount() {
+            NLUI.showModal(
+                '⚠️ ¿Eliminar Cuenta?',
+                'Esta acción es permanente. Todos tus datos y el progreso de tus estudiantes se perderán.',
+                [
+                    { label: 'Cancelar', action: null },
+                    { label: 'Eliminar Permanentemente', primary: false, action: () => {
+                        NLUI.showModal('🗑️ Cuenta Eliminada', 'Tu cuenta ha sido eliminada.');
+                        setTimeout(() => window.location.href = 'landing-page.html', 2000);
+                    }}
+                ]
+            );
+        }
+    </script>
+    <!-- NeuroLearn Systems -->
+    <script src="nl-notifications.js"></script>
+    <script src="nl-ux-enhancements.js"></script>
+</body>
+</html>

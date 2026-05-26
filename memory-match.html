@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memory Match - NeuroLearn Kids</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Fredoka', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 1rem;
+        }
+
+        .game-container {
+            background: white;
+            border-radius: 2rem;
+            padding: 2rem;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 800px;
+            width: 100%;
+        }
+
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 3px solid #E2E8F0;
+        }
+
+        .back-btn {
+            padding: 0.75rem 1.5rem;
+            background: #7C3AED;
+            color: white;
+            border: none;
+            border-radius: 999px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .back-btn:hover {
+            background: #6D28D9;
+            transform: translateY(-2px);
+        }
+
+        .game-title {
+            font-size: 2.5rem;
+            color: #1E293B;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat {
+            text-align: center;
+            padding: 1rem;
+            background: rgba(124,58,237,0.1);
+            border-radius: 1rem;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: #64748B;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            color: #7C3AED;
+            font-weight: 700;
+        }
+
+        .difficulty-selector {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+
+        .difficulty-btn {
+            padding: 0.75rem 1.5rem;
+            border: 2px solid #E2E8F0;
+            background: white;
+            border-radius: 999px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .difficulty-btn.active {
+            background: #7C3AED;
+            color: white;
+            border-color: #7C3AED;
+        }
+
+        .memory-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .memory-card {
+            aspect-ratio: 1;
+            background: white;
+            border: 3px solid #E2E8F0;
+            border-radius: 1rem;
+            cursor: pointer;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+        }
+
+        .memory-card.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .memory-card.matched {
+            border-color: #10B981;
+            animation: pulse 0.5s;
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            border-radius: 0.8rem;
+        }
+
+        .card-back {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            font-size: 2rem;
+        }
+
+        .card-front {
+            background: white;
+            transform: rotateY(180deg);
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .game-over {
+            display: none;
+            text-align: center;
+            padding: 3rem;
+        }
+
+        .game-over.active {
+            display: block;
+        }
+
+        .game-over h2 {
+            font-size: 3rem;
+            color: #7C3AED;
+            margin-bottom: 1rem;
+        }
+
+        .final-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .final-stat {
+            text-align: center;
+        }
+
+        .final-stat-value {
+            font-size: 3rem;
+            color: #1E293B;
+            font-weight: 700;
+        }
+
+        .final-stat-label {
+            color: #64748B;
+            margin-top: 0.5rem;
+        }
+
+        .play-again-btn {
+            padding: 1.5rem 3rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 999px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .play-again-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(102,126,234,0.4);
+        }
+
+        @media (max-width: 640px) {
+            .memory-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div id="gameScreen">
+            <div class="game-header">
+                <button class="back-btn" onclick="window.location.href='student-dashboard.html'">← Volver</button>
+                <h1 class="game-title">🧠 Memory Match</h1>
+                <div></div>
+            </div>
+
+            <div class="difficulty-selector">
+                <button class="difficulty-btn active" onclick="setDifficulty('easy')">Fácil (12)</button>
+                <button class="difficulty-btn" onclick="setDifficulty('medium')">Medio (16)</button>
+                <button class="difficulty-btn" onclick="setDifficulty('hard')">Difícil (20)</button>
+            </div>
+
+            <div class="stats">
+                <div class="stat">
+                    <div class="stat-label">Intentos</div>
+                    <div class="stat-value" id="moves">0</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">Parejas</div>
+                    <div class="stat-value" id="matches">0</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">Tiempo</div>
+                    <div class="stat-value" id="timer">0:00</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">Mejor</div>
+                    <div class="stat-value" id="bestTime">-</div>
+                </div>
+            </div>
+
+            <div class="memory-grid" id="memoryGrid"></div>
+        </div>
+
+        <div class="game-over" id="gameOver">
+            <h2>🎉 ¡Felicitaciones!</h2>
+            <p style="font-size: 1.2rem; color: #64748B; margin-bottom: 2rem;">
+                ¡Encontraste todas las parejas!
+            </p>
+            <div class="final-stats">
+                <div class="final-stat">
+                    <div class="final-stat-value" id="finalMoves">0</div>
+                    <div class="final-stat-label">Intentos</div>
+                </div>
+                <div class="final-stat">
+                    <div class="final-stat-value" id="finalTime">0:00</div>
+                    <div class="final-stat-label">Tiempo</div>
+                </div>
+            </div>
+            <p id="performanceMessage" style="font-size: 1.1rem; margin: 2rem 0;"></p>
+            <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                <button class="play-again-btn" onclick="restartGame()">🔄 Jugar de Nuevo</button>
+                <button class="play-again-btn" onclick="window.location.href='student-dashboard.html'" style="background: linear-gradient(135deg, #10B981, #059669);">← Regresar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const emojis = {
+            easy: ['🐱', '🐶', '🐼', '🦊', '🐸', '🐝'],
+            medium: ['🍎', '🍌', '🍓', '🍊', '🍉', '🍇', '🥝', '🍑'],
+            hard: ['⚽', '🏀', '🎾', '🏐', '🎱', '🏈', '⚾', '🎳', '🏓', '🥊']
+        };
+
+        let gameState = {
+            difficulty: 'easy',
+            cards: [],
+            flippedCards: [],
+            matchedPairs: 0,
+            moves: 0,
+            startTime: null,
+            timerInterval: null,
+            isProcessing: false
+        };
+
+        function setDifficulty(level) {
+            gameState.difficulty = level;
+            document.querySelectorAll('.difficulty-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            initGame();
+        }
+
+        function initGame() {
+            clearInterval(gameState.timerInterval);
+            
+            gameState = {
+                difficulty: gameState.difficulty,
+                cards: [],
+                flippedCards: [],
+                matchedPairs: 0,
+                moves: 0,
+                startTime: null,
+                timerInterval: null,
+                isProcessing: false
+            };
+
+            const selectedEmojis = emojis[gameState.difficulty];
+            const cards = [...selectedEmojis, ...selectedEmojis];
+            shuffleArray(cards);
+
+            const grid = document.getElementById('memoryGrid');
+            grid.innerHTML = '';
+            
+            cards.forEach((emoji, index) => {
+                const card = createCard(emoji, index);
+                grid.appendChild(card);
+                gameState.cards.push({ emoji, element: card, matched: false });
+            });
+
+            updateUI();
+            loadBestTime();
+        }
+
+        function createCard(emoji, index) {
+            const card = document.createElement('div');
+            card.className = 'memory-card';
+            card.dataset.index = index;
+            card.innerHTML = `
+                <div class="card-face card-back">❓</div>
+                <div class="card-face card-front">${emoji}</div>
+            `;
+            card.onclick = () => flipCard(index);
+            return card;
+        }
+
+        function flipCard(index) {
+            if (gameState.isProcessing) return;
+            
+            const card = gameState.cards[index];
+            if (card.matched || gameState.flippedCards.includes(index)) return;
+
+            if (!gameState.startTime) {
+                gameState.startTime = Date.now();
+                startTimer();
+            }
+
+            card.element.classList.add('flipped');
+            gameState.flippedCards.push(index);
+            playSound('flip');
+
+            if (gameState.flippedCards.length === 2) {
+                gameState.moves++;
+                updateUI();
+                checkMatch();
+            }
+        }
+
+        function checkMatch() {
+            gameState.isProcessing = true;
+            const [index1, index2] = gameState.flippedCards;
+            const card1 = gameState.cards[index1];
+            const card2 = gameState.cards[index2];
+
+            setTimeout(() => {
+                if (card1.emoji === card2.emoji) {
+                    card1.matched = true;
+                    card2.matched = true;
+                    card1.element.classList.add('matched');
+                    card2.element.classList.add('matched');
+                    gameState.matchedPairs++;
+                    playSound('correct');
+                    
+                    // ✨ NUEVO: Confetti en cada pareja encontrada
+                    if (typeof NLConfetti !== 'undefined') {
+                        NLConfetti.celebrate();
+                    }
+                    
+                    // ✨ NUEVO: Mega confetti al completar la mitad
+                    const totalPairs = gameState.cards.length / 2;
+                    if (gameState.matchedPairs === Math.floor(totalPairs / 2)) {
+                        if (typeof NLConfetti !== 'undefined') {
+                            NLConfetti.celebrate('mega');
+                        }
+                        if (typeof NLSounds !== 'undefined') {
+                            NLSounds.play('achievement');
+                        }
+                    }
+
+                    if (gameState.matchedPairs === gameState.cards.length / 2) {
+                        endGame();
+                    }
+                } else {
+                    card1.element.classList.remove('flipped');
+                    card2.element.classList.remove('flipped');
+                    playSound('wrong');
+                }
+
+                gameState.flippedCards = [];
+                gameState.isProcessing = false;
+                updateUI();
+            }, 800);
+        }
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        function startTimer() {
+            gameState.timerInterval = setInterval(() => {
+                const elapsed = Math.floor((Date.now() - gameState.startTime) / 1000);
+                const minutes = Math.floor(elapsed / 60);
+                const seconds = elapsed % 60;
+                document.getElementById('timer').textContent = 
+                    `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            }, 1000);
+        }
+
+        function updateUI() {
+            document.getElementById('moves').textContent = gameState.moves;
+            document.getElementById('matches').textContent = gameState.matchedPairs;
+        }
+
+        function loadBestTime() {
+            const best = localStorage.getItem(`memory_best_${gameState.difficulty}`);
+            document.getElementById('bestTime').textContent = best || '-';
+        }
+
+        function saveBestTime(time) {
+            const key = `memory_best_${gameState.difficulty}`;
+            const current = localStorage.getItem(key);
+            
+            if (!current || time < current) {
+                localStorage.setItem(key, time);
+                return true;
+            }
+            return false;
+        }
+
+        function endGame() {
+            clearInterval(gameState.timerInterval);
+            
+            const elapsed = Math.floor((Date.now() - gameState.startTime) / 1000);
+            const minutes = Math.floor(elapsed / 60);
+            const seconds = elapsed % 60;
+            const timeStr = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+
+            document.getElementById('finalMoves').textContent = gameState.moves;
+            document.getElementById('finalTime').textContent = timeStr;
+
+            let message = '';
+            const isNewRecord = saveBestTime(elapsed);
+            
+            if (isNewRecord) {
+                message = '🌟 ¡Nuevo récord personal!';
+            } else if (gameState.moves <= gameState.cards.length) {
+                message = '🎯 ¡Memoria excepcional!';
+            } else if (gameState.moves <= gameState.cards.length * 1.5) {
+                message = '👍 ¡Muy buen trabajo!';
+            } else {
+                message = '💪 ¡Sigue practicando para mejorar!';
+            }
+            
+            document.getElementById('performanceMessage').textContent = message;
+
+            // ── Guardar en el backend ──────────────────────────────
+            const totalPairs      = gameState.cards.length / 2;
+            const levelMap        = { easy: 1, medium: 2, hard: 3 };
+            saveScoreMemoryMatch(
+                gameState.matchedPairs,
+                gameState.moves,
+                elapsed,
+                totalPairs,
+                levelMap[gameState.difficulty] || 1
+            );
+
+            setTimeout(() => {
+                document.getElementById('gameScreen').style.display = 'none';
+                document.getElementById('gameOver').classList.add('active');
+            }, 1000);
+        }
+
+        function restartGame() {
+            document.getElementById('gameScreen').style.display = 'block';
+            document.getElementById('gameOver').classList.remove('active');
+            initGame();
+        }
+
+        function playSound(type) {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            if (type === 'flip') {
+                oscillator.frequency.value = 500;
+                gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+            } else if (type === 'correct') {
+                oscillator.frequency.value = 800;
+                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+            } else if (type === 'wrong') {
+                oscillator.frequency.value = 200;
+                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.4);
+            }
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.4);
+        }
+
+        // Initialize game
+        initGame();
+    </script>
+    
+    <!-- NeuroLearn Systems -->
+    <script src="nl-notifications.js"></script>
+</body>
+
+<script src="api-config.js"></script>
+<script src="game-integration.js"></script>
+
+<script>
+// Al terminar el juego, guarda la puntuación:
+async function finalizarJuego() {
+  // Tus variables del juego
+  let puntuacionFinal = 850;
+  let tiempoJugado = 120; // segundos
+  let precision = 85; // porcentaje
+  let nivelActual = 2;
+
+  // Guardar puntuación
+  const result = await saveGameScore(
+    'MATH_GAME',  // o 'SPANISH_GAME', 'MEMORY_GAME', 'LOGIC_GAME'
+    puntuacionFinal,
+    tiempoJugado,
+    precision,
+    nivelActual
+  );
+
+  if (result) {
+    // Opcional: redirigir al dashboard
+    setTimeout(() => {
+      window.location.href = 'student-dashboard.html';
+    }, 3000);
+  }
+}
+</script>
+
+</html>

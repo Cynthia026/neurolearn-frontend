@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mis Hijos — NeuroLearn Kids</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --purple:#6C63FF; --purple-light:#EEF2FF;
+      --green:#22C55E;  --yellow:#F59E0B; --red:#EF4444; --blue:#3B82F6;
+      --n50:#F8FAFC; --n100:#F1F5F9; --n200:#E2E8F0;
+      --n500:#64748B; --n700:#334155; --n900:#0F172A;
+      --sidebar-w:220px;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'DM Sans',sans-serif; background:var(--n50); color:var(--n900); display:flex; min-height:100vh; }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      width:var(--sidebar-w); background:var(--n900); color:white;
+      display:flex; flex-direction:column; padding:1.5rem 0;
+      position:fixed; top:0; left:0; bottom:0; z-index:100;
+    }
+    .sidebar-logo { padding:0 1.25rem 1.5rem; border-bottom:1px solid rgba(255,255,255,0.1); margin-bottom:1rem; }
+    .sidebar-logo h2 { font-family:'Fredoka',sans-serif; font-size:1.1rem; color:white; }
+    .sidebar-logo p  { font-size:0.75rem; color:rgba(255,255,255,0.5); margin-top:0.15rem; }
+    .nav-list { list-style:none; flex:1; padding:0 0.75rem; }
+    .nav-list li { margin-bottom:0.25rem; }
+    .nav-link {
+      display:flex; align-items:center; gap:0.65rem;
+      padding:0.6rem 0.85rem; border-radius:10px;
+      color:rgba(255,255,255,0.65); text-decoration:none;
+      font-size:0.88rem; font-weight:500; transition:all 0.2s;
+    }
+    .nav-link:hover { background:rgba(255,255,255,0.08); color:white; }
+    .nav-link.active { background:var(--purple); color:white; }
+    .nav-icon { font-size:1rem; width:1.25rem; text-align:center; }
+    .sidebar-user {
+      padding:1rem 1.25rem 0; border-top:1px solid rgba(255,255,255,0.1);
+      display:flex; align-items:center; gap:0.75rem;
+    }
+    .user-avatar {
+      width:36px; height:36px; border-radius:50%; background:var(--purple);
+      display:flex; align-items:center; justify-content:center;
+      font-weight:700; font-size:0.9rem; color:white;
+    }
+    .user-info strong { font-size:0.82rem; display:block; color:white; }
+    .user-info small  { font-size:0.7rem; color:rgba(255,255,255,0.45); }
+
+    /* ── Main ── */
+    .main { margin-left:var(--sidebar-w); flex:1; padding:2rem; }
+    .page-header { margin-bottom:2rem; }
+    .page-header h1 { font-family:'Fredoka',sans-serif; font-size:1.75rem; }
+    .page-header p  { color:var(--n500); font-size:0.9rem; margin-top:0.25rem; }
+
+    /* ── Child selector tabs ── */
+    .child-tabs { display:flex; gap:1rem; margin-bottom:2rem; flex-wrap:wrap; }
+    .child-tab {
+      display:flex; align-items:center; gap:0.75rem;
+      padding:0.85rem 1.25rem; border-radius:14px;
+      background:white; border:2px solid var(--n200);
+      cursor:pointer; transition:all 0.2s; text-decoration:none; color:inherit;
+    }
+    .child-tab.active { border-color:var(--purple); background:var(--purple-light); }
+    .child-tab:hover  { border-color:var(--purple); }
+    .child-tab-av { font-size:1.5rem; }
+    .child-tab-name { font-weight:700; font-size:0.95rem; }
+    .child-tab-grade { font-size:0.78rem; color:var(--n500); }
+    .child-badge {
+      margin-left:auto; padding:0.2rem 0.65rem; border-radius:999px;
+      font-size:0.72rem; font-weight:700;
+    }
+    .badge-ok   { background:#DCFCE7; color:#15803D; }
+    .badge-warn { background:#FEF3C7; color:#92400E; }
+
+    /* ── Stats grid ── */
+    .stats-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; margin-bottom:2rem; }
+    .stat-card {
+      background:white; border-radius:14px; padding:1.25rem;
+      border:1px solid var(--n200); text-align:center;
+    }
+    .stat-icon { font-size:1.75rem; margin-bottom:0.4rem; }
+    .stat-val  { font-family:'Fredoka',sans-serif; font-size:1.75rem; color:var(--n900); }
+    .stat-lbl  { font-size:0.78rem; color:var(--n500); margin-top:0.15rem; }
+
+    /* ── Content sections ── */
+    .sections-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; }
+    .section-card {
+      background:white; border-radius:16px; padding:1.5rem;
+      border:1px solid var(--n200);
+    }
+    .section-title {
+      font-family:'Fredoka',sans-serif; font-size:1.1rem;
+      margin-bottom:1.25rem; display:flex; align-items:center; gap:0.5rem;
+    }
+
+    /* Progress bars */
+    .subject-row { margin-bottom:1rem; }
+    .subject-head { display:flex; justify-content:space-between; font-size:0.85rem; font-weight:600; margin-bottom:0.4rem; }
+    .subject-pct  { color:var(--purple); }
+    .prog-bar { height:8px; background:var(--n100); border-radius:999px; overflow:hidden; }
+    .prog-fill { height:100%; border-radius:999px; }
+
+    /* Activity list */
+    .activity-item {
+      display:flex; align-items:flex-start; gap:0.85rem;
+      padding:0.85rem 0; border-bottom:1px solid var(--n100);
+    }
+    .activity-item:last-child { border-bottom:none; }
+    .act-dot {
+      width:36px; height:36px; border-radius:50%; flex-shrink:0;
+      display:flex; align-items:center; justify-content:center; font-size:1rem;
+    }
+    .dot-green  { background:#DCFCE7; }
+    .dot-yellow { background:#FEF3C7; }
+    .dot-blue   { background:#DBEAFE; }
+    .act-title { font-weight:600; font-size:0.88rem; }
+    .act-desc  { font-size:0.78rem; color:var(--n500); margin-top:0.15rem; }
+    .act-time  { font-size:0.72rem; color:var(--n500); margin-top:0.2rem; }
+
+    /* Games played */
+    .game-row {
+      display:flex; align-items:center; gap:1rem; padding:0.75rem 0;
+      border-bottom:1px solid var(--n100);
+    }
+    .game-row:last-child { border-bottom:none; }
+    .game-ico { font-size:1.5rem; width:36px; text-align:center; }
+    .game-name { font-weight:600; font-size:0.88rem; }
+    .game-score { font-size:0.78rem; color:var(--n500); }
+    .game-pts { margin-left:auto; font-family:'Fredoka',sans-serif; font-size:1rem; color:var(--purple); font-weight:700; }
+
+    /* Actions */
+    .actions-row { display:flex; gap:0.75rem; margin-top:2rem; flex-wrap:wrap; }
+    .action-btn {
+      padding:0.65rem 1.25rem; border-radius:10px; border:none;
+      font-weight:700; font-size:0.88rem; cursor:pointer; transition:all 0.2s;
+    }
+    .btn-primary { background:var(--purple); color:white; }
+    .btn-primary:hover { opacity:0.85; }
+    .btn-secondary { background:var(--purple-light); color:var(--purple); }
+    .btn-secondary:hover { background:#E0DBFF; }
+
+    @media(max-width:900px) {
+      .stats-grid { grid-template-columns:repeat(2,1fr); }
+      .sections-grid { grid-template-columns:1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <h2>🚀 NeuroLearn Kids</h2>
+    <p>Panel de Padres</p>
+  </div>
+  <ul class="nav-list">
+    <li><a class="nav-link" href="parent-dashboard.html"><span class="nav-icon">🏠</span> Inicio</a></li>
+    <li><a class="nav-link active" href="parent-children.html"><span class="nav-icon">👦</span> Mis Hijos</a></li>
+    <li><a class="nav-link" href="progress-report.html"><span class="nav-icon">📊</span> Progreso</a></li>
+    <li><a class="nav-link" href="reports-advanced.html"><span class="nav-icon">📝</span> Reportes</a></li>
+    <li><a class="nav-link" href="parent-recommendations.html"><span class="nav-icon">🎯</span> Recomendaciones</a></li>
+    <li><a class="nav-link" href="parent-communication.html"><span class="nav-icon">💬</span> Maestros</a></li>
+    <li><a class="nav-link" href="messaging.html"><span class="nav-icon">📱</span> Mensajes</a></li>
+    <li><a class="nav-link" href="help-center.html"><span class="nav-icon">❓</span> Ayuda</a></li>
+    <li><a class="nav-link" href="login-register.html" onclick="localStorage.removeItem('token');localStorage.removeItem('user');" style="background:linear-gradient(135deg,#EF4444,#DC2626);color:white;margin-top:1rem;"><span class="nav-icon">🚪</span> Cerrar Sesión</a></li>
+  </ul>
+  <div class="sidebar-user">
+    <div class="user-avatar" id="user-avatar">T</div>
+    <div class="user-info">
+      <strong id="user-name">Cargando...</strong>
+      <small>Padre/Madre de familia</small>
+    </div>
+  </div>
+</aside>
+
+<!-- Main -->
+<main class="main">
+  <div class="page-header">
+    <h1>👦 Mis Hijos</h1>
+    <p>Seguimiento detallado del progreso de tus hijos</p>
+  </div>
+
+  <!-- Child tabs -->
+  <div class="child-tabs">
+    <div class="child-tab active" onclick="selectChild('miguel',this)">
+      <div class="child-tab-av">👦</div>
+      <div>
+        <div class="child-tab-name">Miguel</div>
+        <div class="child-tab-grade">2° Primaria</div>
+      </div>
+      <span class="child-badge badge-ok">✔ Bien</span>
+    </div>
+    <div class="child-tab" onclick="selectChild('valeria',this)">
+      <div class="child-tab-av">👧</div>
+      <div>
+        <div class="child-tab-name">Valeria</div>
+        <div class="child-tab-grade">1° Primaria</div>
+      </div>
+      <span class="child-badge badge-warn">⚠ Atención</span>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon">📊</div>
+      <div class="stat-val" id="stat-avg">87%</div>
+      <div class="stat-lbl">Promedio General</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">🔥</div>
+      <div class="stat-val" id="stat-streak">7 días</div>
+      <div class="stat-lbl">Racha Actual</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">🎮</div>
+      <div class="stat-val" id="stat-games">23</div>
+      <div class="stat-lbl">Partidas jugadas</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">⭐</div>
+      <div class="stat-val" id="stat-points">1,240</div>
+      <div class="stat-lbl">Puntos totales</div>
+    </div>
+  </div>
+
+  <!-- Sections -->
+  <div class="sections-grid">
+
+    <!-- Progreso por materia -->
+    <div class="section-card">
+      <div class="section-title">📚 Progreso por Materia</div>
+      <div id="subjects-content">
+        <div class="subject-row">
+          <div class="subject-head"><span>Matemáticas</span><span class="subject-pct">87%</span></div>
+          <div class="prog-bar"><div class="prog-fill" style="width:87%;background:linear-gradient(90deg,#6C63FF,#A78BFA)"></div></div>
+        </div>
+        <div class="subject-row">
+          <div class="subject-head"><span>Español</span><span class="subject-pct">92%</span></div>
+          <div class="prog-bar"><div class="prog-fill" style="width:92%;background:linear-gradient(90deg,#EC4899,#F9A8D4)"></div></div>
+        </div>
+        <div class="subject-row">
+          <div class="subject-head"><span>Memoria</span><span class="subject-pct">78%</span></div>
+          <div class="prog-bar"><div class="prog-fill" style="width:78%;background:linear-gradient(90deg,#06B6D4,#67E8F9)"></div></div>
+        </div>
+      </div>
+      <div class="actions-row">
+        <button class="action-btn btn-primary" onclick="window.location.href='progress-report.html'">Ver Reporte Completo</button>
+        <button class="action-btn btn-secondary" onclick="window.location.href='reports-advanced.html'">Analytics</button>
+      </div>
+    </div>
+
+    <!-- Actividad reciente -->
+    <div class="section-card">
+      <div class="section-title">⚡ Actividad Reciente</div>
+      <div id="activity-content">
+        <div class="activity-item">
+          <div class="act-dot dot-green">🏆</div>
+          <div>
+            <div class="act-title">Subió al Nivel 2 en Matemáticas</div>
+            <div class="act-desc">Completó todos los ejercicios con 89% de precisión</div>
+            <div class="act-time">Hoy · 10:15 am</div>
+          </div>
+        </div>
+        <div class="activity-item">
+          <div class="act-dot dot-yellow">⚠️</div>
+          <div>
+            <div class="act-title">5 errores en Restas</div>
+            <div class="act-desc">Módulo de refuerzo activado automáticamente</div>
+            <div class="act-time">Ayer · 4:00 pm</div>
+          </div>
+        </div>
+        <div class="activity-item">
+          <div class="act-dot dot-green">⚡</div>
+          <div>
+            <div class="act-title">Racha de 7 días</div>
+            <div class="act-desc">Ingresó todos los días esta semana</div>
+            <div class="act-time">Hace 2 días</div>
+          </div>
+        </div>
+        <div class="activity-item">
+          <div class="act-dot dot-blue">📚</div>
+          <div>
+            <div class="act-title">Módulo de Comprensión completado</div>
+            <div class="act-desc">Español: 95% de precisión en lectura</div>
+            <div class="act-time">Hace 3 días</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Juegos jugados -->
+    <div class="section-card">
+      <div class="section-title">🎮 Juegos Recientes</div>
+      <div id="games-content">
+        <div class="game-row">
+          <div class="game-ico">🔢</div>
+          <div>
+            <div class="game-name">Math Blaster</div>
+            <div class="game-score">Precisión: 88% · Nivel 2</div>
+          </div>
+          <div class="game-pts">+85 pts</div>
+        </div>
+        <div class="game-row">
+          <div class="game-ico">🧠</div>
+          <div>
+            <div class="game-name">Memory Match</div>
+            <div class="game-score">Precisión: 75% · Nivel 1</div>
+          </div>
+          <div class="game-pts">+60 pts</div>
+        </div>
+        <div class="game-row">
+          <div class="game-ico">🦘</div>
+          <div>
+            <div class="game-name">Number Line Jump</div>
+            <div class="game-score">Precisión: 91% · Nivel 1</div>
+          </div>
+          <div class="game-pts">+95 pts</div>
+        </div>
+        <div class="game-row">
+          <div class="game-ico">📝</div>
+          <div>
+            <div class="game-name">Constructor de Palabras</div>
+            <div class="game-score">Precisión: 82% · Nivel 2</div>
+          </div>
+          <div class="game-pts">+70 pts</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Acciones rápidas -->
+    <div class="section-card">
+      <div class="section-title">⚡ Acciones Rápidas</div>
+      <div style="display:flex;flex-direction:column;gap:0.75rem;">
+        <button class="action-btn btn-secondary" style="text-align:left;padding:1rem;" onclick="window.location.href='parent-communication.html'">
+          ✉️ &nbsp;Contactar al Maestro
+        </button>
+        <button class="action-btn btn-secondary" style="text-align:left;padding:1rem;" onclick="window.location.href='parent-recommendations.html'">
+          🎯 &nbsp;Ver Recomendaciones IA
+        </button>
+        <button class="action-btn btn-secondary" style="text-align:left;padding:1rem;" onclick="window.location.href='reports-advanced.html'">
+          📊 &nbsp;Descargar Reporte PDF
+        </button>
+        <button class="action-btn btn-secondary" style="text-align:left;padding:1rem;" onclick="window.location.href='messaging.html'">
+          💬 &nbsp;Enviar Mensaje
+        </button>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<script src="api-config.js"></script>
+<script>
+  // Load user info
+  (function() {
+    const token = localStorage.getItem('token');
+    const userStr = localStorage.getItem('user');
+    if (!token || !userStr) { window.location.href = 'login-register.html'; return; }
+    try {
+      const user = JSON.parse(userStr);
+      if (user.role !== 'PARENT') { window.location.href = 'parent-dashboard.html'; return; }
+      document.getElementById('user-name').textContent = `${user.firstName} ${user.lastName || ''}`.trim();
+      document.getElementById('user-avatar').textContent = (user.firstName[0] + (user.lastName||'X')[0]).toUpperCase();
+    } catch(e) { window.location.href = 'login-register.html'; }
+  })();
+
+  // ── Cargar hijos reales del backend ──────────────────────
+  let childrenData = [];
+
+  async function loadChildren() {
+    try {
+      const res = await API.family.getMyChildren();
+
+      if (!res.success) throw new Error(res.message);
+
+      childrenData = res.data.children;
+
+      if (childrenData.length === 0) {
+        showNoChildren();
+        return;
+      }
+
+      // Renderizar tabs de hijos
+      renderChildTabs(childrenData);
+
+      // Mostrar primer hijo por defecto
+      showChild(0);
+
+    } catch(err) {
+      console.error('Error cargando hijos:', err);
+      // Fallback: datos estáticos si no hay hijos vinculados
+      showNoChildren();
+    }
+  }
+
+  function showNoChildren() {
+    document.querySelector('.child-tabs').innerHTML = `
+      <div style="background:white;border-radius:14px;padding:1.5rem;border:2px dashed #E2E8F0;color:#64748B;font-size:0.9rem;">
+        👦 No tienes hijos vinculados aún.<br>
+        <small>Ve al <a href="parent-dashboard.html" style="color:#6C63FF">dashboard</a> y usa "Mis Hijos" para vincular a tu hijo con su email de registro.</small>
+      </div>`;
+    document.querySelector('.stats-grid').style.display = 'none';
+    document.querySelector('.sections-grid').style.display = 'none';
+  }
+
+  function renderChildTabs(children) {
+    const container = document.querySelector('.child-tabs');
+    container.innerHTML = children.map((child, i) => {
+      const avgAcc = child.avgAccuracy || 0;
+      const isOk = avgAcc >= 70;
+      return `
+        <div class="child-tab ${i === 0 ? 'active' : ''}" onclick="selectChildByIndex(${i}, this)">
+          <div class="child-tab-av">${i % 2 === 0 ? '👦' : '👧'}</div>
+          <div>
+            <div class="child-tab-name">${child.firstName} ${child.lastName}</div>
+            <div class="child-tab-grade">${child.grade}° Primaria</div>
+          </div>
+          <span class="child-badge ${isOk ? 'badge-ok' : 'badge-warn'}">${isOk ? '✔ Bien' : '⚠ Atención'}</span>
+        </div>`;
+    }).join('');
+  }
+
+  function selectChildByIndex(i, el) {
+    document.querySelectorAll('.child-tab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+    showChild(i);
+  }
+
+  function showChild(i) {
+    const child = childrenData[i];
+    if (!child) return;
+
+    // Stats
+    document.getElementById('stat-avg').textContent    = (child.avgAccuracy || 0) + '%';
+    document.getElementById('stat-streak').textContent = (child.streak || 0) + ' días';
+    document.getElementById('stat-games').textContent  = child.totalGames || 0;
+    document.getElementById('stat-points').textContent = (child.points || 0).toLocaleString();
+
+    // Materias (calculadas desde juegos recientes)
+    const gameTypeMap = {
+      MATH_GAME:   { name:'Matemáticas', color:'linear-gradient(90deg,#6C63FF,#A78BFA)' },
+      MEMORY_GAME: { name:'Memoria',     color:'linear-gradient(90deg,#06B6D4,#67E8F9)' },
+      NUMBER_LINE: { name:'Rec. Numérica',color:'linear-gradient(90deg,#F59E0B,#FCD34D)' },
+      WORD_GAME:   { name:'Español',     color:'linear-gradient(90deg,#EC4899,#F9A8D4)' },
+    };
+
+    const subjectAcc = {};
+    (child.recentGames || []).forEach(g => {
+      if (!subjectAcc[g.gameType]) subjectAcc[g.gameType] = [];
+      subjectAcc[g.gameType].push(g.accuracy || 0);
+    });
+
+    const subjectsHtml = Object.entries(subjectAcc).map(([type, accs]) => {
+      const avg  = Math.round(accs.reduce((a,b)=>a+b,0) / accs.length);
+      const info = gameTypeMap[type] || { name: type, color:'linear-gradient(90deg,#6C63FF,#A78BFA)' };
+      return `
+        <div class="subject-row">
+          <div class="subject-head"><span>${info.name}</span><span class="subject-pct">${avg}%</span></div>
+          <div class="prog-bar"><div class="prog-fill" style="width:${avg}%;background:${info.color}"></div></div>
+        </div>`;
+    }).join('') || '<p style="color:#94A3B8;font-size:0.85rem">Sin partidas registradas aún</p>';
+
+    document.getElementById('subjects-content').innerHTML = subjectsHtml;
+
+    // Juegos recientes
+    const gameIcons = { MATH_GAME:'🔢', MEMORY_GAME:'🧠', NUMBER_LINE:'🦘', WORD_GAME:'📝' };
+    const gameNames = { MATH_GAME:'Math Blaster', MEMORY_GAME:'Memory Match', NUMBER_LINE:'Number Line Jump', WORD_GAME:'Word Builder' };
+    const gamesHtml = (child.recentGames || []).slice(0, 5).map(g => `
+      <div class="game-row">
+        <div class="game-ico">${gameIcons[g.gameType] || '🎮'}</div>
+        <div>
+          <div class="game-name">${gameNames[g.gameType] || g.gameType}</div>
+          <div class="game-score">Precisión: ${g.accuracy}% · Nivel ${g.level}</div>
+        </div>
+        <div class="game-pts">+${Math.round(g.score/10)} pts</div>
+      </div>`).join('') || '<p style="color:#94A3B8;font-size:0.85rem">Sin juegos recientes</p>';
+
+    document.getElementById('games-content').innerHTML = gamesHtml;
+
+    // Actividad
+    const actHtml = child.recentGames && child.recentGames.length > 0
+      ? child.recentGames.slice(0,4).map(g => `
+          <div class="activity-item">
+            <div class="act-dot dot-green">${gameIcons[g.gameType]||'🎮'}</div>
+            <div>
+              <div class="act-title">${gameNames[g.gameType]||g.gameType}</div>
+              <div class="act-desc">Puntuación: ${g.score} · Precisión: ${g.accuracy}%</div>
+              <div class="act-time">${new Date(g.createdAt||Date.now()).toLocaleDateString('es-MX')}</div>
+            </div>
+          </div>`).join('')
+      : '<p style="color:#94A3B8;font-size:0.85rem">Sin actividad reciente</p>';
+
+    document.getElementById('activity-content').innerHTML = actHtml;
+  }
+
+  // Iniciar
+  loadChildren();
+
+  // Child data (fallback estático - ya no se usa si hay datos reales)
+  function selectChild(id, el) {
+    document.querySelectorAll('.child-tab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+  }
+</script>
+</body>
+</html>

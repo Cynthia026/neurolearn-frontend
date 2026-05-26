@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Estudiantes - NeuroLearn Kids</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --primary: #7C3AED;
+            --secondary: #EC4899;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --danger: #EF4444;
+            --dark: #1E293B;
+            --light: #F8FAFC;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--light);
+            display: grid;
+            grid-template-columns: 240px 1fr;
+            min-height: 100vh;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            background: var(--dark);
+            color: white;
+            padding: 2rem 0;
+        }
+
+        .sidebar-logo {
+            padding: 0 1.5rem 2rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .sidebar-logo h1 {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.5rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .sidebar-logo p {
+            font-size: 0.85rem;
+            opacity: 0.7;
+        }
+
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 1.5rem;
+            color: white;
+            text-decoration: none;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+        }
+
+        .sidebar-nav a:hover {
+            background: rgba(255,255,255,0.1);
+            border-left-color: var(--primary);
+        }
+
+        .sidebar-nav a.active {
+            background: rgba(124,58,237,0.2);
+            border-left-color: var(--primary);
+        }
+
+        .sidebar-nav a .icon {
+            font-size: 1.25rem;
+        }
+
+        .sidebar-nav a .label {
+            font-weight: 500;
+        }
+
+        /* MAIN CONTENT */
+        .main-content {
+            padding: 2rem;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 2rem;
+            color: var(--dark);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(124,58,237,0.3);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--dark);
+            border: 2px solid #E2E8F0;
+        }
+
+        /* FILTERS */
+        .filters {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            margin-bottom: 2rem;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-item {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .filter-item label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #64748B;
+            margin-bottom: 0.5rem;
+        }
+
+        .filter-item input,
+        .filter-item select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #E2E8F0;
+            border-radius: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        /* STUDENTS GRID */
+        .students-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .student-card {
+            background: white;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .student-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+
+        .student-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .student-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.75rem;
+        }
+
+        .student-info h3 {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.1rem;
+            color: var(--dark);
+            margin-bottom: 0.25rem;
+        }
+
+        .student-info p {
+            font-size: 0.85rem;
+            color: #64748B;
+        }
+
+        .student-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .stat {
+            text-align: center;
+            padding: 0.75rem;
+            background: #F8FAFC;
+            border-radius: 0.75rem;
+        }
+
+        .stat-value {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: #64748B;
+            margin-top: 0.25rem;
+        }
+
+        .student-progress {
+            margin-bottom: 1rem;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: #E2E8F0;
+            border-radius: 999px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 999px;
+            transition: width 0.3s;
+        }
+
+        .student-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            border: 2px solid #E2E8F0;
+            background: white;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .action-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .risk-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .risk-bajo { background: #D1FAE5; color: #065F46; }
+        .risk-medio { background: #FEF3C7; color: #92400E; }
+        .risk-alto { background: #FEE2E2; color: #991B1B; }
+
+        /* EMPTY STATE */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: white;
+            border-radius: 1rem;
+        }
+
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .empty-state h3 {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-state p {
+            color: #64748B;
+            margin-bottom: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            body { grid-template-columns: 1fr; }
+            .sidebar { display: none; }
+            .students-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+    <script src="state.js" defer></script>
+    <script src="ui.js" defer></script>
+    <script src="router.js" defer></script>
+    <script src="auth.js" defer></script>
+    <script src="adaptive.js" defer></script>
+    <script src="reset-first-time.js" defer></script>
+    <script src="nl-init.js" defer></script>
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <h1>🚀 NeuroLearn</h1>
+            <p>Panel Docente</p>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="teacher-dashboard.html">
+                <span class="icon">📊</span>
+                <span class="label">Dashboard</span>
+            </a>
+            <a href="teacher-students.html" class="active">
+                <span class="icon">👥</span>
+                <span class="label">Mis Estudiantes</span>
+            </a>
+            <a href="teacher-content.html">
+                <span class="icon">📚</span>
+                <span class="label">Contenido</span>
+            </a>
+            <a href="teacher-evaluations.html">
+                <span class="icon">📝</span>
+                <span class="label">Evaluaciones</span>
+            </a>
+            <a href="teacher-reports.html">
+                <span class="icon">📈</span>
+                <span class="label">Reportes</span>
+            </a>
+            <a href="teacher-settings.html">
+                <span class="icon">⚙️</span>
+                <span class="label">Configuración</span>
+            </a>
+            <a href="landing-page-v2.html" onclick="return confirm('¿Seguro que quieres cerrar sesión?');" style="background: linear-gradient(135deg, #EF4444, #DC2626);">
+                <span class="icon">🚪</span>
+                <span class="label">Cerrar Sesión</span>
+            </a>
+        </nav>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+        <div class="header">
+            <div>
+                <h1>Mis Estudiantes</h1>
+                <p style="color: #64748B; margin-top: 0.5rem;">Gestiona tu grupo de 2° A - 28 estudiantes activos</p>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-secondary" onclick="exportStudents()">
+                    📥 Exportar
+                </button>
+                <button class="btn btn-primary" onclick="addStudent()">
+                    ➕ Agregar Estudiante
+                </button>
+            </div>
+        </div>
+
+        <!-- FILTERS -->
+        <div class="filters">
+            <div class="filter-item">
+                <label>🔍 Buscar</label>
+                <input type="text" placeholder="Nombre del estudiante..." id="search-input" onkeyup="filterStudents()">
+            </div>
+            <div class="filter-item">
+                <label>📊 Nivel de Riesgo</label>
+                <select id="risk-filter" onchange="filterStudents()">
+                    <option value="">Todos</option>
+                    <option value="bajo">Bajo</option>
+                    <option value="medio">Medio</option>
+                    <option value="alto">Alto</option>
+                </select>
+            </div>
+            <div class="filter-item">
+                <label>🎯 Ordenar por</label>
+                <select id="sort-by" onchange="sortStudents()">
+                    <option value="name">Nombre</option>
+                    <option value="progress">Progreso</option>
+                    <option value="risk">Nivel de Riesgo</option>
+                    <option value="streak">Racha</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- STUDENTS GRID -->
+        <div class="students-grid" id="students-container">
+            <!-- Populated by JavaScript -->
+        </div>
+
+    </main>
+
+    <script>
+        // Datos de demo de estudiantes
+        const studentsData = [
+            { id: 1, name: 'Miguel Hernández', avatar: '👦', grade: '2° A', mathAcc: 85, spanishAcc: 92, streak: 7, risk: 'bajo', sessions: 15 },
+            { id: 2, name: 'Ana Martínez', avatar: '👧', grade: '2° A', mathAcc: 72, spanishAcc: 88, streak: 3, risk: 'medio', sessions: 12 },
+            { id: 3, name: 'Carlos López', avatar: '🧒', grade: '2° A', mathAcc: 45, spanishAcc: 60, streak: 0, risk: 'alto', sessions: 5 },
+            { id: 4, name: 'Sofía Ramírez', avatar: '👧', grade: '2° A', mathAcc: 91, spanishAcc: 95, streak: 7, risk: 'bajo', sessions: 18 },
+            { id: 5, name: 'Luis Torres', avatar: '👦', grade: '2° A', mathAcc: 63, spanishAcc: 71, streak: 2, risk: 'medio', sessions: 9 },
+            { id: 6, name: 'Valentina Cruz', avatar: '👧', grade: '2° A', mathAcc: 88, spanishAcc: 82, streak: 5, risk: 'bajo', sessions: 14 },
+            { id: 7, name: 'Diego Morales', avatar: '🧒', grade: '2° A', mathAcc: 55, spanishAcc: 58, streak: 1, risk: 'alto', sessions: 7 },
+            { id: 8, name: 'Isabella García', avatar: '👧', grade: '2° A', mathAcc: 79, spanishAcc: 84, streak: 4, risk: 'bajo', sessions: 13 },
+        ];
+
+        let filteredStudents = [...studentsData];
+
+        function renderStudents() {
+            const container = document.getElementById('students-container');
+            
+            if (filteredStudents.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1/-1;">
+                        <div class="empty-state-icon">🔍</div>
+                        <h3>No se encontraron estudiantes</h3>
+                        <p>Intenta ajustar los filtros de búsqueda</p>
+                        <button class="btn btn-primary" onclick="clearFilters()">Limpiar Filtros</button>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = filteredStudents.map(student => {
+                const avgProgress = Math.round((student.mathAcc + student.spanishAcc) / 2);
+                return `
+                    <div class="student-card" onclick="viewStudent(${student.id})">
+                        <div class="student-header">
+                            <div class="student-avatar">${student.avatar}</div>
+                            <div class="student-info">
+                                <h3>${student.name}</h3>
+                                <p>${student.grade}</p>
+                            </div>
+                        </div>
+
+                        <div class="student-stats">
+                            <div class="stat">
+                                <div class="stat-value">${student.streak}</div>
+                                <div class="stat-label">🔥 Racha</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">${student.sessions}</div>
+                                <div class="stat-label">📚 Sesiones</div>
+                            </div>
+                        </div>
+
+                        <div class="student-progress">
+                            <div class="progress-label">
+                                <span>Progreso General</span>
+                                <span><strong>${avgProgress}%</strong></span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${avgProgress}%"></div>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                            <span style="font-size: 0.85rem; color: #64748B;">Nivel de Riesgo</span>
+                            <span class="risk-badge risk-${student.risk}">${student.risk.toUpperCase()}</span>
+                        </div>
+
+                        <div class="student-actions">
+                            <button class="action-btn" onclick="viewReport(${student.id}); event.stopPropagation();">
+                                📊 Reporte
+                            </button>
+                            <button class="action-btn" onclick="sendMessage(${student.id}); event.stopPropagation();">
+                                💬 Mensaje
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function filterStudents() {
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            const riskFilter = document.getElementById('risk-filter').value;
+
+            filteredStudents = studentsData.filter(student => {
+                const matchesSearch = student.name.toLowerCase().includes(searchTerm);
+                const matchesRisk = !riskFilter || student.risk === riskFilter;
+                return matchesSearch && matchesRisk;
+            });
+
+            renderStudents();
+        }
+
+        function sortStudents() {
+            const sortBy = document.getElementById('sort-by').value;
+
+            filteredStudents.sort((a, b) => {
+                switch(sortBy) {
+                    case 'name': return a.name.localeCompare(b.name);
+                    case 'progress': return ((b.mathAcc + b.spanishAcc) / 2) - ((a.mathAcc + a.spanishAcc) / 2);
+                    case 'risk': 
+                        const riskOrder = { alto: 0, medio: 1, bajo: 2 };
+                        return riskOrder[a.risk] - riskOrder[b.risk];
+                    case 'streak': return b.streak - a.streak;
+                    default: return 0;
+                }
+            });
+
+            renderStudents();
+        }
+
+        function clearFilters() {
+            document.getElementById('search-input').value = '';
+            document.getElementById('risk-filter').value = '';
+            document.getElementById('sort-by').value = 'name';
+            filteredStudents = [...studentsData];
+            renderStudents();
+        }
+
+        function viewStudent(id) {
+            const student = studentsData.find(s => s.id === id);
+            NLUI.showModal(
+                `👤 ${student.name}`,
+                `
+                    <div style="text-align: left;">
+                        <p style="margin-bottom: 1rem;"><strong>Grado:</strong> ${student.grade}</p>
+                        <p style="margin-bottom: 1rem;"><strong>Matemáticas:</strong> ${student.mathAcc}%</p>
+                        <p style="margin-bottom: 1rem;"><strong>Español:</strong> ${student.spanishAcc}%</p>
+                        <p style="margin-bottom: 1rem;"><strong>Racha:</strong> ${student.streak} días 🔥</p>
+                        <p style="margin-bottom: 1rem;"><strong>Sesiones:</strong> ${student.sessions}</p>
+                        <p><strong>Nivel de Riesgo:</strong> <span class="risk-badge risk-${student.risk}">${student.risk.toUpperCase()}</span></p>
+                    </div>
+                `,
+                [
+                    { label: 'Ver Reporte Completo', primary: true, action: () => window.location.href = `progress-report.html?student=${id}` },
+                    { label: 'Cerrar', action: null }
+                ]
+            );
+        }
+
+        function viewReport(id) {
+            window.location.href = `progress-report.html?student=${id}`;
+        }
+
+        function sendMessage(id) {
+            const student = studentsData.find(s => s.id === id);
+            
+            // Crear modal personalizado para enviar mensaje
+            const modal = document.createElement('div');
+            modal.id = 'message-modal';
+            modal.style.cssText = 'position:fixed;inset:0;background:rgba(15,23,42,0.6);backdrop-filter:blur(6px);z-index:9999;display:flex;align-items:center;justify-content:center;padding:1.5rem;';
+            
+            modal.innerHTML = `
+                <div style="background:white;border-radius:1.5rem;padding:2rem;max-width:600px;width:100%;box-shadow:0 25px 60px rgba(0,0,0,0.25);">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
+                        <h2 style="font-family:'Fredoka',sans-serif;font-size:1.5rem;margin:0;">💬 Enviar Mensaje</h2>
+                        <button onclick="document.getElementById('message-modal').remove()" style="background:none;border:none;font-size:1.5rem;cursor:pointer;color:#94A3B8;">×</button>
+                    </div>
+                    
+                    <div style="background:#F8FAFC;padding:1rem;border-radius:0.75rem;margin-bottom:1.5rem;display:flex;align-items:center;gap:1rem;">
+                        <div style="width:50px;height:50px;border-radius:50%;background:linear-gradient(135deg,#667eea,#764ba2);display:flex;align-items:center;justify-content:center;font-size:1.5rem;">
+                            ${student.avatar}
+                        </div>
+                        <div>
+                            <div style="font-weight:700;color:#1E293B;">${student.name}</div>
+                            <div style="font-size:0.85rem;color:#64748B;">${student.grade}</div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom:1rem;">
+                        <label style="display:block;font-weight:600;margin-bottom:0.5rem;color:#1E293B;">Asunto</label>
+                        <input type="text" id="msg-subject" placeholder="Ej: Felicitaciones por tu progreso" style="width:100%;padding:0.75rem;border:2px solid #E2E8F0;border-radius:0.5rem;font-size:0.95rem;">
+                    </div>
+                    
+                    <div style="margin-bottom:1.5rem;">
+                        <label style="display:block;font-weight:600;margin-bottom:0.5rem;color:#1E293B;">Mensaje</label>
+                        <textarea id="msg-body" placeholder="Escribe tu mensaje aquí..." style="width:100%;padding:0.75rem;border:2px solid #E2E8F0;border-radius:0.5rem;font-size:0.95rem;min-height:150px;font-family:'DM Sans',sans-serif;resize:vertical;"></textarea>
+                    </div>
+                    
+                    <div style="margin-bottom:1.5rem;">
+                        <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;">
+                            <input type="checkbox" id="notify-parents" style="width:18px;height:18px;cursor:pointer;">
+                            <span style="font-size:0.9rem;color:#64748B;">Notificar también a los padres</span>
+                        </label>
+                    </div>
+                    
+                    <div style="display:flex;gap:0.75rem;">
+                        <button onclick="document.getElementById('message-modal').remove()" style="flex:1;padding:0.875rem;border:2px solid #E2E8F0;background:white;border-radius:999px;font-family:'Fredoka',sans-serif;font-weight:600;cursor:pointer;color:#334155;">
+                            Cancelar
+                        </button>
+                        <button onclick="sendMessageSubmit(${id})" style="flex:1;padding:0.875rem;border:none;background:linear-gradient(135deg,#667eea,#764ba2);color:white;border-radius:999px;font-family:'Fredoka',sans-serif;font-weight:600;cursor:pointer;box-shadow:0 4px 12px rgba(102,126,234,0.3);">
+                            📤 Enviar Mensaje
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            // Focus en el campo de asunto
+            setTimeout(() => document.getElementById('msg-subject').focus(), 100);
+        }
+        
+        function sendMessageSubmit(id) {
+            const student = studentsData.find(s => s.id === id);
+            const subject = document.getElementById('msg-subject').value.trim();
+            const body = document.getElementById('msg-body').value.trim();
+            const notifyParents = document.getElementById('notify-parents').checked;
+            
+            if (!subject || !body) {
+                alert('Por favor completa el asunto y el mensaje');
+                return;
+            }
+            
+            // Cerrar modal de mensaje
+            document.getElementById('message-modal').remove();
+            
+            // Simular envío
+            NLUI.showModal(
+                '✅ Mensaje Enviado',
+                `Tu mensaje a ${student.name} ha sido enviado exitosamente.${notifyParents ? '\n\nSe ha notificado también a los padres.' : ''}`
+            );
+            
+            // Aquí iría la lógica real de envío al backend
+            console.log('Mensaje enviado:', { studentId: id, subject, body, notifyParents });
+        }
+
+        function addStudent() {
+            const modal = document.createElement('div');
+            modal.id = 'add-student-modal';
+            modal.style.cssText = 'position:fixed;inset:0;background:rgba(15,23,42,0.6);backdrop-filter:blur(6px);z-index:9999;display:flex;align-items:center;justify-content:center;padding:1.5rem;overflow-y:auto;';
+            
+            modal.innerHTML = `
+                <div style="background:white;border-radius:1.5rem;padding:2rem;max-width:650px;width:100%;box-shadow:0 25px 60px rgba(0,0,0,0.25);margin:2rem auto;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem;">
+                        <h2 style="font-family:'Fredoka',sans-serif;font-size:1.75rem;margin:0;">➕ Agregar Estudiante</h2>
+                        <button onclick="document.getElementById('add-student-modal').remove()" style="background:none;border:none;font-size:1.5rem;cursor:pointer;color:#94A3B8;">×</button>
+                    </div>
+                    
+                    <form id="add-student-form" onsubmit="submitNewStudent(event)" style="display:grid;gap:1.25rem;">
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+                            <div>
+                                <label style="display:block;font-weight:600;margin-bottom:0.5rem;color:#1E293B;">Nombre(s) *</label>
+                                <input type="text" id="student-name" required placeholder="Ej: Juan" style="width:100%;padding:0.75rem;border:2px solid #E2E8F0;border-radius:0.5rem;font-size:0.95rem;">
+                            </div>
+                            <div>
+                                <label style="display:block;font-weight:600;margin-bottom:0.5rem;color:#1E293B;">Apellido(s) *</label>
+                                <input type="text" id="student-lastname" required placeholder="Ej: García" style="width:100%;padding:0.75rem;border:2px solid #E2E8F0;border-radius:0.5rem;font-size:0.95rem;">
+                            </div>
+                        </div>
+                        
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+                            <div>
+                                <label style="display:block;font-weight:600;margin-bottom:0.5rem;color:#1E293B;">Matrícula</label>
+                                <input type="text" id="student-id" placeholder="Ej: 20240001" style="width:100%;padding:0.75rem;border:2px solid #E2E8F0;border-radius:0.5rem;font-size:0.95rem;">
+                            </div>
+                            <div>
+                                <label style="display:block;font-weight:600;margin-bottom:0.5rem;color:#1E293B;">Género</label>
+                                <select id="student-gender" style="width:100%;padding:0.75rem;border:2px solid #E2E8F0;border-radius:0.5rem;font-size:0.95rem;">
+                                    <option value="">Seleccionar...</option>
+                                    <option value="M">Masculino</option>
+                                    <option value="F">Femenino</option>
+                                    <option value="O">Otro</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+                            <div>
+                                <label style="display:block;font-weight:600;margin-bottom:0.5rem;color:#1E293B;">Fecha de Nacimiento</label>
+                                <input type="date" id="student-dob" style="width:100%;padding:0.75rem;border:2px solid #E2E8F0;border-radius:0.5rem;font-size:0.95rem;">
+                            </div>
+                            <div>
+                                <label style="display:block;font-weight:600;margin-bottom:0.5rem;color:#1E293B;">Grado *</label>
+                                <select id="student-grade" required style="width:100%;padding:0.75rem;border:2px solid #E2E8F0;border-radius:0.5rem;font-size:0.95rem;">
+                                    <option value="">Seleccionar...</option>
+                                    <option value="1° A">1° A</option>
+                                    <option value="1° B">1° B</option>
+                                    <option value="2° A" selected>2° A</option>
+                                    <option value="2° B">2° B</option>
+                                    <option value="3° A">3° A</option>
+                                    <option value="3° B">3° B</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div style="border-top:2px solid #F1F5F9;padding-top:1.5rem;margin-top:0.5rem;">
+                            <h3 style="font-family:'Fredoka',sans-serif;font-size:1.1rem;margin-bottom:1rem;color:#1E293B;">📧 Datos de Contacto</h3>
+                            
+                            <div style="display:grid;gap:1rem;">
+                                <div>
+                                    <label style="display:block;font-weight:600;margin-bottom:0.5rem;color:#1E293B;">Email del Padre/Madre</label>
+                                    <input type="email" id="parent-email" placeholder="padre@email.com" style="width:100%;padding:0.75rem;border:2px solid #E2E8F0;border-radius:0.5rem;font-size:0.95rem;">
+                                </div>
+                                
+                                <div>
+                                    <label style="display:block;font-weight:600;margin-bottom:0.5rem;color:#1E293B;">Teléfono</label>
+                                    <input type="tel" id="parent-phone" placeholder="(442) 123-4567" style="width:100%;padding:0.75rem;border:2px solid #E2E8F0;border-radius:0.5rem;font-size:0.95rem;">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div style="background:#F0F9FF;padding:1rem;border-radius:0.75rem;border-left:4px solid #3B82F6;">
+                            <div style="font-size:0.85rem;color:#1E40AF;">
+                                <strong>💡 Nota:</strong> El estudiante recibirá un correo con sus credenciales de acceso.
+                            </div>
+                        </div>
+                        
+                        <div style="display:flex;gap:0.75rem;margin-top:0.5rem;">
+                            <button type="button" onclick="document.getElementById('add-student-modal').remove()" style="flex:1;padding:0.875rem;border:2px solid #E2E8F0;background:white;border-radius:999px;font-family:'Fredoka',sans-serif;font-weight:600;cursor:pointer;color:#334155;">
+                                Cancelar
+                            </button>
+                            <button type="submit" style="flex:1;padding:0.875rem;border:none;background:linear-gradient(135deg,#667eea,#764ba2);color:white;border-radius:999px;font-family:'Fredoka',sans-serif;font-weight:600;cursor:pointer;box-shadow:0 4px 12px rgba(102,126,234,0.3);">
+                                ➕ Agregar Estudiante
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            // Focus en el campo de nombre
+            setTimeout(() => document.getElementById('student-name').focus(), 100);
+        }
+        
+        function submitNewStudent(event) {
+            event.preventDefault();
+            
+            const newStudent = {
+                id: studentsData.length + 1,
+                name: document.getElementById('student-name').value + ' ' + document.getElementById('student-lastname').value,
+                avatar: document.getElementById('student-gender').value === 'F' ? '👧' : '👦',
+                grade: document.getElementById('student-grade').value,
+                mathAcc: 0,
+                spanishAcc: 0,
+                streak: 0,
+                risk: 'bajo',
+                sessions: 0,
+                matricula: document.getElementById('student-id').value,
+                dob: document.getElementById('student-dob').value,
+                parentEmail: document.getElementById('parent-email').value,
+                parentPhone: document.getElementById('parent-phone').value
+            };
+            
+            // Agregar a la lista
+            studentsData.push(newStudent);
+            filteredStudents = [...studentsData];
+            
+            // Cerrar modal
+            document.getElementById('add-student-modal').remove();
+            
+            // Mostrar confirmación
+            NLUI.showModal(
+                '✅ Estudiante Agregado',
+                `${newStudent.name} ha sido agregado exitosamente al grupo ${newStudent.grade}.\n\nSe ha enviado un correo a ${newStudent.parentEmail || 'los padres'} con las credenciales de acceso.`,
+                [
+                    { label: 'Ver Estudiante', primary: true, action: () => viewStudent(newStudent.id) },
+                    { label: 'Cerrar', action: null }
+                ]
+            );
+            
+            // Re-renderizar
+            renderStudents();
+            
+            // Aquí iría la lógica real de guardado al backend
+            console.log('Nuevo estudiante:', newStudent);
+        }
+
+        function exportStudents() {
+            NLUI.showModal('📥 Exportar Datos', 'Los datos se exportarán en formato CSV.');
+        }
+
+        // Initial render
+        renderStudents();
+    </script>
+
+    <!-- NeuroLearn Systems -->
+    <script src="nl-notifications.js"></script>
+</body>
+</html>

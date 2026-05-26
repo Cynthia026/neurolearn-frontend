@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recomendaciones Personalizadas - NeuroLearn Kids</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;600;700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .back-btn {
+            padding: 1rem 2rem;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            border-radius: 999px;
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            margin-bottom: 2rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .back-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateX(-5px);
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: fadeInDown 0.8s ease;
+        }
+
+        .header h1 {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 3rem;
+            color: white;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+
+        .header p {
+            color: rgba(255,255,255,0.9);
+            font-size: 1.1rem;
+        }
+
+        /* Child Selector */
+        .child-selector {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 3rem;
+        }
+
+        .child-btn {
+            padding: 1rem 2rem;
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 999px;
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .child-btn.active {
+            background: white;
+            color: #7C3AED;
+        }
+
+        /* AI Summary */
+        .ai-summary {
+            background: white;
+            border-radius: 2rem;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            animation: fadeInUp 0.8s ease;
+        }
+
+        .ai-badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 999px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .ai-summary h2 {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: #1E293B;
+        }
+
+        .ai-summary p {
+            color: #64748B;
+            line-height: 1.8;
+            font-size: 1.05rem;
+        }
+
+        /* Recommendations Grid */
+        .recommendations-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .recommendation-card {
+            background: white;
+            border-radius: 2rem;
+            padding: 2rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            animation: fadeInUp 0.8s ease both;
+        }
+
+        .recommendation-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+        }
+
+        .recommendation-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .recommendation-title {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.5rem;
+            margin-bottom: 0.75rem;
+            color: #1E293B;
+        }
+
+        .recommendation-description {
+            color: #64748B;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .recommendation-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .tag {
+            padding: 0.4rem 1rem;
+            background: rgba(124,58,237,0.1);
+            color: #7C3AED;
+            border-radius: 999px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .recommendation-action {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 1rem;
+            border: none;
+            border-radius: 999px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .action-btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .action-btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(102,126,234,0.3);
+        }
+
+        .action-btn-secondary {
+            background: white;
+            color: #7C3AED;
+            border: 2px solid #E2E8F0;
+        }
+
+        .action-btn-secondary:hover {
+            border-color: #7C3AED;
+        }
+
+        /* Progress Tracker */
+        .progress-tracker {
+            background: white;
+            border-radius: 2rem;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        .progress-tracker h2 {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: #1E293B;
+        }
+
+        .progress-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.5rem;
+            background: #F8FAFC;
+            border-radius: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .progress-info {
+            flex: 1;
+        }
+
+        .progress-title {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: #1E293B;
+        }
+
+        .progress-bar-container {
+            background: #E2E8F0;
+            height: 8px;
+            border-radius: 999px;
+            overflow: hidden;
+            width: 200px;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #10B981, #059669);
+            border-radius: 999px;
+            transition: width 0.5s ease;
+        }
+
+        .progress-status {
+            font-weight: 700;
+            color: #7C3AED;
+        }
+
+        /* Resources Section */
+        .resources-section {
+            background: white;
+            border-radius: 2rem;
+            padding: 2.5rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        .resources-section h2 {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: #1E293B;
+        }
+
+        .resources-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .resource-card {
+            padding: 1.5rem;
+            background: #F8FAFC;
+            border-radius: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .resource-card:hover {
+            background: rgba(124,58,237,0.05);
+            transform: translateY(-5px);
+        }
+
+        .resource-type {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: #E2E8F0;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #64748B;
+        }
+
+        .resource-title {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: #1E293B;
+        }
+
+        .resource-duration {
+            font-size: 0.85rem;
+            color: #94A3B8;
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 768px) {
+            .recommendations-grid { grid-template-columns: 1fr; }
+            .resources-grid { grid-template-columns: 1fr; }
+            .header h1 { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="login-register.html" class="back-btn" style="background: #EF4444; margin-left: 1rem;">🚪 Cerrar Sesión</a>
+            <a href="parent-dashboard.html" class="back-btn">← Volver</a>
+
+        <!-- Header -->
+        <div class="header">
+            <h1>🎯 Recomendaciones Personalizadas</h1>
+            <p>Actividades sugeridas por nuestra IA basadas en el desempeño de tu hijo</p>
+        </div>
+
+        <!-- Child Selector -->
+        <div class="child-selector">
+            <button class="child-btn active" onclick="selectChild('miguel')">Miguel</button>
+            <button class="child-btn" onclick="selectChild('valeria')">Valeria</button>
+        </div>
+
+        <!-- AI Summary -->
+        <div class="ai-summary">
+            <span class="ai-badge">✨ Análisis IA</span>
+            <h2>Resumen Semanal para Miguel</h2>
+            <p>
+                Miguel ha mostrado un <strong>progreso excelente en multiplicación</strong>, dominando las tablas del 2 al 5 con un 92% de precisión. 
+                Sin embargo, detectamos que las <strong>restas con llevadas</strong> representan un área de oportunidad (68% de precisión). 
+                Te recomendamos enfocarte en las actividades de resta durante los próximos 7 días. 
+                Su racha de 7 días consecutivos indica una <strong>excelente motivación</strong> que podemos aprovechar.
+            </p>
+        </div>
+
+        <!-- Recommendations Grid -->
+        <div class="recommendations-grid">
+            <!-- Recommendation 1 -->
+            <div class="recommendation-card" style="animation-delay: 0.1s;">
+                <div class="recommendation-icon">🧮</div>
+                <h3 class="recommendation-title">Práctica de Restas con Llevadas</h3>
+                <p class="recommendation-description">
+                    15 minutos diarios de ejercicios graduales de resta. Comenzaremos con números de 2 dígitos y avanzaremos progresivamente.
+                </p>
+                <div class="recommendation-tags">
+                    <span class="tag">Matemáticas</span>
+                    <span class="tag">15 min/día</span>
+                    <span class="tag">Prioridad Alta</span>
+                </div>
+                <div class="recommendation-action">
+                    <button class="action-btn action-btn-primary" onclick="startActivity('restas')">Comenzar Ahora</button>
+                    <button class="action-btn action-btn-secondary" onclick="viewDetails('restas')">Ver Detalles</button>
+                </div>
+            </div>
+
+            <!-- Recommendation 2 -->
+            <div class="recommendation-card" style="animation-delay: 0.2s;">
+                <div class="recommendation-icon">📚</div>
+                <h3 class="recommendation-title">Lectura: "El Principito"</h3>
+                <p class="recommendation-description">
+                    Libro ideal para su nivel de comprensión lectora. Incluye preguntas de reflexión al final de cada capítulo.
+                </p>
+                <div class="recommendation-tags">
+                    <span class="tag">Español</span>
+                    <span class="tag">20 min/día</span>
+                    <span class="tag">Nivel Adecuado</span>
+                </div>
+                <div class="recommendation-action">
+                    <button class="action-btn action-btn-primary" onclick="startActivity('lectura')">Ver Libro</button>
+                    <button class="action-btn action-btn-secondary" onclick="viewDetails('lectura')">Más Info</button>
+                </div>
+            </div>
+
+            <!-- Recommendation 3 -->
+            <div class="recommendation-card" style="animation-delay: 0.3s;">
+                <div class="recommendation-icon">🎮</div>
+                <h3 class="recommendation-title">Juego: Math Blaster</h3>
+                <p class="recommendation-description">
+                    Refuerza las tablas de multiplicar de forma divertida. Modo adaptativo que ajusta dificultad automáticamente.
+                </p>
+                <div class="recommendation-tags">
+                    <span class="tag">Gamificación</span>
+                    <span class="tag">10 min/día</span>
+                    <span class="tag">Diversión</span>
+                </div>
+                <div class="recommendation-action">
+                    <button class="action-btn action-btn-primary" onclick="window.location.href='math-blaster.html'">Jugar Ahora</button>
+                    <button class="action-btn action-btn-secondary" onclick="viewDetails('juego')">Info</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Progress Tracker -->
+        <div class="progress-tracker">
+            <h2>📈 Progreso de Recomendaciones</h2>
+            <p style="color: #64748B; margin-bottom: 2rem;">Has completado 3 de 5 actividades sugeridas esta semana</p>
+
+            <div class="progress-item">
+                <div class="progress-info">
+                    <div class="progress-title">Práctica de multiplicación</div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar-fill" style="width: 100%;"></div>
+                    </div>
+                </div>
+                <div class="progress-status">✓ Completado</div>
+            </div>
+
+            <div class="progress-item">
+                <div class="progress-info">
+                    <div class="progress-title">Juego educativo de sumas</div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar-fill" style="width: 100%;"></div>
+                    </div>
+                </div>
+                <div class="progress-status">✓ Completado</div>
+            </div>
+
+            <div class="progress-item">
+                <div class="progress-info">
+                    <div class="progress-title">Lectura comprensiva</div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar-fill" style="width: 70%;"></div>
+                    </div>
+                </div>
+                <div class="progress-status">70%</div>
+            </div>
+
+            <div class="progress-item">
+                <div class="progress-info">
+                    <div class="progress-title">Restas con llevadas</div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar-fill" style="width: 40%;"></div>
+                    </div>
+                </div>
+                <div class="progress-status">40%</div>
+            </div>
+
+            <div class="progress-item">
+                <div class="progress-info">
+                    <div class="progress-title">Dictado de palabras</div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar-fill" style="width: 0%;"></div>
+                    </div>
+                </div>
+                <div class="progress-status">Pendiente</div>
+            </div>
+        </div>
+
+        <!-- Resources Section -->
+        <div class="resources-section">
+            <h2>📖 Recursos para Padres</h2>
+            <div class="resources-grid">
+                <div class="resource-card" onclick="openResource('video1')">
+                    <span class="resource-type">VIDEO</span>
+                    <div class="resource-title">Cómo ayudar con las restas</div>
+                    <div class="resource-duration">⏱️ 8 minutos</div>
+                </div>
+
+                <div class="resource-card" onclick="openResource('article1')">
+                    <span class="resource-type">ARTÍCULO</span>
+                    <div class="resource-title">Técnicas de estudio efectivas</div>
+                    <div class="resource-duration">📄 5 min de lectura</div>
+                </div>
+
+                <div class="resource-card" onclick="openResource('pdf1')">
+                    <span class="resource-type">PDF</span>
+                    <div class="resource-title">Ejercicios de práctica</div>
+                    <div class="resource-duration">💾 Descargable</div>
+                </div>
+
+                <div class="resource-card" onclick="openResource('video2')">
+                    <span class="resource-type">VIDEO</span>
+                    <div class="resource-title">Motivación en el aprendizaje</div>
+                    <div class="resource-duration">⏱️ 12 minutos</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function selectChild(child) {
+            document.querySelectorAll('.child-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Aquí cargarías las recomendaciones del hijo seleccionado
+            alert(`Cargando recomendaciones para ${child === 'miguel' ? 'Miguel' : 'Valeria'}...`);
+        }
+
+        function startActivity(activity) {
+            const activities = {
+                'restas': 'diagnostic-evaluation.html',
+                'lectura': '#',
+                'juego': 'math-blaster.html'
+            };
+
+            if (activities[activity]) {
+                window.location.href = activities[activity];
+            }
+        }
+
+        function viewDetails(activity) {
+            alert(`Ver detalles de la actividad: ${activity}`);
+        }
+
+        function openResource(resource) {
+            alert(`Abriendo recurso: ${resource}`);
+        }
+    </script>
+    <!-- NeuroLearn Systems -->
+    <script src="nl-notifications.js"></script>
+</body>
+</html>
